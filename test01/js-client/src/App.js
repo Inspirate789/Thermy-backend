@@ -4,7 +4,7 @@ import './App.css';
 import { SensorRequest  } from "./sensorpb/sensor_pb"
 import { SensorClient} from "./sensorpb/sensor_grpc_web_pb"
 
-var client = new SensorClient('http://Test-backend:8080')
+var client = new SensorClient('https://test-backend-ubeb.onrender.com:8080')
 function App() {
   const [temp, setTemp] = useState(-9999);
   const [humidity , setHumidity] = useState(-99999)
