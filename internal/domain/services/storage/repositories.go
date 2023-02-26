@@ -1,6 +1,9 @@
-package interfaces
+package storage
 
-import "github.com/Inspirate789/Thermy-backend/internal/domain/entities"
+import (
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
+)
 
 type UserRepository interface {
 	AddUser(conn ConnDB, username string, role string) error
@@ -19,15 +22,15 @@ type ModelElementsRepository interface {
 
 type PropertiesRepository interface {
 	GetAllProperties(conn ConnDB) ([]entities.Property, error)
-	GetPropertiesByUnit(conn ConnDB, layer string, unit SearchUnitDTO) ([]entities.Property, error)
+	GetPropertiesByUnit(conn ConnDB, layer string, unit interfaces.SearchUnitDTO) ([]entities.Property, error)
 	SaveProperties(conn ConnDB, properties []string) ([]int, error)
 }
 
 type UnitsRepository interface {
-	GetAllUnits(conn ConnDB, layer string) (OutputUnitsDTO, error)
-	GetUnitsByModels(conn ConnDB, layer string, modelsID []int) (OutputUnitsDTO, error)
-	GetUnitsByProperties(conn ConnDB, layer string, propertiesID []int) (OutputUnitsDTO, error)
-	SaveUnits(conn ConnDB, layer string, data SaveUnitsDTO) error // stored procedure (SQL)
+	GetAllUnits(conn ConnDB, layer string) (interfaces.OutputUnitsDTO, error)
+	GetUnitsByModels(conn ConnDB, layer string, modelsID []int) (interfaces.OutputUnitsDTO, error)
+	GetUnitsByProperties(conn ConnDB, layer string, propertiesID []int) (interfaces.OutputUnitsDTO, error)
+	SaveUnits(conn ConnDB, layer string, data interfaces.SaveUnitsDTO) error // stored procedure (SQL)
 	RenameUnit(conn ConnDB, layer string, oldName string, newName string) error
 	SetUnitProperties(conn ConnDB, layer string, unitName string, propertiesID []int) error
 }

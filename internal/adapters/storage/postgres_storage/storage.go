@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage/wrappers"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/jmoiron/sqlx"
 	"os"
 )
@@ -48,7 +48,7 @@ func getConnRole(conn *sqlx.DB, ctx context.Context) (string, error) {
 	return roles[0], nil
 }
 
-func getPostgresInfo(request *interfaces.AuthRequest) (string, error) {
+func getPostgresInfo(request *storage.AuthRequest) (string, error) {
 	host := os.Getenv("POSTGRES_HOST") // TODO: get once?
 	if host == "" {
 		return "", errors.New("POSTGRES_HOST must be set")
@@ -80,7 +80,7 @@ func getPostgresInfo(request *interfaces.AuthRequest) (string, error) {
 	return postgresInfo, nil
 }
 
-func (ps *PostgresStorage) OpenConn(request *interfaces.AuthRequest, ctx context.Context) (interfaces.ConnDB, string, error) {
+func (ps *PostgresStorage) OpenConn(request *storage.AuthRequest, ctx context.Context) (storage.ConnDB, string, error) {
 	postgresInfo, err := getPostgresInfo(request)
 	if err != nil {
 		return nil, "", err
@@ -105,7 +105,7 @@ func (ps *PostgresStorage) OpenConn(request *interfaces.AuthRequest, ctx context
 	return sqlxDB, role, nil
 }
 
-func (ps *PostgresStorage) CloseConn(db interfaces.ConnDB) error {
+func (ps *PostgresStorage) CloseConn(db storage.ConnDB) error {
 	sqlxDB, ok := db.(*sqlx.DB)
 	if !ok {
 		return errors.New("cannot get *sqlx.DB from argument")

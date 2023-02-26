@@ -1,8 +1,6 @@
-package interfaces
+package storage
 
-import (
-	"context"
-)
+import "context"
 
 type AuthRequest struct {
 	Username string `json:"username"`

@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/server"
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services/authorization"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/joho/godotenv"
 	"log"
@@ -30,8 +31,8 @@ func main() { // TODO: decompose main into initServer, startServer, stopServer?
 	}
 	defer mainLog.Close()
 
-	authService := services.NewAuthorizationService(mainLog)
-	storageService := services.NewStorageService(postgres_storage.NewPostgresStorage(), mainLog)
+	authService := authorization.NewAuthorizationService(mainLog)
+	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(), mainLog)
 	srv := server.NewServer(8080, &authService, &storageService, mainLog)
 
 	go func() {

@@ -1,4 +1,4 @@
-package services
+package storage
 
 import (
 	"context"
@@ -9,26 +9,26 @@ import (
 )
 
 type StorageService struct {
-	storage interfaces.Storage
+	storage Storage
 	log     logger.Logger
 }
 
-func NewStorageService(storage interfaces.Storage, log logger.Logger) StorageService {
+func NewStorageService(storage Storage, log logger.Logger) StorageService {
 	return StorageService{
 		storage: storage,
 		log:     log,
 	}
 }
 
-func (ss *StorageService) OpenConn(request *interfaces.AuthRequest, ctx context.Context) (interfaces.ConnDB, string, error) {
+func (ss *StorageService) OpenConn(request *AuthRequest, ctx context.Context) (ConnDB, string, error) {
 	return ss.storage.OpenConn(request, ctx)
 }
 
-func (ss *StorageService) CloseConn(conn interfaces.ConnDB) error {
+func (ss *StorageService) CloseConn(conn ConnDB) error {
 	return ss.storage.CloseConn(conn)
 }
 
-func (ss *StorageService) GetAllUnits(conn interfaces.ConnDB, layer string) (interfaces.OutputUnitsDTO, error) {
+func (ss *StorageService) GetAllUnits(conn ConnDB, layer string) (interfaces.OutputUnitsDTO, error) {
 	exist, err := ss.storage.LayerExist(conn, layer)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -61,7 +61,7 @@ func (ss *StorageService) GetAllUnits(conn interfaces.ConnDB, layer string) (int
 	return units, nil
 }
 
-func (ss *StorageService) GetUnitsByModels(conn interfaces.ConnDB, layer string, modelsDTO interfaces.ModelsIdDTO) (interfaces.OutputUnitsDTO, error) {
+func (ss *StorageService) GetUnitsByModels(conn ConnDB, layer string, modelsDTO interfaces.ModelsIdDTO) (interfaces.OutputUnitsDTO, error) {
 	exist, err := ss.storage.LayerExist(conn, layer)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -94,7 +94,7 @@ func (ss *StorageService) GetUnitsByModels(conn interfaces.ConnDB, layer string,
 	return units, nil
 }
 
-func (ss *StorageService) GetUnitsByProperties(conn interfaces.ConnDB, layer string, propertiesDTO interfaces.PropertiesIdDTO) (interfaces.OutputUnitsDTO, error) {
+func (ss *StorageService) GetUnitsByProperties(conn ConnDB, layer string, propertiesDTO interfaces.PropertiesIdDTO) (interfaces.OutputUnitsDTO, error) {
 	exist, err := ss.storage.LayerExist(conn, layer)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -127,7 +127,7 @@ func (ss *StorageService) GetUnitsByProperties(conn interfaces.ConnDB, layer str
 	return units, nil
 }
 
-func (ss *StorageService) GetModels(conn interfaces.ConnDB, layer string) (interfaces.OutputModelsDTO, error) {
+func (ss *StorageService) GetModels(conn ConnDB, layer string) (interfaces.OutputModelsDTO, error) {
 	exist, err := ss.storage.LayerExist(conn, layer)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -165,7 +165,7 @@ func (ss *StorageService) GetModels(conn interfaces.ConnDB, layer string) (inter
 	return interfaces.OutputModelsDTO{Models: modelsDTO}, nil
 }
 
-func (ss *StorageService) GetModelElements(conn interfaces.ConnDB, layer string) (interfaces.OutputModelElementsDTO, error) {
+func (ss *StorageService) GetModelElements(conn ConnDB, layer string) (interfaces.OutputModelElementsDTO, error) {
 	exist, err := ss.storage.LayerExist(conn, layer)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -203,7 +203,7 @@ func (ss *StorageService) GetModelElements(conn interfaces.ConnDB, layer string)
 	return interfaces.OutputModelElementsDTO{Elements: modelElementsDTO}, nil
 }
 
-func (ss *StorageService) GetProperties(conn interfaces.ConnDB) (interfaces.OutputPropertiesDTO, error) {
+func (ss *StorageService) GetProperties(conn ConnDB) (interfaces.OutputPropertiesDTO, error) {
 	properties, err := ss.storage.GetAllProperties(conn)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -222,7 +222,7 @@ func (ss *StorageService) GetProperties(conn interfaces.ConnDB) (interfaces.Outp
 	return interfaces.OutputPropertiesDTO{Properties: propertiesDTO}, nil
 }
 
-func (ss *StorageService) GetPropertiesByUnit(conn interfaces.ConnDB, layer string, unit interfaces.SearchUnitDTO) (interfaces.OutputPropertiesDTO, error) {
+func (ss *StorageService) GetPropertiesByUnit(conn ConnDB, layer string, unit interfaces.SearchUnitDTO) (interfaces.OutputPropertiesDTO, error) {
 	properties, err := ss.storage.GetPropertiesByUnit(conn, layer, unit)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -241,7 +241,7 @@ func (ss *StorageService) GetPropertiesByUnit(conn interfaces.ConnDB, layer stri
 	return interfaces.OutputPropertiesDTO{Properties: propertiesDTO}, nil
 }
 
-func (ss *StorageService) GetLayers(conn interfaces.ConnDB) (interfaces.LayersDTO, error) {
+func (ss *StorageService) GetLayers(conn ConnDB) (interfaces.LayersDTO, error) {
 	layers, err := ss.storage.GetAllLayers(conn)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -255,7 +255,7 @@ func (ss *StorageService) GetLayers(conn interfaces.ConnDB) (interfaces.LayersDT
 	return interfaces.LayersDTO{Layers: layers}, nil
 }
 
-func (ss *StorageService) SaveUnits(conn interfaces.ConnDB, layer string, unitsDTO interfaces.SaveUnitsDTO) error {
+func (ss *StorageService) SaveUnits(conn ConnDB, layer string, unitsDTO interfaces.SaveUnitsDTO) error {
 	exist, err := ss.storage.LayerExist(conn, layer)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -288,7 +288,7 @@ func (ss *StorageService) SaveUnits(conn interfaces.ConnDB, layer string, unitsD
 	return nil
 }
 
-func (ss *StorageService) UpdateUnits(conn interfaces.ConnDB, layer string, unitsDTO interfaces.UpdateUnitsDTO) error {
+func (ss *StorageService) UpdateUnits(conn ConnDB, layer string, unitsDTO interfaces.UpdateUnitsDTO) error {
 	exist, err := ss.storage.LayerExist(conn, layer)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -340,7 +340,7 @@ func (ss *StorageService) UpdateUnits(conn interfaces.ConnDB, layer string, unit
 	return nil
 }
 
-func (ss *StorageService) SaveProperties(conn interfaces.ConnDB, propertiesDTO interfaces.PropertyNamesDTO) (interfaces.PropertiesIdDTO, error) {
+func (ss *StorageService) SaveProperties(conn ConnDB, propertiesDTO interfaces.PropertyNamesDTO) (interfaces.PropertiesIdDTO, error) {
 	propertiesID, err := ss.storage.SaveProperties(conn, propertiesDTO.Properties)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -354,7 +354,7 @@ func (ss *StorageService) SaveProperties(conn interfaces.ConnDB, propertiesDTO i
 	return interfaces.PropertiesIdDTO{Properties: propertiesID}, nil
 }
 
-func (ss *StorageService) SaveModels(conn interfaces.ConnDB, layer string, modelsDTO interfaces.ModelNamesDTO) (interfaces.ModelsIdDTO, error) {
+func (ss *StorageService) SaveModels(conn ConnDB, layer string, modelsDTO interfaces.ModelNamesDTO) (interfaces.ModelsIdDTO, error) {
 	exist, err := ss.storage.LayerExist(conn, layer)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -387,7 +387,7 @@ func (ss *StorageService) SaveModels(conn interfaces.ConnDB, layer string, model
 	return interfaces.ModelsIdDTO{Models: modelsID}, nil
 }
 
-func (ss *StorageService) SaveModelElements(conn interfaces.ConnDB, layer string, modelElementsDTO interfaces.ModelElementNamesDTO) (interfaces.ModelElementsIdDTO, error) {
+func (ss *StorageService) SaveModelElements(conn ConnDB, layer string, modelElementsDTO interfaces.ModelElementNamesDTO) (interfaces.ModelElementsIdDTO, error) {
 	exist, err := ss.storage.LayerExist(conn, layer)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -420,7 +420,7 @@ func (ss *StorageService) SaveModelElements(conn interfaces.ConnDB, layer string
 	return interfaces.ModelElementsIdDTO{ModelElements: modelElementsID}, nil
 }
 
-func (ss *StorageService) SaveLayer(conn interfaces.ConnDB, layer string) error {
+func (ss *StorageService) SaveLayer(conn ConnDB, layer string) error {
 	err := ss.storage.SaveLayer(conn, layer)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -434,10 +434,10 @@ func (ss *StorageService) SaveLayer(conn interfaces.ConnDB, layer string) error 
 	return nil
 }
 
-func (ss *StorageService) AddUser(conn interfaces.ConnDB, username string, role string) error {
+func (ss *StorageService) AddUser(conn ConnDB, username string, role string) error {
 	return ss.storage.AddUser(conn, username, role)
 }
 
-func (ss *StorageService) GetUserPassword(conn interfaces.ConnDB, username string) (string, error) {
+func (ss *StorageService) GetUserPassword(conn ConnDB, username string) (string, error) {
 	return ss.storage.GetUserPassword(conn, username)
 }

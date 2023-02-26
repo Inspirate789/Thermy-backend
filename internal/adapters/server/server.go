@@ -3,7 +3,8 @@ package server
 import (
 	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/server/middleware"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services/authorization"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -12,8 +13,8 @@ import (
 
 type Server struct {
 	srv            *http.Server
-	storageService *services.StorageService
-	authService    *services.AuthorizationService
+	storageService *storage.StorageService
+	authService    *authorization.AuthorizationService
 	log            logger.Logger
 }
 
@@ -79,7 +80,7 @@ func (s *Server) setupHandlers(router *gin.Engine) {
 	s.addAdminRoutes(adminRG)
 }
 
-func NewServer(port int, authSVC *services.AuthorizationService, storageSVC *services.StorageService, log logger.Logger) Server {
+func NewServer(port int, authSVC *authorization.AuthorizationService, storageSVC *storage.StorageService, log logger.Logger) Server {
 	router := gin.Default()
 	// router.SetTrustedProxies([]string{"192.168.52.38"}) // TODO?
 

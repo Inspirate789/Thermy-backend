@@ -1,9 +1,9 @@
-package services
+package authorization
 
 import (
 	"context"
 	"fmt"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"os"
 	"testing"
@@ -12,7 +12,7 @@ import (
 type testStorage struct {
 }
 
-func (*testStorage) Connect(r *interfaces.AuthRequest, ctx context.Context) (interfaces.ConnDB, string, error) {
+func (*testStorage) Connect(r *storage.AuthRequest, ctx context.Context) (storage.ConnDB, string, error) {
 	return nil, "TestRole", nil
 }
 
@@ -31,13 +31,13 @@ func (testLogger) Close() error {
 }
 
 func TestAddSession(t *testing.T) {
-	r := interfaces.AuthRequest{
+	r := storage.AuthRequest{
 		Username: "TestUser",
 		Password: "TestPassword",
 	}
 	s := &testStorage{}
 	as := NewAuthorizationService(testLogger{})
-	ss := NewStorageService() // TODO
+	ss := storage.NewStorageService() // TODO
 
 	token, err := as.AddSession(s, &r, context.Background())
 	if err != nil {
@@ -47,12 +47,12 @@ func TestAddSession(t *testing.T) {
 }
 
 func TestRemoveExistingSession(t *testing.T) {
-	r := interfaces.AuthRequest{
+	r := storage.AuthRequest{
 		Username: "TestUser",
 		Password: "TestPassword",
 	}
 
-	var s interfaces.Storage = &testStorage{}
+	var s storage.Storage = &testStorage{}
 	as := NewAuthorizationService(testLogger{})
 	err := as.Open()
 	if err != nil {
@@ -96,12 +96,12 @@ func TestRemoveNonExistingSession(t *testing.T) {
 }
 
 func TestGetSessionRole(t *testing.T) {
-	r := interfaces.AuthRequest{
+	r := storage.AuthRequest{
 		Username: "TestUser",
 		Password: "TestPassword",
 	}
 
-	var s interfaces.Storage = &testStorage{}
+	var s storage.Storage = &testStorage{}
 	as := NewAuthorizationService(testLogger{})
 	err := as.Open()
 	if err != nil {

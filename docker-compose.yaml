@@ -9,6 +9,7 @@ services:
         image: postgres:15.2-alpine3.17
         environment:
             POSTGRES_USER: root
+            POSTGRES_DB: thermy_db
             POSTGRES_PASSWORD: postgres
             PGDATA: /data/postgres
         volumes:

@@ -1,21 +1,20 @@
-package entities
+package authorization
 
 import (
 	"context"
 	"fmt"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"hash/fnv"
 )
 
 type Session struct {
-	authData *interfaces.AuthRequest
+	authData *storage.AuthRequest
 	token    uint64
 	role     string
-	connDB   interfaces.ConnDB
+	connDB   storage.ConnDB
 }
 
-func (s *Session) GetAuthData() *interfaces.AuthRequest {
+func (s *Session) GetAuthData() *storage.AuthRequest {
 	return s.authData
 }
 
@@ -27,11 +26,11 @@ func (s *Session) GetRole() string {
 	return s.role
 }
 
-func (s *Session) GetConn() interfaces.ConnDB {
+func (s *Session) GetConn() storage.ConnDB {
 	return s.connDB
 }
 
-func generateToken(request *interfaces.AuthRequest) (uint64, error) {
+func generateToken(request *storage.AuthRequest) (uint64, error) {
 	h := fnv.New64a()
 
 	_, err := h.Write([]byte(request.Username))
@@ -42,7 +41,7 @@ func generateToken(request *interfaces.AuthRequest) (uint64, error) {
 	return h.Sum64(), err
 }
 
-func (s *Session) Open(ss *services.StorageService, request *interfaces.AuthRequest, ctx context.Context) (uint64, error) {
+func (s *Session) Open(ss *storage.StorageService, request *storage.AuthRequest, ctx context.Context) (uint64, error) {
 	conn, role, err := ss.OpenConn(request, ctx)
 	if err != nil {
 		return 0, fmt.Errorf("cannot open session: %w", err)
@@ -56,7 +55,7 @@ func (s *Session) Open(ss *services.StorageService, request *interfaces.AuthRequ
 	return s.token, err
 }
 
-func (s *Session) Close(ss *services.StorageService) error {
+func (s *Session) Close(ss *storage.StorageService) error {
 	err := ss.CloseConn(s.connDB)
 	if err != nil {
 		return fmt.Errorf("cannot close session: %w", err)

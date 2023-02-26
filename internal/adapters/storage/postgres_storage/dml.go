@@ -6,6 +6,7 @@ import (
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage/wrappers"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/jmoiron/sqlx"
 	"github.com/sethvargo/go-password/password"
 )
@@ -21,7 +22,7 @@ type JoinedUnits struct {
 	UnitEnText    string `db:"unit_en_text"`
 }
 
-func executeScript(conn interfaces.ConnDB, scriptName string, args ...any) error {
+func executeScript(conn storage.ConnDB, scriptName string, args ...any) error {
 	sqlxDB, ok := conn.(*sqlx.DB)
 	if !ok {
 		return errors.New("cannot get *sqlx.DB from argument")
@@ -37,7 +38,7 @@ func executeScript(conn interfaces.ConnDB, scriptName string, args ...any) error
 	return err
 }
 
-func selectValueFromScript[T any](conn interfaces.ConnDB, scriptName string, args ...any) (T, error) {
+func selectValueFromScript[T any](conn storage.ConnDB, scriptName string, args ...any) (T, error) {
 	var value T
 
 	sqlxDB, ok := conn.(*sqlx.DB)
@@ -58,7 +59,7 @@ func selectValueFromScript[T any](conn interfaces.ConnDB, scriptName string, arg
 	return value, nil
 }
 
-func selectSliceFromScript[S ~[]E, E any](conn interfaces.ConnDB, scriptName string, args ...any) (S, error) {
+func selectSliceFromScript[S ~[]E, E any](conn storage.ConnDB, scriptName string, args ...any) (S, error) {
 	sqlxDB, ok := conn.(*sqlx.DB)
 	if !ok {
 		return nil, errors.New("cannot get *sqlx.DB from argument") // TODO: log and wrap
@@ -78,35 +79,35 @@ func selectSliceFromScript[S ~[]E, E any](conn interfaces.ConnDB, scriptName str
 	return slice, nil
 }
 
-func (ps *PostgresStorage) GetAllModels(conn interfaces.ConnDB, layer string) ([]entities.Model, error) {
+func (ps *PostgresStorage) GetAllModels(conn storage.ConnDB, layer string) ([]entities.Model, error) {
 	return selectSliceFromScript[[]entities.Model](conn, "sql/select_all_models.sql", layer)
 }
 
-func (ps *PostgresStorage) SaveModels(conn interfaces.ConnDB, layer string, models []string) ([]int, error) {
+func (ps *PostgresStorage) SaveModels(conn storage.ConnDB, layer string, models []string) ([]int, error) {
 	return nil, errors.New("postgres storage does not support function SaveModels") // TODO: implement me
 }
 
-func (ps *PostgresStorage) GetAllModelElements(conn interfaces.ConnDB, layer string) ([]entities.ModelElement, error) {
+func (ps *PostgresStorage) GetAllModelElements(conn storage.ConnDB, layer string) ([]entities.ModelElement, error) {
 	return selectSliceFromScript[[]entities.ModelElement](conn, "sql/select_all_model_elements.sql", layer)
 }
 
-func (ps *PostgresStorage) SaveModelElements(conn interfaces.ConnDB, layer string, modelElements []string) ([]int, error) {
+func (ps *PostgresStorage) SaveModelElements(conn storage.ConnDB, layer string, modelElements []string) ([]int, error) {
 	return nil, errors.New("postgres storage does not support function SaveModelElements") // TODO: implement me
 }
 
-func (ps *PostgresStorage) GetAllProperties(conn interfaces.ConnDB) ([]entities.Property, error) {
+func (ps *PostgresStorage) GetAllProperties(conn storage.ConnDB) ([]entities.Property, error) {
 	return selectSliceFromScript[[]entities.Property](conn, "sql/select_all_properties.sql")
 }
 
-func (ps *PostgresStorage) GetPropertiesByUnit(conn interfaces.ConnDB, layer string, unit interfaces.SearchUnitDTO) ([]entities.Property, error) {
+func (ps *PostgresStorage) GetPropertiesByUnit(conn storage.ConnDB, layer string, unit interfaces.SearchUnitDTO) ([]entities.Property, error) {
 	return selectSliceFromScript[[]entities.Property](conn, "sql/select_properties_by_unit.sql", layer, unit.Lang, unit.Text)
 }
 
-func (ps *PostgresStorage) SaveProperties(conn interfaces.ConnDB, properties []string) ([]int, error) {
+func (ps *PostgresStorage) SaveProperties(conn storage.ConnDB, properties []string) ([]int, error) {
 	return nil, errors.New("postgres storage does not support function SaveProperties") // TODO: implement me
 }
 
-func makeOutputUnitDTO(conn interfaces.ConnDB, layer string, lang string, unit entities.Unit) (interfaces.OutputUnitDTO, error) {
+func makeOutputUnitDTO(conn storage.ConnDB, layer string, lang string, unit entities.Unit) (interfaces.OutputUnitDTO, error) {
 	propertiesID, err := selectSliceFromScript[[]int](conn, "sql/select_properties_id_by_unit.sql", layer, lang, unit.ID)
 	if err != nil {
 		return interfaces.OutputUnitDTO{}, err
@@ -128,7 +129,7 @@ func makeOutputUnitDTO(conn interfaces.ConnDB, layer string, lang string, unit e
 	return unitDTO, nil
 }
 
-func (ps *PostgresStorage) GetAllUnits(conn interfaces.ConnDB, layer string) (interfaces.OutputUnitsDTO, error) {
+func (ps *PostgresStorage) GetAllUnits(conn storage.ConnDB, layer string) (interfaces.OutputUnitsDTO, error) {
 	unlinkedUnitsRu, err := selectSliceFromScript[[]entities.Unit](conn, "sql/select_unlinked_units_by_lang.sql", layer, "ru")
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
@@ -222,39 +223,39 @@ func (ps *PostgresStorage) GetAllUnits(conn interfaces.ConnDB, layer string) (in
 	return interfaces.OutputUnitsDTO{Units: combinedUnits, Contexts: contexts}, nil
 }
 
-func (ps *PostgresStorage) GetUnitsByModels(conn interfaces.ConnDB, layer string, modelsID []int) (interfaces.OutputUnitsDTO, error) {
+func (ps *PostgresStorage) GetUnitsByModels(conn storage.ConnDB, layer string, modelsID []int) (interfaces.OutputUnitsDTO, error) {
 	return interfaces.OutputUnitsDTO{}, errors.New("postgres storage does not support function GetUnitsByModels") // TODO: implement me
 }
 
-func (ps *PostgresStorage) GetUnitsByProperties(conn interfaces.ConnDB, layer string, propertiesID []int) (interfaces.OutputUnitsDTO, error) {
+func (ps *PostgresStorage) GetUnitsByProperties(conn storage.ConnDB, layer string, propertiesID []int) (interfaces.OutputUnitsDTO, error) {
 	return interfaces.OutputUnitsDTO{}, errors.New("postgres storage does not support function GetUnitsByProperties") // TODO: implement me
 }
 
-func (ps *PostgresStorage) SaveUnits(conn interfaces.ConnDB, layer string, data interfaces.SaveUnitsDTO) error {
+func (ps *PostgresStorage) SaveUnits(conn storage.ConnDB, layer string, data interfaces.SaveUnitsDTO) error {
 	return errors.New("postgres storage does not support function SaveUnits") // TODO: implement me
 }
 
-func (ps *PostgresStorage) RenameUnit(conn interfaces.ConnDB, layer string, oldName string, newName string) error {
+func (ps *PostgresStorage) RenameUnit(conn storage.ConnDB, layer string, oldName string, newName string) error {
 	return errors.New("postgres storage does not support function RenameUnit") // TODO: implement me
 }
 
-func (ps *PostgresStorage) SetUnitProperties(conn interfaces.ConnDB, layer string, unitName string, propertiesID []int) error {
+func (ps *PostgresStorage) SetUnitProperties(conn storage.ConnDB, layer string, unitName string, propertiesID []int) error {
 	return errors.New("postgres storage does not support function SetUnitProperties") // TODO: implement me
 }
 
-func (ps *PostgresStorage) LayerExist(conn interfaces.ConnDB, layer string) (bool, error) {
+func (ps *PostgresStorage) LayerExist(conn storage.ConnDB, layer string) (bool, error) {
 	return false, errors.New("postgres storage does not support function LayerExist") // TODO: implement me
 }
 
-func (ps *PostgresStorage) GetAllLayers(conn interfaces.ConnDB) ([]string, error) {
+func (ps *PostgresStorage) GetAllLayers(conn storage.ConnDB) ([]string, error) {
 	return nil, errors.New("postgres storage does not support function GetAllLayers") // TODO: implement me
 }
 
-func (ps *PostgresStorage) SaveLayer(conn interfaces.ConnDB, name string) error {
+func (ps *PostgresStorage) SaveLayer(conn storage.ConnDB, name string) error {
 	return errors.New("postgres storage does not support function SaveLayer") // TODO: implement me
 }
 
-func (ps *PostgresStorage) AddUser(conn interfaces.ConnDB, username string, role string) error {
+func (ps *PostgresStorage) AddUser(conn storage.ConnDB, username string, role string) error {
 	passwd, err := password.Generate(64, 10, 10, false, false)
 	if err != nil {
 		return err
@@ -263,6 +264,6 @@ func (ps *PostgresStorage) AddUser(conn interfaces.ConnDB, username string, role
 	return executeScript(conn, "sql/insert_user.sql", username, passwd, role)
 }
 
-func (ps *PostgresStorage) GetUserPassword(conn interfaces.ConnDB, username string) (string, error) {
+func (ps *PostgresStorage) GetUserPassword(conn storage.ConnDB, username string) (string, error) {
 	return selectValueFromScript[string](conn, "sql/select_user_password.sql", username)
 }

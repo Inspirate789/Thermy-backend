@@ -1,30 +1,29 @@
-package services
+package authorization
 
 import (
 	"context"
 	"fmt"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/errors"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"sync"
 )
 
 type AuthorizationService struct {
 	mx       sync.RWMutex
-	sessions map[uint64]entities.Session
+	sessions map[uint64]Session
 	log      logger.Logger
 }
 
 func NewAuthorizationService(log logger.Logger) AuthorizationService {
 	return AuthorizationService{
-		sessions: make(map[uint64]entities.Session),
+		sessions: make(map[uint64]Session),
 		log:      log,
 	}
 }
 
-func (as *AuthorizationService) AddSession(ss *StorageService, request *interfaces.AuthRequest, ctx context.Context) (uint64, error) {
-	var session entities.Session
+func (as *AuthorizationService) AddSession(ss *storage.StorageService, request *storage.AuthRequest, ctx context.Context) (uint64, error) {
+	var session Session
 	token, err := session.Open(ss, request, ctx)
 	if err != nil {
 		return 0, err
@@ -43,7 +42,7 @@ func (as *AuthorizationService) AddSession(ss *StorageService, request *interfac
 	return token, nil
 }
 
-func (as *AuthorizationService) RemoveSession(ss *StorageService, token uint64) error {
+func (as *AuthorizationService) RemoveSession(ss *storage.StorageService, token uint64) error {
 	as.mx.RLock()
 	session, ok := as.sessions[token]
 	as.mx.RUnlock()
@@ -80,7 +79,7 @@ func (as *AuthorizationService) GetSessionRole(token uint64) (string, error) {
 	return session.GetRole(), nil
 }
 
-func (as *AuthorizationService) GetSessionConn(token uint64) (interfaces.ConnDB, error) {
+func (as *AuthorizationService) GetSessionConn(token uint64) (storage.ConnDB, error) {
 	as.mx.RLock()
 	session, ok := as.sessions[token]
 	as.mx.RUnlock()

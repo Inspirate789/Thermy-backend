@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services/authorization"
 	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -27,7 +27,7 @@ func ErrorHandler(log logger.Logger) gin.HandlerFunc {
 	}
 }
 
-func RoleCheck(svc *services.AuthorizationService, parseRole func(*gin.Context) (string, error)) gin.HandlerFunc {
+func RoleCheck(svc *authorization.AuthorizationService, parseRole func(*gin.Context) (string, error)) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token, err := strconv.ParseUint(ctx.Param("token"), 10, 64)
 		if err != nil {
