@@ -1,8 +1,8 @@
 package server
 
 import (
-	"backend/internal/domain/interfaces"
 	"errors"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"

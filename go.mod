@@ -1,4 +1,4 @@
-module backend
+module github.com/Inspirate789/Thermy-backend
 
 go 1.20
 

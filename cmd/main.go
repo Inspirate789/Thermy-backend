@@ -1,11 +1,11 @@
 package main
 
 import (
-	"backend/internal/adapters/server"
-	"backend/internal/adapters/storage/postgres_storage"
-	"backend/internal/domain/services"
-	"backend/pkg/logger"
 	"fmt"
+	"github.com/Inspirate789/Thermy-backend/internal/adapters/server"
+	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services"
+	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"

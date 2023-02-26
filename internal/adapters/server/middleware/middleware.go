@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"backend/internal/domain/services"
-	"backend/pkg/logger"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services"
+	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"

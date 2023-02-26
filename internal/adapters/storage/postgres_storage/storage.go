@@ -1,12 +1,12 @@
 package postgres_storage
 
 import (
-	"backend/internal/adapters/storage/postgres_storage/wrappers"
-	"backend/internal/domain/interfaces"
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage/wrappers"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/jmoiron/sqlx"
 	"os"
 )

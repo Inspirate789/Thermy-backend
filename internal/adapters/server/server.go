@@ -1,10 +1,10 @@
 package server
 
 import (
-	"backend/internal/adapters/server/middleware"
-	"backend/internal/domain/services"
-	"backend/pkg/logger"
 	"fmt"
+	"github.com/Inspirate789/Thermy-backend/internal/adapters/server/middleware"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services"
+	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"

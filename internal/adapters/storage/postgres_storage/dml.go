@@ -1,11 +1,11 @@
 package postgres_storage
 
 import (
-	"backend/internal/adapters/storage/postgres_storage/wrappers"
-	"backend/internal/domain/entities"
-	"backend/internal/domain/interfaces"
 	"context"
 	"errors"
+	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage/wrappers"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/jmoiron/sqlx"
 	"github.com/sethvargo/go-password/password"
 )

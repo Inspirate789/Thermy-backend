@@ -1,6 +1,6 @@
 package interfaces
 
-import "backend/internal/domain/entities"
+import "github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 
 type UserRepository interface {
 	AddUser(conn ConnDB, username string, role string) error

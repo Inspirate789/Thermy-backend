@@ -1,10 +1,10 @@
 package entities
 
 import (
-	"backend/internal/domain/interfaces"
-	"backend/internal/domain/services"
 	"context"
 	"fmt"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/services"
 	"hash/fnv"
 )
 

@@ -1,12 +1,12 @@
 package services
 
 import (
-	"backend/internal/domain/entities" // TODO: replace relational paths by github.com/...
-	"backend/internal/domain/errors"
-	"backend/internal/domain/interfaces"
-	"backend/pkg/logger"
 	"context"
 	"fmt"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/errors"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
+	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"sync"
 )
 
