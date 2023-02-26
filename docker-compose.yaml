@@ -17,7 +17,7 @@ services:
             - 5432:5432
         networks:
             - persistent_bridge_network
-    influxdb:
+    influxdb: # TODO: configure dashboards
         image: influxdb:2.6.1-alpine
         environment:
             DOCKER_INFLUXDB_INIT_MODE: setup

@@ -11,12 +11,28 @@
 - [Отличия реляционных и нереляционных баз данных (и когда какую выбирать)](https://www.xelent.ru/blog/otlichiya-relyatsionnykh-i-nerelyatsionnykh-baz-dannykh/)
 - [In-memory архитектура для веб-сервисов: основы технологии и принципы](https://habr.com/ru/company/headzio/blog/505792/)
 
+#### PostgreSQL:
+- [PostgreSQL. Добавление пользователей с правами на чтение.](https://wtfm.info/postgresql-%D0%B4%D0%BE%D0%B1%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D0%B5%D0%B9-%D1%81-%D0%BF%D1%80%D0%B0%D0%B2%D0%B0%D0%BC/)
+- [CREATE USER (documentation)](https://www.postgresql.org/docs/8.0/sql-createuser.html)
+- [CREATE ROLE (documentation)](https://www.postgresql.org/docs/current/sql-createrole.html)
+- [How To Use Roles and Manage Grant Permissions in PostgreSQL on a VPS](https://www.digitalocean.com/community/tutorials/how-to-use-roles-and-manage-grant-permissions-in-postgresql-on-a-vps-2)
+- [How to manage DEFAULT PRIVILEGES for USERs on a DATABASE vs SCHEMA?](https://dba.stackexchange.com/questions/117109/how-to-manage-default-privileges-for-users-on-a-database-vs-schema)
+- [Postgresql: How to add a role that inherits from another?](https://dba.stackexchange.com/questions/60942/postgresql-how-to-add-a-role-that-inherits-from-another)
+- [Why is a new user allowed to create a table?](https://dba.stackexchange.com/questions/35316/why-is-a-new-user-allowed-to-create-a-table)
+- [Типы даты/времени](https://postgrespro.ru/docs/postgresql/9.4/datatype-datetime)
+- [How to get current database and user name with `SELECT` in PostgreSQL? (stackoverflow)](https://stackoverflow.com/questions/26277356/how-to-get-current-database-and-user-name-with-select-in-postgresql)
+- [What is the difference between a user and a role? (stackoverflow)](https://stackoverflow.com/questions/27709456/what-is-the-difference-between-a-user-and-a-role)
+- [What is the difference between SESSION_USER and CURRENT_USER in PostgreSQL](https://www.postgresql.r2schools.com/what-is-the-difference-between-session_user-and-current_user-in-postgresql/)
+- [System Information Functions (documentation)](https://www.postgresql.org/docs/9.1/functions-info.html)
+
 #### InfluxDB:
-- [Getting Started with Go and InfluxDB (Official)](https://www.influxdata.com/blog/getting-started-go-influxdb/)
+- [Getting Started with Go and InfluxDB (documentation)](https://www.influxdata.com/blog/getting-started-go-influxdb/)
 - [Getting Started with Go and InfluxDB](https://thenewstack.io/getting-started-with-go-and-influxdb/)
 - [Line protocol](https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/)
 - [Create a token](https://docs.influxdata.com/influxdb/cloud/security/tokens/create-token/#manage-tokens-in-the-influxdb-ui)
 - [InfluxDB Client Go (GitHub)](https://github.com/influxdata/influxdb-client-go)
+- [How to create adittional buckets on influxdb docker initialize (stackoverflow)](https://stackoverflow.com/questions/71854059/how-to-create-adittional-buckets-on-influxdb-docker-initialize)
+- [Create a bucket (documentation)](https://docs.influxdata.com/influxdb/v2.3/organizations/buckets/create-bucket/)
 
 
 
@@ -32,6 +48,33 @@
 - [Tutorial: Developing a RESTful API with Go and Gin](https://go.dev/doc/tutorial/web-service-gin)
 - [How to Wrap and Unwrap Errors in Golang](https://rollbar.com/blog/golang-wrap-and-unwrap-error/)
 - [How to generate hash number of a string in Go? (stackoverflow)](https://stackoverflow.com/questions/13582519/how-to-generate-hash-number-of-a-string-in-go)
+- [jmoiron/sqlx documentation](https://pkg.go.dev/github.com/jmoiron/sqlx)
+- [Accessing PostgreSQL databases in Go (about database/sql and jmoiron/sqlx)](https://eli.thegreenplace.net/2021/accessing-postgresql-databases-in-go/)
+- [Golang NewDb примеры использования (sqlx)](https://golang.hotexamples.com/ru/examples/github.com.jmoiron.sqlx/-/NewDb/golang-newdb-function-examples.html)
+- [Практичный гайд по переменным окружения в Go (habr)](https://habr.com/ru/post/446468/)
+- [Comparison between Gin, Gorilla Mux and Net/Http](https://golang.company/blog/comparison-between-gin-gorilla-mux-and-net-http)
+- [pgweb](https://github.com/sosedoff/pgweb)
+- [Routing (using gorilla/mux)](https://gowebexamples.com/routes-using-gorilla-mux/)
+- [How To Use Dates and Times in Go](https://www.digitalocean.com/community/tutorials/how-to-use-dates-and-times-in-go)
+- [Golang Omitempty Explained](https://www.sohamkamani.com/golang/omitempty/)
+- [How To Use Struct Tags in Go](https://www.digitalocean.com/community/tutorials/how-to-use-struct-tags-in-go)
+- ["Perfect singleton" via using sync.Once? (stackoverflow)](https://stackoverflow.com/questions/53502089/perfect-singleton-via-using-sync-once)
+- [The Go Memory Model (documentation)](https://go.dev/ref/mem)
+- [What are the use(s) for struct tags in Go? (stackoverflow)](https://stackoverflow.com/questions/10858787/what-are-the-uses-for-struct-tags-in-go)
+- [Illustrated guide to SQLX](https://jmoiron.github.io/sqlx/)
+- [Как запускать SQL в Go с максимальным комфортом (habr)](https://habr.com/ru/company/vk/blog/692062/)
+- [Tutorial: Getting started with generics (documentation)](https://go.dev/doc/tutorial/generics)
+- [An Introduction To Generics (documentation)](https://go.dev/blog/intro-generics)
+
+#### Gin web framework:
+- [Graceful restart or stop (Gin)](https://gin-gonic.com/docs/examples/graceful-restart-or-stop/)
+- [Grouping routes (Gin)](https://gin-gonic.com/docs/examples/grouping-routes/)
+- [Gin middleware examples](https://sosedoff.com/2014/12/21/gin-middleware.html)
+- [Using the Middleware (Gin)](https://chenyitian.gitbooks.io/gin-tutorials/content/tdd/21.html)
+- [How to handle errors in Gin middleware](https://stackoverflow.com/questions/69948784/how-to-handle-errors-in-gin-middleware)
+- [Global Error Handling via Middleware with Go's Gin Framework](https://josephwoodward.co.uk/2022/06/global-error-handling-gin-middleware)
+- [Parameters in path (Gin)](https://gin-gonic.com/docs/examples/param-in-path/)
+- [JSON response in Golang’s GIN returning as scrambled data (stackoverflow)](https://stackoverflow.com/questions/48010954/json-response-in-golang-s-gin-returning-as-scrambled-data)
 
 
 
@@ -84,13 +127,14 @@
 #### Patterns:
 - [ActiveRecord pattern (Wikipedia)](https://ru.wikipedia.org/wiki/ActiveRecord)
 - [Dependency injection (design pattern) (Wikipedia)](https://en.wikipedia.org/wiki/Dependency_injection)
-- [What is Dependency Injection?](https://www.growin.com/blog/what-is-dependency-injection/#:~:text=Dependency%20Injection%20(DI%20is%20a,for%20example%20as%20a%20service.)
+- [What is Dependency Injection?](https://www.growin.com/blog/what-is-dependency-injection/)
 - [Template method pattern (Wikipedia)](https://en.wikipedia.org/wiki/Template_method_pattern)
 - [Sentinel value (Wikipedia)](https://en.wikipedia.org/wiki/Sentinel_value)
 - [Паттерн репозиторий (Github gist)](https://gist.github.com/maestrow/594fd9aee859c809b043)
 - [The Repository Pattern Explained (For Dummies)](https://blog.sapiensworks.com/post/2014/06/02/The-Repository-Pattern-For-Dummies.aspx)
 - [Repository Pattern](https://lyz-code.github.io/blue-book/architecture/repository_pattern/)
 - [Are the Repository Pattern and Active Record pattern compatible? (stackoverflow)](https://softwareengineering.stackexchange.com/questions/284865/are-the-repository-pattern-and-active-record-pattern-compatible)
+- [Data Transfer Object](https://martinfowler.com/eaaCatalog/dataTransferObject.html)
 
 #### Microservice architechture:
 - [Микросервисы и микросервисная архитектура](https://www.atlassian.com/ru/microservices)
@@ -152,6 +196,9 @@
 - [Defining Stateful vs Stateless Web Services](https://nordicapis.com/defining-stateful-vs-stateless-web-services/)
 - [MEAN vs. MERN vs. MEVN Stacks: What’s the Difference?](https://kenzie.snhu.edu/blog/mean-vs-mern-vs-mevn-stacks-whats-the-difference/)
 - [curl only results in "Empty reply from server" (GitHub issue)](https://github.com/moby/moby/issues/2522)
+- [Postman](https://web.postman.co/)
+- [Система заметок с нуля. Часть 4: разработка микросервисов NoteService, TagService и UserService (habr)](https://habr.com/ru/post/583772/)
+- [Building Go Microservice with Gin and CI/CD](https://semaphoreci.com/community/tutorials/building-go-web-applications-and-microservices-using-gin)
 
 
 
@@ -164,6 +211,8 @@
 - [Деплой React-приложения на Vercel, Netlify, Heroku, GitHub Pages, Surge (YouTube)](https://www.youtube.com/watch?v=-pJN9faoa8E)
 - [Deploy to a Server on Render.com](https://blitzjs.com/docs/deploy-render)
 - [Deployment types (envoy)](https://www.envoyproxy.io/docs/envoy/latest/intro/deployment_types/deployment_types)
+
+
 
 ## Docker:
 - [Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
@@ -183,3 +232,5 @@
 - [ritual (GitHub) (it allows to use C++ libraries from Rust)](https://github.com/rust-qt/ritual)
 - [GTK-server example scripts (Какой-то древний ужас)](https://www.gtk-server.org/examples.html)
 - [Теги strong и b, важность и выделение](https://htmlacademy.ru/courses/301/run/17)
+- [Краткое описание нотации BPMN (habr)](https://habr.com/ru/company/auriga/blog/667084/)
+- [BPMN Примеры](https://camundarus.ru/bpmn/examples/)
