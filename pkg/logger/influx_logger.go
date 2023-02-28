@@ -67,8 +67,13 @@ func (il *InfluxLogger) Open(serviceName string) error {
 
 	il.client = client
 
+	dbORG := os.Getenv("INFLUXDB_ORG")
+	if dbORG == "" {
+		return errors.New("INFLUXDB_ORG must be set")
+	}
+
 	// Get non-blocking write client
-	il.writeAPI = il.client.WriteAPI("iot", serviceName)
+	il.writeAPI = il.client.WriteAPI(dbORG, serviceName)
 
 	return nil
 }

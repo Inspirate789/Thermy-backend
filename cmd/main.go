@@ -12,20 +12,27 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 )
 
 func init() {
 	// TODO: read .env file and set environment variable
 
-	if err := godotenv.Load("main.env"); err != nil {
-		log.Fatal("No .env file found")
+	if err := godotenv.Load("backend.env"); err != nil {
+		log.Fatal("File backend.env not found")
 	}
 }
 
 func main() { // TODO: decompose main into initServer, startServer, stopServer?
 	mainLog := logger.NewInfluxLogger()
-	err := mainLog.Open("Backend")
+
+	logBucketName := os.Getenv("INFLUXDB_BACKEND_BUCKET_NAME")
+	if logBucketName == "" {
+		log.Fatal("INFLUXDB_BACKEND_BUCKET_NAME must be set")
+	}
+
+	err := mainLog.Open(logBucketName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,7 +40,17 @@ func main() { // TODO: decompose main into initServer, startServer, stopServer?
 
 	authService := authorization.NewAuthorizationService(mainLog)
 	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(), mainLog)
-	srv := server.NewServer(8080, &authService, &storageService, mainLog)
+
+	portStr := os.Getenv("BACKEND_PORT")
+	if logBucketName == "" {
+		log.Fatal("BACKEND_PORT must be set")
+	}
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	srv := server.NewServer(port, &authService, &storageService, mainLog)
 
 	go func() {
 		err = srv.Start()

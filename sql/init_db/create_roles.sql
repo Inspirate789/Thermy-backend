@@ -11,20 +11,10 @@ grant update on public.properties to student;
 grant select on information_schema.schemata to student;
 grant select on information_schema.tables to student;
 
-
-
 create role educator;
-
 grant student to educator;
-
 grant create on database postgres to educator;
 
-
-
 create role admin with CREATEDB CREATEROLE;
-
-
-
-
-
-
+grant all on schema public to admin;
+grant all on all tables in schema public to admin;

@@ -244,19 +244,29 @@ func (ps *PostgresStorage) SetUnitProperties(conn storage.ConnDB, layer string, 
 }
 
 func (ps *PostgresStorage) LayerExist(conn storage.ConnDB, layer string) (bool, error) {
-	return false, errors.New("postgres storage does not support function LayerExist") // TODO: implement me
+	layers, err := selectSliceFromScript[[]string](conn, "sql/select_layer_names.sql")
+	if err != nil {
+		return false, err
+	}
+
+	for _, elem := range layers {
+		if elem == layer {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 func (ps *PostgresStorage) GetAllLayers(conn storage.ConnDB) ([]string, error) {
-	return nil, errors.New("postgres storage does not support function GetAllLayers") // TODO: implement me
+	return selectSliceFromScript[[]string](conn, "sql/select_layer_names.sql")
 }
 
 func (ps *PostgresStorage) SaveLayer(conn storage.ConnDB, name string) error {
-	return errors.New("postgres storage does not support function SaveLayer") // TODO: implement me
+	return executeScript(conn, "sql/create_layer.sql", name)
 }
 
 func (ps *PostgresStorage) AddUser(conn storage.ConnDB, username string, role string) error {
-	passwd, err := password.Generate(64, 10, 10, false, false)
+	passwd, err := password.Generate(20, 10, 0, false, false)
 	if err != nil {
 		return err
 	}

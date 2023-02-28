@@ -12,8 +12,6 @@ create table if not exists public.users(
     registration_date timestamp not null
 );
 
-
-
 -- Контексты употребления
 -- drop table if exists public.contexts;
 create table if not exists public.contexts(
@@ -22,13 +20,9 @@ create table if not exists public.contexts(
     text text unique not null
 );
 
-
-
 -- Характеристики единиц языка
 -- drop table if exists public.properties;
 create table if not exists public.properties(
     id int generated always as identity primary key,
     property text unique not null
 );
-
-
