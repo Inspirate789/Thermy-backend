@@ -8,6 +8,7 @@ import (
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage/wrappers"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"os"
 )
 
@@ -69,7 +70,7 @@ func getPostgresInfo(request *storage.AuthRequest) (string, error) {
 		return "", errors.New("POSTGRES_SSL_MODE must be set")
 	}
 
-	postgresInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+	postgresInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		host,
 		port,
 		request.Username,

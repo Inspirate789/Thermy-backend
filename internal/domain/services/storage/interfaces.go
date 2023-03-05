@@ -11,7 +11,7 @@ type ConnDB any
 
 type Storage interface { // TODO: split?
 	OpenConn(request *AuthRequest, ctx context.Context) (ConnDB, string, error) // Get conn, role in database and error
-	UserRepository
+	UsersRepository
 	ModelsRepository
 	ModelElementsRepository
 	PropertiesRepository

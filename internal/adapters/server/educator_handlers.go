@@ -9,12 +9,12 @@ import (
 )
 
 func (s *Server) postModels(ctx *gin.Context) {
-	token, err := strconv.ParseUint(ctx.Param("token"), 10, 64)
+	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
 		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
 		return
 	}
-	layer := ctx.Param("layer")
+	layer := ctx.Query("layer")
 
 	var modelNames interfaces.ModelNamesDTO
 	err = ctx.BindJSON(&modelNames)
@@ -39,12 +39,12 @@ func (s *Server) postModels(ctx *gin.Context) {
 }
 
 func (s *Server) postElements(ctx *gin.Context) {
-	token, err := strconv.ParseUint(ctx.Param("token"), 10, 64)
+	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
 		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
 		return
 	}
-	layer := ctx.Param("layer")
+	layer := ctx.Query("layer")
 
 	var modelElementNames interfaces.ModelElementNamesDTO
 	err = ctx.BindJSON(&modelElementNames)
@@ -69,12 +69,12 @@ func (s *Server) postElements(ctx *gin.Context) {
 }
 
 func (s *Server) postLayer(ctx *gin.Context) {
-	token, err := strconv.ParseUint(ctx.Param("token"), 10, 64)
+	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
 		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
 		return
 	}
-	layer := ctx.Param("layer")
+	layer := ctx.Query("layer")
 
 	conn, err := s.authService.GetSessionConn(token)
 	if err != nil {

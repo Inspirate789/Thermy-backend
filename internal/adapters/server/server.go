@@ -19,34 +19,34 @@ type Server struct {
 }
 
 func (s *Server) addStudentRoutes(rg *gin.RouterGroup) {
-	rg.POST("/units/:layer/add/:token", s.postUnits)
-	rg.PATCH("/units/:layer/update/:token", s.patchUnits)
-	rg.GET("/units/:layer/all/:token", s.getAllUnits)
-	rg.GET("/units/:layer/models/:token", s.getUnitsByModels)
-	rg.GET("/units/:layer/properties/:token", s.getUnitsByProperties)
+	rg.POST("/units", s.postUnits)
+	rg.PATCH("/units", s.patchUnits)
+	rg.GET("/units/all", s.getAllUnits)
+	rg.GET("/units/models", s.getUnitsByModels)
+	rg.GET("/units/properties", s.getUnitsByProperties)
 
-	rg.GET("/models/:layer/:token", s.getModels)
+	rg.GET("/models/all", s.getModels)
 
-	rg.GET("/elements/:layer/:token", s.getModelElements)
+	rg.GET("/elements/all", s.getModelElements)
 
-	rg.GET("/properties/:token", s.getProperties)
-	rg.GET("/properties/unit/:layer/:token", s.getPropertiesByUnit)
-	rg.POST("/properties/:token", s.postProperties)
+	rg.GET("/properties/all", s.getProperties)
+	rg.GET("/properties/unit", s.getPropertiesByUnit)
+	rg.POST("/properties", s.postProperties)
 
-	rg.GET("/layers/all/:token", s.getAllLayers)
+	rg.GET("/layers/all", s.getAllLayers)
 }
 
 func (s *Server) addEducatorRoutes(rg *gin.RouterGroup) {
-	rg.POST("/models/:token", s.postModels)
+	rg.POST("/models", s.postModels)
 
-	rg.POST("/elements/:token", s.postElements)
+	rg.POST("/elements", s.postElements)
 
-	rg.POST("/layer/:layer/:token", s.postLayer)
+	rg.POST("/layers", s.postLayer)
 }
 
 func (s *Server) addAdminRoutes(rg *gin.RouterGroup) {
-	rg.POST("/user/:username/create/:role/:token", s.postUser)
-	rg.GET("/user/:username/password/:token", s.getUserPassword)
+	rg.POST("/user/create", s.postUser)
+	rg.GET("/user/get/password", s.getUserPassword)
 }
 
 func parseRole(ctx *gin.Context) (string, error) {
@@ -59,8 +59,11 @@ func parseRole(ctx *gin.Context) (string, error) {
 }
 
 func (s *Server) setupHandlers(router *gin.Engine) {
+	router.UseRawPath = true
+	router.UnescapePathValues = false
+
 	router.GET("/login", s.login)
-	router.POST("/logout/:token", s.logout)
+	router.POST("/logout", s.logout)
 
 	router.Use(middleware.ErrorHandler(s.log))
 

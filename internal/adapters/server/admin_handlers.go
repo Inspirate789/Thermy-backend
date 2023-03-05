@@ -8,13 +8,13 @@ import (
 )
 
 func (s *Server) postUser(ctx *gin.Context) {
-	token, err := strconv.ParseUint(ctx.Param("token"), 10, 64)
+	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
 		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
 		return
 	}
-	username := ctx.Param("username")
-	role := ctx.Param("role")
+	username := ctx.Query("username")
+	role := ctx.Query("role")
 
 	conn, err := s.authService.GetSessionConn(token)
 	if err != nil {
@@ -32,12 +32,12 @@ func (s *Server) postUser(ctx *gin.Context) {
 }
 
 func (s *Server) getUserPassword(ctx *gin.Context) {
-	token, err := strconv.ParseUint(ctx.Param("token"), 10, 64)
+	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
 		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
 		return
 	}
-	username := ctx.Param("username")
+	username := ctx.Query("username")
 
 	conn, err := s.authService.GetSessionConn(token)
 	if err != nil {

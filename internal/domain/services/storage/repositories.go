@@ -5,7 +5,7 @@ import (
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 )
 
-type UserRepository interface {
+type UsersRepository interface {
 	AddUser(conn ConnDB, username string, role string) error
 	GetUserPassword(conn ConnDB, username string) (string, error)
 }

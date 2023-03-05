@@ -29,7 +29,7 @@ func (s *Server) login(ctx *gin.Context) {
 }
 
 func (s *Server) logout(ctx *gin.Context) {
-	token, err := strconv.ParseUint(ctx.Param("token"), 10, 64)
+	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
 		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
 		return
