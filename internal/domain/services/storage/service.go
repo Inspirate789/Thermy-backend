@@ -13,8 +13,8 @@ type StorageService struct {
 	log     logger.Logger
 }
 
-func NewStorageService(storage Storage, log logger.Logger) StorageService {
-	return StorageService{
+func NewStorageService(storage Storage, log logger.Logger) *StorageService {
+	return &StorageService{
 		storage: storage,
 		log:     log,
 	}

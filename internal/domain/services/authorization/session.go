@@ -41,8 +41,8 @@ func generateToken(request *storage.AuthRequest) (uint64, error) {
 	return h.Sum64(), err
 }
 
-func (s *Session) Open(ss *storage.StorageService, request *storage.AuthRequest, ctx context.Context) (uint64, error) {
-	conn, role, err := ss.OpenConn(request, ctx)
+func (s *Session) Open(sm storage.StorageManager, request *storage.AuthRequest, ctx context.Context) (uint64, error) {
+	conn, role, err := sm.OpenConn(request, ctx)
 	if err != nil {
 		return 0, fmt.Errorf("cannot open session: %w", err)
 	}
@@ -55,8 +55,8 @@ func (s *Session) Open(ss *storage.StorageService, request *storage.AuthRequest,
 	return s.token, err
 }
 
-func (s *Session) Close(ss *storage.StorageService) error {
-	err := ss.CloseConn(s.connDB)
+func (s *Session) Close(sm storage.StorageManager) error {
+	err := sm.CloseConn(s.connDB)
 	if err != nil {
 		return fmt.Errorf("cannot close session: %w", err)
 	}

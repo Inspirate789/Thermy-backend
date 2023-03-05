@@ -17,11 +17,43 @@ import (
 )
 
 func init() {
-	// TODO: read .env file and set environment variable
-
-	if err := godotenv.Load("backend.env"); err != nil {
+	err := godotenv.Load("backend.env") // TODO: read filename from flag
+	if err != nil {
 		log.Fatal("File backend.env not found")
 	}
+
+	err = os.Remove("backend.env")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func exitServer(mainLog logger.Logger, srv *server.Server) {
+	quit := make(chan os.Signal)
+	// kill (no param) default send syscall.SIGTERM
+	// kill -2 is syscall.SIGINT
+	// kill -9 is syscall.SIGKILL but can't be caught, so don't need to add it
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	mainLog.Print(logger.LogRecord{
+		Name: "Main",
+		Type: logger.Debug,
+		Msg:  "Shutdown Server ...",
+	})
+
+	err := srv.Stop()
+	if err != nil {
+		mainLog.Print(logger.LogRecord{
+			Name: "Main",
+			Type: logger.Error,
+			Msg:  fmt.Sprintf("Server Shutdown: %v", err),
+		})
+	}
+	mainLog.Print(logger.LogRecord{
+		Name: "Main",
+		Type: logger.Debug,
+		Msg:  "Server exited",
+	})
 }
 
 func main() { // TODO: decompose main into initServer, startServer, stopServer?
@@ -38,7 +70,7 @@ func main() { // TODO: decompose main into initServer, startServer, stopServer?
 	}
 	defer mainLog.Close()
 
-	authService := authorization.NewAuthorizationService(mainLog)
+	authService := authorization.NewAuthService(mainLog)
 	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(), mainLog)
 
 	portStr := os.Getenv("BACKEND_PORT")
@@ -50,7 +82,7 @@ func main() { // TODO: decompose main into initServer, startServer, stopServer?
 		log.Fatal(err)
 	}
 
-	srv := server.NewServer(port, &authService, &storageService, mainLog)
+	srv := server.NewServer(port, authService, storageService, mainLog)
 
 	go func() {
 		err = srv.Start()
@@ -62,35 +94,11 @@ func main() { // TODO: decompose main into initServer, startServer, stopServer?
 			})
 		}
 	}()
-
 	mainLog.Print(logger.LogRecord{
 		Name: "Main",
 		Type: logger.Debug,
 		Msg:  "Server started",
 	})
 
-	quit := make(chan os.Signal)
-	// kill (no param) default send syscall.SIGTERM
-	// kill -2 is syscall.SIGINT
-	// kill -9 is syscall.SIGKILL but can't be caught, so don't need to add it
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	mainLog.Print(logger.LogRecord{
-		Name: "Main",
-		Type: logger.Debug,
-		Msg:  "Shutdown Server ...",
-	})
-	err = srv.Stop()
-	if err != nil {
-		mainLog.Print(logger.LogRecord{
-			Name: "Main",
-			Type: logger.Error,
-			Msg:  fmt.Sprintf("Server Shutdown: %v", err),
-		})
-	}
-	mainLog.Print(logger.LogRecord{
-		Name: "Main",
-		Type: logger.Debug,
-		Msg:  "Server exited",
-	})
+	exitServer(mainLog, srv)
 }

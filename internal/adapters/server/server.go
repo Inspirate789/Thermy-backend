@@ -13,8 +13,8 @@ import (
 
 type Server struct {
 	srv            *http.Server
-	storageService *storage.StorageService
-	authService    *authorization.AuthorizationService
+	storageService storage.StorageManager
+	authService    authorization.AuthManager
 	log            logger.Logger
 }
 
@@ -83,7 +83,7 @@ func (s *Server) setupHandlers(router *gin.Engine) {
 	s.addAdminRoutes(adminRG)
 }
 
-func NewServer(port int, authSVC *authorization.AuthorizationService, storageSVC *storage.StorageService, log logger.Logger) Server {
+func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.StorageManager, log logger.Logger) *Server {
 	router := gin.Default()
 	// router.SetTrustedProxies([]string{"192.168.52.38"}) // TODO?
 
@@ -92,13 +92,13 @@ func NewServer(port int, authSVC *authorization.AuthorizationService, storageSVC
 			Addr:    fmt.Sprintf(":%d", port),
 			Handler: router,
 		},
-		storageService: storageSVC,
-		authService:    authSVC,
+		storageService: storageMgr,
+		authService:    authMgr,
 		log:            log,
 	}
 	s.setupHandlers(router)
 
-	return s
+	return &s
 }
 
 func (s *Server) Start() error {

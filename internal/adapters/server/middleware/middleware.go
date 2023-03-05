@@ -27,7 +27,7 @@ func ErrorHandler(log logger.Logger) gin.HandlerFunc {
 	}
 }
 
-func RoleCheck(svc *authorization.AuthorizationService, parseRole func(*gin.Context) (string, error)) gin.HandlerFunc {
+func RoleCheck(svc authorization.AuthManager, parseRole func(*gin.Context) (string, error)) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 		if err != nil {

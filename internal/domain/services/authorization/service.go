@@ -9,22 +9,23 @@ import (
 	"sync"
 )
 
-type AuthorizationService struct {
+type AuthService struct {
 	mx       sync.RWMutex
 	sessions map[uint64]Session
 	log      logger.Logger
 }
 
-func NewAuthorizationService(log logger.Logger) AuthorizationService {
-	return AuthorizationService{
+func NewAuthService(log logger.Logger) *AuthService {
+	return &AuthService{
+		mx:       sync.RWMutex{},
 		sessions: make(map[uint64]Session),
 		log:      log,
 	}
 }
 
-func (as *AuthorizationService) AddSession(ss *storage.StorageService, request *storage.AuthRequest, ctx context.Context) (uint64, error) {
+func (as *AuthService) AddSession(sm storage.StorageManager, request *storage.AuthRequest, ctx context.Context) (uint64, error) {
 	var session Session
-	token, err := session.Open(ss, request, ctx)
+	token, err := session.Open(sm, request, ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -34,7 +35,7 @@ func (as *AuthorizationService) AddSession(ss *storage.StorageService, request *
 	as.mx.Unlock()
 
 	as.log.Print(logger.LogRecord{
-		Name: "AuthorizationService",
+		Name: "AuthService",
 		Type: logger.Debug,
 		Msg:  fmt.Sprintf("Add session with token %d, role %s", session.GetToken(), session.GetRole()),
 	})
@@ -42,7 +43,7 @@ func (as *AuthorizationService) AddSession(ss *storage.StorageService, request *
 	return token, nil
 }
 
-func (as *AuthorizationService) RemoveSession(ss *storage.StorageService, token uint64) error {
+func (as *AuthService) RemoveSession(sm storage.StorageManager, token uint64) error {
 	as.mx.RLock()
 	session, ok := as.sessions[token]
 	as.mx.RUnlock()
@@ -50,13 +51,13 @@ func (as *AuthorizationService) RemoveSession(ss *storage.StorageService, token 
 		return errors.ErrRemoveSession
 	}
 
-	err := session.Close(ss)
+	err := session.Close(sm)
 	if err != nil {
 		return err // TODO: wrap errors on every layer
 	}
 
 	as.log.Print(logger.LogRecord{
-		Name: "AuthorizationService",
+		Name: "AuthService",
 		Type: logger.Debug,
 		Msg:  fmt.Sprintf("Remove session with token %d, role %s", session.GetToken(), session.GetRole()),
 	})
@@ -68,7 +69,7 @@ func (as *AuthorizationService) RemoveSession(ss *storage.StorageService, token 
 	return nil
 }
 
-func (as *AuthorizationService) GetSessionRole(token uint64) (string, error) {
+func (as *AuthService) GetSessionRole(token uint64) (string, error) {
 	as.mx.RLock()
 	session, ok := as.sessions[token]
 	as.mx.RUnlock()
@@ -79,7 +80,7 @@ func (as *AuthorizationService) GetSessionRole(token uint64) (string, error) {
 	return session.GetRole(), nil
 }
 
-func (as *AuthorizationService) GetSessionConn(token uint64) (storage.ConnDB, error) {
+func (as *AuthService) GetSessionConn(token uint64) (storage.ConnDB, error) {
 	as.mx.RLock()
 	session, ok := as.sessions[token]
 	as.mx.RUnlock()
