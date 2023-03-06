@@ -8,8 +8,6 @@ import (
 	"go.uber.org/multierr"
 )
 
-// TODO: move into another package (sql_wrappers)
-
 func sqlErr(err error, query string, args ...any) error {
 	return fmt.Errorf(`run query "%s" with args %+v: %w`, query, args, err)
 }

@@ -16,7 +16,14 @@ import (
 // or execute in GoLand
 //go:generate go-bindata -pkg postgres_storage -o sqlscripts.go ./sql
 
-type PostgresStorage struct{}
+type PostgresStorage struct {
+	LayersPgRepository
+	ModelsPgRepository
+	ModelElementsPgRepository
+	PropertiesPgRepository
+	UnitsPgRepository
+	UsersPgRepository
+}
 
 func NewPostgresStorage() *PostgresStorage {
 	return &PostgresStorage{}
