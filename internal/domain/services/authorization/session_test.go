@@ -9,7 +9,7 @@ import (
 )
 
 func TestSession_Open(t *testing.T) {
-	mockSM := new(mockStorageManager)
+	mockSM := new(storage.MockStorageManager)
 	mockSM.On("OpenConn", mock.Anything, mock.Anything).Return(nil, "admin", nil)
 	mockSM.On("CloseConn", mock.Anything).Return(nil)
 
@@ -57,7 +57,7 @@ func TestSession_Open(t *testing.T) {
 }
 
 func TestSession_Close(t *testing.T) {
-	mockSM := new(mockStorageManager)
+	mockSM := new(storage.MockStorageManager)
 	mockSM.On("OpenConn", mock.Anything, mock.Anything).Return(nil, "admin", nil)
 	mockSM.On("CloseConn", mock.Anything).Return(nil)
 
