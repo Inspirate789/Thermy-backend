@@ -10,40 +10,8 @@ import (
 	"testing"
 )
 
-type mockLogger struct {
-	mock.Mock
-}
-
-func (m *mockLogger) Open(serviceName string) error {
-	args := m.Called(serviceName)
-	return args.Error(0)
-}
-
-func (m *mockLogger) Print(r logger.LogRecord) {
-	m.Called(r)
-}
-
-func (m *mockLogger) Close() {
-	m.Called()
-}
-
-type mockStorageManager struct {
-	storage.StorageManager
-	mock.Mock
-}
-
-func (m *mockStorageManager) OpenConn(request *storage.AuthRequest, ctx context.Context) (storage.ConnDB, string, error) {
-	args := m.Called(request, ctx)
-	return args.Get(0), "admin", args.Error(2)
-}
-
-func (m *mockStorageManager) CloseConn(conn storage.ConnDB) error {
-	args := m.Called(conn)
-	return args.Error(0)
-}
-
 func TestNewAuthService(t *testing.T) {
-	mockLog := new(mockLogger)
+	mockLog := new(logger.MockLogger)
 	mockLog.On("Print", mock.Anything).Return()
 
 	tests := []struct {
@@ -77,10 +45,10 @@ func TestNewAuthService(t *testing.T) {
 }
 
 func TestAuthService_AddSession(t *testing.T) {
-	mockLog := new(mockLogger)
+	mockLog := new(logger.MockLogger)
 	mockLog.On("Print", mock.Anything).Return()
 
-	mockSM := new(mockStorageManager)
+	mockSM := new(storage.MockStorageManager)
 	mockSM.On("OpenConn", mock.Anything, mock.Anything).Return(nil, "admin", nil)
 	mockSM.On("CloseConn", mock.Anything).Return(nil)
 
@@ -136,10 +104,10 @@ func TestAuthService_AddSession(t *testing.T) {
 }
 
 func TestAuthService_RemoveSession(t *testing.T) {
-	mockLog := new(mockLogger)
+	mockLog := new(logger.MockLogger)
 	mockLog.On("Print", mock.Anything).Return()
 
-	mockSM := new(mockStorageManager)
+	mockSM := new(storage.MockStorageManager)
 	mockSM.On("OpenConn", mock.Anything, mock.Anything).Return(nil, "admin", nil)
 	mockSM.On("CloseConn", mock.Anything).Return(nil)
 
@@ -212,10 +180,10 @@ func TestAuthService_RemoveSession(t *testing.T) {
 }
 
 func TestAuthService_GetSessionConn(t *testing.T) {
-	mockLog := new(mockLogger)
+	mockLog := new(logger.MockLogger)
 	mockLog.On("Print", mock.Anything).Return()
 
-	mockSM := new(mockStorageManager)
+	mockSM := new(storage.MockStorageManager)
 	mockSM.On("OpenConn", mock.Anything, mock.Anything).Return(nil, "admin", nil)
 	mockSM.On("CloseConn", mock.Anything).Return(nil)
 
@@ -293,10 +261,10 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 }
 
 func TestAuthService_GetSessionRole(t *testing.T) {
-	mockLog := new(mockLogger)
+	mockLog := new(logger.MockLogger)
 	mockLog.On("Print", mock.Anything).Return()
 
-	mockSM := new(mockStorageManager)
+	mockSM := new(storage.MockStorageManager)
 	mockSM.On("OpenConn", mock.Anything, mock.Anything).Return(nil, "admin", nil)
 	mockSM.On("CloseConn", mock.Anything).Return(nil)
 

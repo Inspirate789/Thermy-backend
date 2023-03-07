@@ -2,8 +2,8 @@ package postgres_storage
 
 import (
 	"errors"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/models"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 )
 
@@ -20,7 +20,7 @@ type JoinedUnits struct {
 	UnitEnText    string `db:"unit_en_text"`
 }
 
-func makeOutputUnitDTO(conn storage.ConnDB, layer string, lang string, unit entities.Unit) (interfaces.OutputUnitDTO, error) {
+func makeOutputUnitDTO(conn storage.ConnDB, layer string, lang string, unit models.Unit) (interfaces.OutputUnitDTO, error) {
 	propertiesID, err := selectSliceFromScript[[]int](conn, "sql/select_properties_id_by_unit.sql", layer, lang, unit.ID)
 	if err != nil {
 		return interfaces.OutputUnitDTO{}, err
@@ -43,12 +43,12 @@ func makeOutputUnitDTO(conn storage.ConnDB, layer string, lang string, unit enti
 }
 
 func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (interfaces.OutputUnitsDTO, error) {
-	unlinkedUnitsRu, err := selectSliceFromScript[[]entities.Unit](conn, "sql/select_unlinked_units_by_lang.sql", layer, "ru")
+	unlinkedUnitsRu, err := selectSliceFromScript[[]models.Unit](conn, "sql/select_unlinked_units_by_lang.sql", layer, "ru")
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	unlinkedUnitsEn, err := selectSliceFromScript[[]entities.Unit](conn, "sql/select_unlinked_units_by_lang.sql", layer, "en")
+	unlinkedUnitsEn, err := selectSliceFromScript[[]models.Unit](conn, "sql/select_unlinked_units_by_lang.sql", layer, "en")
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
@@ -89,13 +89,13 @@ func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (inte
 		i++
 	}
 	for _, unitPair := range linkedUnits {
-		unitRu := entities.Unit{
+		unitRu := models.Unit{
 			ID:      unitPair.UnitRuID,
 			ModelID: unitPair.UnitRuModelID,
 			RegDate: unitPair.UnitRuRegDate,
 			Text:    unitPair.UnitRuText,
 		}
-		unitEn := entities.Unit{
+		unitEn := models.Unit{
 			ID:      unitPair.UnitEnID,
 			ModelID: unitPair.UnitEnModelID,
 			RegDate: unitPair.UnitEnRegDate,

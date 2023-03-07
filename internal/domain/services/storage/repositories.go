@@ -1,8 +1,8 @@
 package storage
 
 import (
-	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/models"
 )
 
 type UsersRepository interface {
@@ -11,18 +11,18 @@ type UsersRepository interface {
 }
 
 type ModelsRepository interface {
-	GetAllModels(conn ConnDB, layer string) ([]entities.Model, error)
+	GetAllModels(conn ConnDB, layer string) ([]models.Model, error)
 	SaveModels(conn ConnDB, layer string, models []string) ([]int, error)
 }
 
 type ModelElementsRepository interface {
-	GetAllModelElements(conn ConnDB, layer string) ([]entities.ModelElement, error)
+	GetAllModelElements(conn ConnDB, layer string) ([]models.ModelElement, error)
 	SaveModelElements(conn ConnDB, layer string, modelElements []string) ([]int, error)
 }
 
 type PropertiesRepository interface {
-	GetAllProperties(conn ConnDB) ([]entities.Property, error)
-	GetPropertiesByUnit(conn ConnDB, layer string, unit interfaces.SearchUnitDTO) ([]entities.Property, error)
+	GetAllProperties(conn ConnDB) ([]models.Property, error)
+	GetPropertiesByUnit(conn ConnDB, layer string, unit interfaces.SearchUnitDTO) ([]models.Property, error)
 	SaveProperties(conn ConnDB, properties []string) ([]int, error)
 }
 
@@ -43,20 +43,20 @@ type LayersRepository interface {
 }
 
 //type ContextsRepository interface {
-//	GetByUnit(conn ConnDB, unit entities.Unit) ([]entities.Context, error)
+//	GetByUnit(conn ConnDB, unit models.Unit) ([]models.Context, error)
 //	// Save(conn ConnDB, contexts []string) ([]int, error)
 //}
 
 //type LinksRepository interface {
-//	SaveModelElementLinks(conn ConnDB, layer string, links []entities.Link) error
-//	SaveModelUnitRuLinks(conn ConnDB, layer string, links []entities.Link) error
-//	SaveModelUnitEnLinks(conn ConnDB, layer string, links []entities.Link) error
-//	SaveUnitRuEnLinks(conn ConnDB, layer string, links []entities.Link) error
-//	SavePropertyUnitRuLinks(conn ConnDB, layer string, links []entities.Link) error
-//	SavePropertyUnitEnLinks(conn ConnDB, layer string, links []entities.Link) error
-//	SaveContextUnitRuLinks(conn ConnDB, layer string, links []entities.Link) error
-//	SaveContextUnitEnLinks(conn ConnDB, layer string, links []entities.Link) error
-//	SaveUserUnitRuLinks(conn ConnDB, layer string, links []entities.Link) error
-//	SaveUserUnitEnLinks(conn ConnDB, layer string, links []entities.Link) error
+//	SaveModelElementLinks(conn ConnDB, layer string, links []models.Link) error
+//	SaveModelUnitRuLinks(conn ConnDB, layer string, links []models.Link) error
+//	SaveModelUnitEnLinks(conn ConnDB, layer string, links []models.Link) error
+//	SaveUnitRuEnLinks(conn ConnDB, layer string, links []models.Link) error
+//	SavePropertyUnitRuLinks(conn ConnDB, layer string, links []models.Link) error
+//	SavePropertyUnitEnLinks(conn ConnDB, layer string, links []models.Link) error
+//	SaveContextUnitRuLinks(conn ConnDB, layer string, links []models.Link) error
+//	SaveContextUnitEnLinks(conn ConnDB, layer string, links []models.Link) error
+//	SaveUserUnitRuLinks(conn ConnDB, layer string, links []models.Link) error
+//	SaveUserUnitEnLinks(conn ConnDB, layer string, links []models.Link) error
 //	// GetCount...() (int, err) ?
 //}
