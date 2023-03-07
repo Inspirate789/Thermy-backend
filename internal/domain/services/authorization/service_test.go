@@ -17,24 +17,24 @@ func TestNewAuthService(t *testing.T) {
 	tests := []struct {
 		name string
 		arg  logger.Logger
-		want AuthService
+		want *AuthService
 	}{
 		{
 			name: "Simple positive test",
 			arg:  mockLog,
-			want: AuthService{
+			want: &AuthService{
 				mx:       sync.RWMutex{},
 				sessions: make(map[uint64]*Session),
 				log:      mockLog,
 			},
 		},
 	}
-	for i := range tests {
-		t.Run(tests[i].name, func(t *testing.T) {
-			got := NewAuthService(tests[i].arg)
-			if !reflect.DeepEqual(got.log, tests[i].want.log) ||
-				!reflect.DeepEqual(got.sessions, tests[i].want.sessions) {
-				t.Errorf("NewAuthService() = %v, want %v", got, tests[i].want)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := NewAuthService(tt.arg)
+			if !reflect.DeepEqual(got.log, tt.want.log) ||
+				!reflect.DeepEqual(got.sessions, tt.want.sessions) {
+				t.Errorf("NewAuthService() = %v, want %v", got, tt.want)
 			}
 		})
 
@@ -83,15 +83,15 @@ func TestAuthService_AddSession(t *testing.T) {
 			wantErr: false,
 		},
 	}
-	for i := range tests {
-		t.Run(tests[i].name, func(t *testing.T) {
-			got, err := tests[i].as.AddSession(tests[i].args.sm, tests[i].args.request, tests[i].args.ctx)
-			if (err != nil) != tests[i].wantErr {
-				t.Errorf("AddSession() error = %v, wantErr %v", err, tests[i].wantErr)
+	for i, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.as.AddSession(tt.args.sm, tt.args.request, tt.args.ctx)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("AddSession() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tests[i].want {
-				t.Errorf("AddSession() got = %v, want %v", got, tests[i].want)
+			if got != tt.want {
+				t.Errorf("AddSession() got = %v, want %v", got, tt.want)
 			}
 		})
 
@@ -176,6 +176,10 @@ func TestAuthService_RemoveSession(t *testing.T) {
 		mockLog.AssertNumberOfCalls(t, "Close", 0)
 
 		mockSM.AssertNumberOfCalls(t, "OpenConn", i+1)
+
+		if !tt.wantErr {
+			mockSM.AssertNumberOfCalls(t, "CloseConn", i+1)
+		}
 	}
 }
 
