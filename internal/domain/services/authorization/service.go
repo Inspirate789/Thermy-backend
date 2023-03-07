@@ -11,20 +11,20 @@ import (
 
 type AuthService struct {
 	mx       sync.RWMutex
-	sessions map[uint64]Session
+	sessions map[uint64]*Session
 	log      logger.Logger
 }
 
 func NewAuthService(log logger.Logger) *AuthService {
 	return &AuthService{
 		mx:       sync.RWMutex{},
-		sessions: make(map[uint64]Session),
+		sessions: make(map[uint64]*Session),
 		log:      log,
 	}
 }
 
 func (as *AuthService) AddSession(sm storage.StorageManager, request *storage.AuthRequest, ctx context.Context) (uint64, error) {
-	var session Session
+	session := NewSession()
 	token, err := session.Open(sm, request, ctx)
 	if err != nil {
 		return 0, err

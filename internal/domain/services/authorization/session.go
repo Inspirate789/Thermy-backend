@@ -14,6 +14,10 @@ type Session struct {
 	connDB   storage.ConnDB
 }
 
+func NewSession() *Session {
+	return &Session{}
+}
+
 func (s *Session) GetAuthData() *storage.AuthRequest {
 	return s.authData
 }

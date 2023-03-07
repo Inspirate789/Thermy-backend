@@ -56,7 +56,7 @@ func TestNewAuthService(t *testing.T) {
 			arg:  mockLog,
 			want: AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]Session),
+				sessions: make(map[uint64]*Session),
 				log:      mockLog,
 			},
 		},
@@ -69,6 +69,10 @@ func TestNewAuthService(t *testing.T) {
 				t.Errorf("NewAuthService() = %v, want %v", got, tests[i].want)
 			}
 		})
+
+		mockLog.AssertNumberOfCalls(t, "Open", 0)
+		mockLog.AssertNumberOfCalls(t, "Print", 0)
+		mockLog.AssertNumberOfCalls(t, "Close", 0)
 	}
 }
 
@@ -96,7 +100,7 @@ func TestAuthService_AddSession(t *testing.T) {
 			name: "Simple positive test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]Session),
+				sessions: make(map[uint64]*Session),
 				log:      mockLog,
 			},
 			args: args{
@@ -122,6 +126,12 @@ func TestAuthService_AddSession(t *testing.T) {
 				t.Errorf("AddSession() got = %v, want %v", got, tests[i].want)
 			}
 		})
+
+		mockLog.AssertNumberOfCalls(t, "Open", 0)
+		mockLog.AssertNumberOfCalls(t, "Print", i+1)
+		mockLog.AssertNumberOfCalls(t, "Close", 0)
+
+		mockSM.AssertNumberOfCalls(t, "OpenConn", i+1)
 	}
 }
 
@@ -149,7 +159,7 @@ func TestAuthService_RemoveSession(t *testing.T) {
 			name: "Simple positive test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]Session),
+				sessions: make(map[uint64]*Session),
 				log:      mockLog,
 			},
 			args: args{
@@ -167,7 +177,7 @@ func TestAuthService_RemoveSession(t *testing.T) {
 			name: "Simple negative test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]Session),
+				sessions: make(map[uint64]*Session),
 				log:      mockLog,
 			},
 			args: args{
@@ -182,7 +192,7 @@ func TestAuthService_RemoveSession(t *testing.T) {
 			wantErr: true,
 		},
 	}
-	for _, tt := range tests {
+	for i, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.as.AddSession(tt.args.sm, tt.args.request, tt.args.ctx)
 			if err != nil {
@@ -193,6 +203,11 @@ func TestAuthService_RemoveSession(t *testing.T) {
 				t.Errorf("RemoveSession() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
+
+		mockLog.AssertNumberOfCalls(t, "Open", 0)
+		mockLog.AssertNumberOfCalls(t, "Close", 0)
+
+		mockSM.AssertNumberOfCalls(t, "OpenConn", i+1)
 	}
 }
 
@@ -220,7 +235,7 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 			name: "Simple positive test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]Session),
+				sessions: make(map[uint64]*Session),
 				log:      mockLog,
 			},
 			args: args{
@@ -238,7 +253,7 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 			name: "Simple negative test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]Session),
+				sessions: make(map[uint64]*Session),
 				log:      mockLog,
 			},
 			args: args{
@@ -253,7 +268,7 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 			wantErr: true,
 		},
 	}
-	for _, tt := range tests {
+	for i, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.as.AddSession(tt.args.sm, tt.args.request, tt.args.ctx)
 			if err != nil {
@@ -268,6 +283,12 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 			//	t.Errorf("GetSessionConn() got = %v, want %v", got, tt.want)
 			//}
 		})
+
+		mockLog.AssertNumberOfCalls(t, "Open", 0)
+		mockLog.AssertNumberOfCalls(t, "Print", i+1)
+		mockLog.AssertNumberOfCalls(t, "Close", 0)
+
+		mockSM.AssertNumberOfCalls(t, "OpenConn", i+1)
 	}
 }
 
@@ -296,7 +317,7 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 			name: "Simple positive test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]Session),
+				sessions: make(map[uint64]*Session),
 				log:      mockLog,
 			},
 			args: args{
@@ -315,7 +336,7 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 			name: "Simple negative test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]Session),
+				sessions: make(map[uint64]*Session),
 				log:      mockLog,
 			},
 			args: args{
@@ -331,7 +352,7 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 			wantErr: true,
 		},
 	}
-	for _, tt := range tests {
+	for i, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := tt.as.AddSession(tt.args.sm, tt.args.request, tt.args.ctx)
 			if err != nil {
@@ -346,5 +367,11 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 				t.Errorf("GetSessionRole() got = %v, want %v", got, tt.want)
 			}
 		})
+
+		mockLog.AssertNumberOfCalls(t, "Open", 0)
+		mockLog.AssertNumberOfCalls(t, "Print", i+1)
+		mockLog.AssertNumberOfCalls(t, "Close", 0)
+
+		mockSM.AssertNumberOfCalls(t, "OpenConn", i+1)
 	}
 }
