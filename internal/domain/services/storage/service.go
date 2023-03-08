@@ -157,9 +157,9 @@ func (ss *StorageService) GetModels(conn ConnDB, layer string) (interfaces.Outpu
 		return interfaces.OutputModelsDTO{}, err
 	}
 
-	modelsDTO := make([]interfaces.OutputModelDTO, len(models))
+	modelsDTO := make([]interfaces.OutputModelDTO, 0, len(models))
 	for i := range modelsDTO {
-		modelsDTO[i] = interfaces.OutputModelDTO(models[i])
+		modelsDTO = append(modelsDTO, interfaces.OutputModelDTO(models[i]))
 	}
 
 	return interfaces.OutputModelsDTO{Models: modelsDTO}, nil
@@ -195,9 +195,9 @@ func (ss *StorageService) GetModelElements(conn ConnDB, layer string) (interface
 		return interfaces.OutputModelElementsDTO{}, err
 	}
 
-	modelElementsDTO := make([]interfaces.OutputModelElementDTO, len(modelElements))
+	modelElementsDTO := make([]interfaces.OutputModelElementDTO, 0, len(modelElements))
 	for i := range modelElementsDTO {
-		modelElementsDTO[i] = interfaces.OutputModelElementDTO(modelElements[i])
+		modelElementsDTO = append(modelElementsDTO, interfaces.OutputModelElementDTO(modelElements[i]))
 	}
 
 	return interfaces.OutputModelElementsDTO{Elements: modelElementsDTO}, nil
@@ -214,9 +214,9 @@ func (ss *StorageService) GetProperties(conn ConnDB) (interfaces.OutputPropertie
 		return interfaces.OutputPropertiesDTO{}, err
 	}
 
-	propertiesDTO := make([]interfaces.OutputPropertyDTO, len(properties))
+	propertiesDTO := make([]interfaces.OutputPropertyDTO, 0, len(properties))
 	for i := range propertiesDTO {
-		propertiesDTO[i] = interfaces.OutputPropertyDTO(properties[i])
+		propertiesDTO = append(propertiesDTO, interfaces.OutputPropertyDTO(properties[i]))
 	}
 
 	return interfaces.OutputPropertiesDTO{Properties: propertiesDTO}, nil
@@ -233,9 +233,9 @@ func (ss *StorageService) GetPropertiesByUnit(conn ConnDB, layer string, unit in
 		return interfaces.OutputPropertiesDTO{}, err
 	}
 
-	propertiesDTO := make([]interfaces.OutputPropertyDTO, len(properties))
+	propertiesDTO := make([]interfaces.OutputPropertyDTO, 0, len(properties))
 	for i := range propertiesDTO {
-		propertiesDTO[i] = interfaces.OutputPropertyDTO(properties[i])
+		propertiesDTO = append(propertiesDTO, interfaces.OutputPropertyDTO(properties[i]))
 	}
 
 	return interfaces.OutputPropertiesDTO{Properties: propertiesDTO}, nil
