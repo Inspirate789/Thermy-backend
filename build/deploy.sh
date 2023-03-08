@@ -73,6 +73,15 @@ echo -e "REDIS_PASSWORD=${redis_password}" >> .env
 backend_port=8080
 echo -e "BACKEND_PORT=${backend_port}" >> .env
 
+# Generate code for backend:
+cd internal/adapters/storage/postgres_storage
+go-bindata -pkg postgres_storage -o sqlscripts.go ./sql
+cd ../../../../
+
+# Set backend wait time:
+backend_init_sleep_time=6
+echo -e "BACKEND_INIT_SLEEP_TIME=${backend_init_sleep_time}" >> .env
+
 
 
 echo -e ".env before run: "
@@ -96,6 +105,7 @@ echo -e "REDIS_HOST=${redis_host}" >> backend.env
 echo -e "REDIS_PORT=${redis_port}" >> backend.env
 echo -e "REDIS_PASSWORD=${redis_password}" >> backend.env
 echo -e "BACKEND_PORT=${backend_port}" >> backend.env
+echo -e "BACKEND_INIT_SLEEP_TIME=${backend_init_sleep_time}" >> backend.env
 
 echo -e "backend.env before run: "
 cat backend.env

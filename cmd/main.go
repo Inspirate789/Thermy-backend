@@ -14,6 +14,7 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 )
 
 func init() {
@@ -26,6 +27,16 @@ func init() {
 	//if err != nil {
 	//	log.Fatal(err)
 	//}
+
+	initTimeStr := os.Getenv("BACKEND_INIT_SLEEP_TIME")
+	if initTimeStr == "" {
+		log.Fatal("BACKEND_INIT_SLEEP_TIME must be set")
+	}
+	initTime, err := strconv.Atoi(initTimeStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	time.Sleep(time.Duration(initTime) * time.Second)
 }
 
 func exitServer(mainLog logger.Logger, srv *server.Server) {
@@ -74,7 +85,7 @@ func main() { // TODO: decompose main into initServer, startServer, stopServer?
 	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(), mainLog)
 
 	portStr := os.Getenv("BACKEND_PORT")
-	if logBucketName == "" {
+	if portStr == "" {
 		log.Fatal("BACKEND_PORT must be set")
 	}
 	port, err := strconv.Atoi(portStr)

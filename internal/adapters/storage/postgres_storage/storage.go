@@ -12,7 +12,7 @@ import (
 	"os"
 )
 
-// Execute from project root (backend/): go-bindata -pkg postgres_storage -o internal/adapters/storage/postgres_storage/sqlscripts.go ./internal/adapters/storage/postgres_storage/sql
+// Execute from current directory: go-bindata -pkg postgres_storage -o sqlscripts.go ./sql
 // or execute in GoLand
 //go:generate go-bindata -pkg postgres_storage -o sqlscripts.go ./sql
 

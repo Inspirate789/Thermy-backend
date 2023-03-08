@@ -11,6 +11,12 @@ services:
             DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_ORG}
             DOCKER_INFLUXDB_INIT_BUCKET: default
             DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_TOKEN}
+        restart: always
+        healthcheck:
+            test: "curl -f http://localhost:8086/ping"
+            interval: 3s
+            timeout: 10s
+            retries: 5
         ports:
             - ${INFLUXDB_PORT}:${INFLUXDB_PORT}
     postgres:
@@ -20,6 +26,7 @@ services:
             POSTGRES_DB: ${POSTGRES_DBNAME}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
             PGDATA: /data/postgres
+        restart: always
         healthcheck:
             test: [ "CMD-SHELL", "pg_isready -U postgres" ]
             interval: 5s
@@ -40,12 +47,31 @@ services:
             REDIS_PORT: ${REDIS_PORT}
             REDIS_PASSWORD: ${REDIS_PASSWORD}
         restart: always
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
         ports:
             - ${REDIS_PORT}:${REDIS_PORT}
         command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
         volumes:
             - redis:/data
         depends_on:
+            postgres:
+                condition: service_healthy
+    backend:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        image: golang-backend
+        ports:
+            - ${BACKEND_PORT}:${BACKEND_PORT}
+        depends_on:
+            influxdb:
+                condition: service_started
+            redis:
+                condition: service_healthy
             postgres:
                 condition: service_healthy
 volumes:
