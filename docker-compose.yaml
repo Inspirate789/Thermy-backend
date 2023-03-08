@@ -12,14 +12,16 @@ services:
             DOCKER_INFLUXDB_INIT_BUCKET: default
             DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_TOKEN}
         restart: always
-        healthcheck:
-            test: "curl -f http://localhost:8086/ping"
-            interval: 3s
-            timeout: 10s
-            retries: 5
+#        healthcheck:
+#            # test: "curl -f http://localhost:8086/ping"
+#            test: ${INFLUXDB_SERVICE_HEALTHCHECK_CMD}
+#            interval: 3s
+#            timeout: 10s
+#            retries: 5
         ports:
             - ${INFLUXDB_PORT}:${INFLUXDB_PORT}
     postgres:
+        container_name: ${POSTGRES_CONTAINER_NAME}
         image: postgres:15.2-alpine3.17
         environment:
             POSTGRES_USER: ${POSTGRES_USER}
@@ -41,6 +43,7 @@ services:
         depends_on:
             - influxdb
     redis:
+        container_name: redis
         image: redis:7.0.8-alpine3.17
         environment:
             REDIS_HOST: ${REDIS_HOST}
@@ -61,10 +64,12 @@ services:
             postgres:
                 condition: service_healthy
     backend:
+        container_name: backend
         build:
             context: ./
             dockerfile: Dockerfile
         image: golang-backend
+        restart: always
         ports:
             - ${BACKEND_PORT}:${BACKEND_PORT}
         depends_on:

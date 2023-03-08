@@ -39,6 +39,10 @@ echo -e "INFLUXDB_TOKEN=${influx_token}" >> .env
 
 
 
+# Init PostgreSQL service:
+postgres_container_name=postgres
+echo -e "POSTGRES_CONTAINER_NAME=${postgres_container_name}" >> .env
+
 # Init PostgreSQL database:
 postgres_user="root"
 postgres_password=$(echo $RANDOM | md5sum | head -c 20)
@@ -141,6 +145,8 @@ psql postgresql://$postgres_user:$postgres_password@$postgres_host:$postgres_por
   -v username="${admin_name}" \
   -v quoted_username="'${admin_name}'" \
   -v quoted_password="'${admin_password}'"
+
+docker exec -ti $postgres_container_name createuser --superuser postgres
 
 
 
