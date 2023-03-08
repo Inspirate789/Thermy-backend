@@ -22,10 +22,10 @@ func init() {
 		log.Fatal("File backend.env not found")
 	}
 
-	err = os.Remove("backend.env")
-	if err != nil {
-		log.Fatal(err)
-	}
+	//err = os.Remove("backend.env")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 }
 
 func exitServer(mainLog logger.Logger, srv *server.Server) {
