@@ -24,6 +24,12 @@
 - [What is the difference between a user and a role? (stackoverflow)](https://stackoverflow.com/questions/27709456/what-is-the-difference-between-a-user-and-a-role)
 - [What is the difference between SESSION_USER and CURRENT_USER in PostgreSQL](https://www.postgresql.r2schools.com/what-is-the-difference-between-session_user-and-current_user-in-postgresql/)
 - [System Information Functions (documentation)](https://www.postgresql.org/docs/9.1/functions-info.html)
+- [Postgresql: How to add a role that inherits from another? (stackoverflow)](https://dba.stackexchange.com/questions/60942/postgresql-how-to-add-a-role-that-inherits-from-another)
+- [PostgreSQL: How to pass parameters from command line? (stackoverflow)](https://stackoverflow.com/questions/7389416/postgresql-how-to-pass-parameters-from-command-line)
+- [How to pass parameters into a sql script ? (postgresql.org)](https://www.postgresql.org/message-id/004601c9dfa4$94a7df30$bdf79d90$@com)
+- [SQL table name as variable to query (stackoverflow)](https://stackoverflow.com/questions/65327759/sql-table-name-as-variable-to-query)
+- [Postgresql: Scripting psql execution with password (about connection string) (stackoverflow)](https://stackoverflow.com/questions/6523019/postgresql-scripting-psql-execution-with-password)
+- [Select hardcoded values without table (stackoverflow)](https://stackoverflow.com/questions/15948614/select-hardcoded-values-without-table)
 
 #### InfluxDB:
 - [Getting Started with Go and InfluxDB (documentation)](https://www.influxdata.com/blog/getting-started-go-influxdb/)
@@ -33,6 +39,9 @@
 - [InfluxDB Client Go (GitHub)](https://github.com/influxdata/influxdb-client-go)
 - [How to create adittional buckets on influxdb docker initialize (stackoverflow)](https://stackoverflow.com/questions/71854059/how-to-create-adittional-buckets-on-influxdb-docker-initialize)
 - [Create a bucket (documentation)](https://docs.influxdata.com/influxdb/v2.3/organizations/buckets/create-bucket/)
+- [InfluxDB CLI/Shell](https://archive.docs.influxdata.com/influxdb/v0.9/tools/shell/)
+- [Manage API tokens](https://docs.influxdata.com/influxdb/cloud/security/tokens/)
+- [InfluxDB 2 (include healthcheck)](https://sensorsiot.github.io/IOTstack/Containers/InfluxDB2/)
 
 
 
@@ -40,6 +49,7 @@
 - [Standard Go Project Layout (GitHub)](https://github.com/golang-standards/project-layout/blob/master/README_ru.md)
 - [Fyne tutorials (YouTube)](https://youtube.com/playlist?list=PLjpijTpXl1_po-ld8jORR9k5NornDNKQk)
 - [UUID package for Go language (GitHub source code)](https://github.com/satori/go.uuid)
+- [Embedding in Golang (documentation)](https://go.dev/doc/effective_go#embedding)
 - [Dependency Injection in Go: The better way](https://faun.pub/dependency-injection-in-go-the-better-way-833e2cc65fab)
 - [4 примера iota-перечислений](https://habr.com/ru/company/nixys/blog/492056/)
 - [Практичный Go: советы по написанию поддерживаемых программ в реальном мире](https://habr.com/ru/post/441842/)
@@ -76,10 +86,25 @@
 - [Parameters in path (Gin)](https://gin-gonic.com/docs/examples/param-in-path/)
 - [JSON response in Golang’s GIN returning as scrambled data (stackoverflow)](https://stackoverflow.com/questions/48010954/json-response-in-golang-s-gin-returning-as-scrambled-data)
 
+#### Echo web framework:
+- [Golang REST framework comparison: gin vs echo](https://yuiltripathee.medium.com/go-gin-vs-echo-comparison-edf1536e2e25)
+- [Is Echo is more efficient than Gin? (GitHub Discussions)](https://github.com/labstack/echo/discussions/2143)
+
+#### Testing:
+- [Writing unit tests in Golang Part 2: Mocking](https://medium.com/nerd-for-tech/writing-unit-tests-in-golang-part-2-mocking-d4fa1701a3ae)
+- [Mocking Techniques for Go](https://www.myhatchpad.com/insight/mocking-techniques-for-go/)
+- [Go Unit Testing at Compass](https://www.myhatchpad.com/insight/go-unit-testing-at-compass/)
+- [DATA-DOG/go-sqlmock: Sql driver mock for Golang (GitHub)](https://github.com/DATA-DOG/go-sqlmock)
+- [Mocks in Go tests with Testify Mock](https://dev.to/salesforceeng/mocks-in-go-tests-with-testify-mock-6pd)
+- [How to measure test coverage in Go (stackoverflow)](https://stackoverflow.com/questions/10516662/how-to-measure-test-coverage-in-go)
+- [Команда cover в Golang](https://golang-blog.blogspot.com/2019/07/cover-golang.html)
+- [How to `go test` all tests in my project? (stackoverflow)](https://stackoverflow.com/questions/16353016/how-to-go-test-all-tests-in-my-project)
+- [stretchr/testify: Testify - Thou Shalt Write Tests (GitHub)](https://github.com/stretchr/testify)
+- [Mock Database Unit Test with Mockery in Go](https://dev.to/yanoandri/mock-database-unit-test-with-mockery-in-go-42cl)
+- [Mocking an Interface using Mockery in Go](https://medium.com/yemeksepeti-teknoloji/mocking-an-interface-using-mockery-in-go-afbcb83cc773)
 
 
 ## Python:
-
 - [Что такое yield в Python? (proglib)](https://proglib.io/p/chto-takoe-yield-v-python-samyy-populyarnyy-vopros-na-stakoverflou-po-pitonu-2022-03-21)
 - [Приватные методы без нижнего подчеркивания и интерфейсы в Python (habr)](https://habr.com/ru/post/443192/)
 
@@ -115,7 +140,6 @@
 
 #### Troubleshooting:
 - [mustEmbedUnimplemented*** method appear in grpc-server (GitHub issue)](https://github.com/grpc/grpc-go/issues/3794)
-- [Embedding in Golang (documentation)](https://go.dev/doc/effective_go#embedding)
 - [Error "protoc-gen-go: program not found or is not executable" (stackoverflow)](https://stackoverflow.com/questions/57700860/error-protoc-gen-go-program-not-found-or-is-not-executable)
 - [protoc-gen-go: unable to determine Go import path for "simple.proto" (stackoverflow)](https://stackoverflow.com/questions/70586511/protoc-gen-go-unable-to-determine-go-import-path-for-simple-proto)
 - [Fix read behavior when timeout is set by service config (GitHub issue)](https://github.com/grpc/grpc-go/issues/1818)
@@ -199,6 +223,9 @@
 - [Postman](https://web.postman.co/)
 - [Система заметок с нуля. Часть 4: разработка микросервисов NoteService, TagService и UserService (habr)](https://habr.com/ru/post/583772/)
 - [Building Go Microservice with Gin and CI/CD](https://semaphoreci.com/community/tutorials/building-go-web-applications-and-microservices-using-gin)
+- [Основы Postman для самых маленьких (habr)](https://habr.com/ru/company/maxilect/blog/596789/)
+- [Tutorial: Generate Swagger Specification and SwaggerUI for Gin Go Web Framework](https://levelup.gitconnected.com/tutorial-generate-swagger-specification-and-swaggerui-for-gin-go-web-framework-9f0c038483b5)
+- [swaggo/swag (GitHub)](https://github.com/swaggo/swag)
 
 
 
@@ -223,6 +250,18 @@
 - [Networking in Compose](https://docs.docker.com/compose/networking/)
 - [Use bridge networks](https://docs.docker.com/network/bridge/)
 - [Using Redis with docker and docker-compose for local development a step-by-step tutorial](https://geshan.com.np/blog/2022/01/redis-docker/)
+- [Allow Docker Container Access to Host's Postgres Database on linux (ubuntu)](https://gist.github.com/MauricioMoraes/87d76577babd4e084cba70f63c04b07d)
+- [Run a shell script from docker-compose command, inside the container (stackoverflow)](https://stackoverflow.com/questions/57840820/run-a-shell-script-from-docker-compose-command-inside-the-container)
+- [docker-compose-healthcheck (GitHub)](https://github.com/peter-evans/docker-compose-healthcheck)
+- [Build your Go image](https://docs.docker.com/language/golang/build-images/)
+- [Create a base image](https://docs.docker.com/build/building/base-images/)
+- [Create the smallest and secured golang docker image based on scratch](https://chemidy.medium.com/create-the-smallest-and-secured-golang-docker-image-based-on-scratch-4752223b7324)
+- [How do I create a .env file in Docker (stackoverflow)](https://stackoverflow.com/questions/68122419/how-do-i-create-a-env-file-in-docker)
+- [Copy directory to another directory using ADD command](https://stackoverflow.com/questions/26504846/copy-directory-to-another-directory-using-add-command)
+- [main.go: no required module provides package (stackoverflow troubleshooting)](https://stackoverflow.com/questions/68701039/main-go-no-required-module-provides-package)
+- [Clarification on Docker Compose's `start_period` paramter (stackoverflow)](https://stackoverflow.com/questions/53289950/clarification-on-docker-composes-start-period-paramter)
+- [Start containers automatically](https://docs.docker.com/config/containers/start-containers-automatically/)
+- [Configuring HealthCheck in docker-compose](https://medium.com/@saklani1408/configuring-healthcheck-in-docker-compose-3fa6439ee280)
 
 
 
@@ -234,3 +273,8 @@
 - [Теги strong и b, важность и выделение](https://htmlacademy.ru/courses/301/run/17)
 - [Краткое описание нотации BPMN (habr)](https://habr.com/ru/company/auriga/blog/667084/)
 - [BPMN Примеры](https://camundarus.ru/bpmn/examples/)
+- [What is the loopback device and how do I use it?](https://askubuntu.com/questions/247625/what-is-the-loopback-device-and-how-do-i-use-it)
+
+#### Bash:
+- [How to Generate Random String in Bash](https://linuxhint.com/generate-random-string-bash/)
+- [Nth word in a string variable](https://stackoverflow.com/questions/3005627/nth-word-in-a-string-variable)
