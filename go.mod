@@ -8,6 +8,8 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.7
+	github.com/mailru/easyjson v0.0.0-20190626092158-b2ccc519800e
+	github.com/prometheus/procfs v0.9.0
 	github.com/sethvargo/go-password v0.2.0
 	github.com/stretchr/testify v1.8.1
 	go.uber.org/multierr v1.9.0
