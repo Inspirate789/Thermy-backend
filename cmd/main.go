@@ -8,7 +8,6 @@ import (
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/joho/godotenv"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -20,21 +19,21 @@ import (
 func init() {
 	err := godotenv.Load("backend.env") // TODO: read filename from flag
 	if err != nil {
-		log.Fatal("File backend.env not found")
+		panic("File backend.env not found")
 	}
 
 	//err = os.Remove("backend.env")
 	//if err != nil {
-	//	log.Fatal(err)
+	//	panic(err)
 	//}
 
 	initTimeStr := os.Getenv("BACKEND_INIT_SLEEP_TIME")
 	if initTimeStr == "" {
-		log.Fatal("BACKEND_INIT_SLEEP_TIME must be set")
+		panic("BACKEND_INIT_SLEEP_TIME must be set")
 	}
 	initTime, err := strconv.Atoi(initTimeStr)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	time.Sleep(time.Duration(initTime) * time.Second)
 }
@@ -72,12 +71,12 @@ func main() { // TODO: decompose main into initServer, startServer, stopServer?
 
 	logBucketName := os.Getenv("INFLUXDB_BACKEND_BUCKET_NAME")
 	if logBucketName == "" {
-		log.Fatal("INFLUXDB_BACKEND_BUCKET_NAME must be set")
+		panic("INFLUXDB_BACKEND_BUCKET_NAME must be set")
 	}
 
 	err := mainLog.Open(logBucketName)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	defer mainLog.Close()
 
@@ -86,11 +85,11 @@ func main() { // TODO: decompose main into initServer, startServer, stopServer?
 
 	portStr := os.Getenv("BACKEND_PORT")
 	if portStr == "" {
-		log.Fatal("BACKEND_PORT must be set")
+		panic("BACKEND_PORT must be set")
 	}
 	port, err := strconv.Atoi(portStr)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	srv := server.NewServer(port, authService, storageService, mainLog)
