@@ -8,7 +8,7 @@ create table if not exists public.users(
     id int generated always as identity primary key,
     name text unique not null,
     password text not null,
-    role text,
+    role text not null,
     registration_date timestamp not null
 );
 

@@ -42,24 +42,6 @@ create table if not exists $1_layer.models_and_elems(
     foreign key (elem_id) references $1_layer.elements(id)
 );
 
--- Таблица-связка (модели слоя и единицы русского языка)
--- drop table if exists $1_layer.models_and_units_ru;
-create table if not exists $1_layer.models_and_units_ru(
-    model_id int,
-    foreign key (model_id) references $1_layer.models(id),
-    unit_id int,
-    foreign key (unit_id) references $1_layer.units_ru(id)
-);
-
--- Таблица-связка (модели слоя и единицы иностранного языка)
--- drop table if exists $1_layer.models_and_units_en;
-create table if not exists $1_layer.models_and_units_en(
-    model_id int,
-    foreign key (model_id) references $1_layer.models(id),
-    unit_id int,
-    foreign key (unit_id) references $1_layer.units_en(id)
-);
-
 -- Таблица-связка (единицы русского языка и единицы иностранного языка)
 -- drop table if exists $1_layer.units_ru_and_en;
 create table if not exists $1_layer.units_ru_and_en(
@@ -131,14 +113,6 @@ grant select on $1_layer.units_en to student;
 grant insert on $1_layer.units_en to student;
 grant update on $1_layer.units_en to student;
 
-grant select on $1_layer.models_and_units_ru to student;
-grant insert on $1_layer.models_and_units_ru to student;
-grant update on $1_layer.models_and_units_ru to student;
-
-grant select on $1_layer.models_and_units_en to student;
-grant insert on $1_layer.models_and_units_en to student;
-grant update on $1_layer.models_and_units_en to student;
-
 grant select on $1_layer.units_ru_and_en to student;
 grant insert on $1_layer.units_ru_and_en to student;
 grant update on $1_layer.units_ru_and_en to student;
@@ -172,8 +146,6 @@ grant select on $1_layer.models to student;
 grant select on $1_layer.elements to student;
 
 grant select on $1_layer.models_and_elems to student;
-
-
 
 grant insert on $1_layer.models to educator;
 grant update on $1_layer.models to educator;
