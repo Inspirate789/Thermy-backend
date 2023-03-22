@@ -1,8 +1,8 @@
 package storage
 
 import (
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/models"
 )
 
 type UsersRepository interface {
@@ -11,18 +11,18 @@ type UsersRepository interface {
 }
 
 type ModelsRepository interface {
-	GetAllModels(conn ConnDB, layer string) ([]models.Model, error)
+	GetAllModels(conn ConnDB, layer string) ([]entities.Model, error)
 	SaveModels(conn ConnDB, layer string, models []string) ([]int, error)
 }
 
 type ModelElementsRepository interface {
-	GetAllModelElements(conn ConnDB, layer string) ([]models.ModelElement, error)
+	GetAllModelElements(conn ConnDB, layer string) ([]entities.ModelElement, error)
 	SaveModelElements(conn ConnDB, layer string, modelElements []string) ([]int, error)
 }
 
 type PropertiesRepository interface {
-	GetAllProperties(conn ConnDB) ([]models.Property, error)
-	GetPropertiesByUnit(conn ConnDB, layer string, unit interfaces.SearchUnitDTO) ([]models.Property, error)
+	GetAllProperties(conn ConnDB) ([]entities.Property, error)
+	GetPropertiesByUnit(conn ConnDB, layer string, unit interfaces.SearchUnitDTO) ([]entities.Property, error)
 	SaveProperties(conn ConnDB, properties []string) ([]int, error)
 }
 

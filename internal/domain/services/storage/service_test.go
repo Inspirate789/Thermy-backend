@@ -2,8 +2,8 @@ package storage
 
 import (
 	"context"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/models"
 	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/stretchr/testify/mock"
 	"reflect"
@@ -231,7 +231,7 @@ func TestStorageService_GetModelElements(t *testing.T) {
 	mockLog.On("Print", mock.Anything).Return()
 
 	mockStorage := new(MockStorage)
-	mockStorage.On("GetAllModelElements", mock.Anything, "test_layer").Return([]models.ModelElement{}, nil)
+	mockStorage.On("GetAllModelElements", mock.Anything, "test_layer").Return([]entities.ModelElement{}, nil)
 	mockStorage.On("LayerExist", mock.Anything, "test_layer").Return(true, nil)
 
 	type args struct {
@@ -281,7 +281,7 @@ func TestStorageService_GetModels(t *testing.T) {
 	mockLog.On("Print", mock.Anything).Return()
 
 	mockStorage := new(MockStorage)
-	mockStorage.On("GetAllModels", mock.Anything, "test_layer").Return([]models.Model{}, nil)
+	mockStorage.On("GetAllModels", mock.Anything, "test_layer").Return([]entities.Model{}, nil)
 	mockStorage.On("LayerExist", mock.Anything, "test_layer").Return(true, nil)
 
 	type args struct {
@@ -331,7 +331,7 @@ func TestStorageService_GetProperties(t *testing.T) {
 	mockLog.On("Print", mock.Anything).Return()
 
 	mockStorage := new(MockStorage)
-	mockStorage.On("GetAllProperties", mock.Anything).Return([]models.Property{}, nil)
+	mockStorage.On("GetAllProperties", mock.Anything).Return([]entities.Property{}, nil)
 
 	type args struct {
 		conn ConnDB
@@ -377,7 +377,7 @@ func TestStorageService_GetPropertiesByUnit(t *testing.T) {
 	mockStorage := new(MockStorage)
 	mockStorage.
 		On("GetPropertiesByUnit", mock.Anything, "test_layer", interfaces.SearchUnitDTO{}).
-		Return([]models.Property{}, nil)
+		Return([]entities.Property{}, nil)
 
 	type args struct {
 		conn  ConnDB
