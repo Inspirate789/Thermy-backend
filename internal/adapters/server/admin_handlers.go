@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"github.com/Inspirate789/Thermy-backend/pkg/monitoring"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -52,4 +53,20 @@ func (s *Server) getUserPassword(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"password": password, "error": "ok"})
+}
+
+func (s *Server) getStat(ctx *gin.Context) {
+	observer, err := monitoring.NewProcStatObserver()
+	if err != nil {
+		_ = ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	stat, err := observer.GetInfo()
+	if err != nil {
+		_ = ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, stat)
 }

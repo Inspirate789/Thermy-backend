@@ -10,9 +10,8 @@ import (
 )
 
 type ProcStatObserver struct {
-	timeInterval time.Duration
-	process      procfs.Proc
-	file         *os.File
+	process procfs.Proc
+	file    *os.File
 }
 
 type ProcStat struct {
@@ -24,13 +23,13 @@ type ProcStat struct {
 	ProcStat      procfs.ProcStat `json:"proc_stat"`
 }
 
-func NewProcStatObserver(d time.Duration) (*ProcStatObserver, error) {
+func NewProcStatObserver() (*ProcStatObserver, error) {
 	p, err := procfs.Self()
 	if err != nil {
 		return nil, fmt.Errorf("could not get process: %w", err)
 	}
 
-	return &ProcStatObserver{timeInterval: d, process: p}, nil
+	return &ProcStatObserver{process: p}, nil
 }
 
 func (o *ProcStatObserver) GetInfo() (*ProcStat, error) {
@@ -65,7 +64,7 @@ func (o *ProcStatObserver) saveInfo(stat *ProcStat) error {
 	return err
 }
 
-func (o *ProcStatObserver) Observe(ctx context.Context, filename string) error {
+func (o *ProcStatObserver) Observe(ctx context.Context, d time.Duration, filename string) error {
 	var err error
 	o.file, err = os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
@@ -74,7 +73,7 @@ func (o *ProcStatObserver) Observe(ctx context.Context, filename string) error {
 	defer o.file.Close()
 
 	var observeErr error
-	ticker := time.NewTicker(o.timeInterval)
+	ticker := time.NewTicker(d)
 	go func() {
 		for {
 			select {

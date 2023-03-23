@@ -47,6 +47,7 @@ func (s *Server) addEducatorRoutes(rg *gin.RouterGroup) {
 func (s *Server) addAdminRoutes(rg *gin.RouterGroup) {
 	rg.POST("/user/create", s.postUser)
 	rg.GET("/user/get/password", s.getUserPassword)
+	rg.GET("/stat", s.getStat)
 }
 
 func parseRole(ctx *gin.Context) (string, error) {
