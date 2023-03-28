@@ -117,7 +117,7 @@ cat backend.env
 
 
 # Run system
-docker-compose up -d
+docker-compose up -d --build
 sleep 3
 
 
