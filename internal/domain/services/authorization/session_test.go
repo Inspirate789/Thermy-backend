@@ -2,6 +2,7 @@ package authorization
 
 import (
 	"context"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/stretchr/testify/mock"
 	"reflect"
@@ -15,7 +16,7 @@ func TestSession_Open(t *testing.T) {
 
 	type args struct {
 		sm      storage.StorageManager
-		request *storage.AuthRequest
+		request *entities.AuthRequest
 		ctx     context.Context
 	}
 	tests := []struct {
@@ -30,7 +31,7 @@ func TestSession_Open(t *testing.T) {
 			session: NewSession(),
 			args: args{
 				sm: mockSM,
-				request: &storage.AuthRequest{
+				request: &entities.AuthRequest{
 					Username: "initial_admin",
 					Password: "12345",
 				},
@@ -94,17 +95,17 @@ func TestSession_GetAuthData(t *testing.T) {
 	tests := []struct {
 		name    string
 		session *Session
-		want    *storage.AuthRequest
+		want    *entities.AuthRequest
 	}{
 		{
 			name: "Simple positive test",
 			session: &Session{
-				authData: &storage.AuthRequest{
+				authData: &entities.AuthRequest{
 					Username: "initial_admin",
 					Password: "12345",
 				},
 			},
-			want: &storage.AuthRequest{
+			want: &entities.AuthRequest{
 				Username: "initial_admin",
 				Password: "12345",
 			},

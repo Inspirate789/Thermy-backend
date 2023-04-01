@@ -295,16 +295,16 @@ func (_m *MockStorage) LayerExist(conn ConnDB, layer string) (bool, error) {
 }
 
 // OpenConn provides a mock function with given fields: request, ctx
-func (_m *MockStorage) OpenConn(request *AuthRequest, ctx context.Context) (ConnDB, string, error) {
+func (_m *MockStorage) OpenConn(request *models.AuthRequest, ctx context.Context) (ConnDB, string, error) {
 	ret := _m.Called(request, ctx)
 
 	var r0 ConnDB
 	var r1 string
 	var r2 error
-	if rf, ok := ret.Get(0).(func(*AuthRequest, context.Context) (ConnDB, string, error)); ok {
+	if rf, ok := ret.Get(0).(func(*models.AuthRequest, context.Context) (ConnDB, string, error)); ok {
 		return rf(request, ctx)
 	}
-	if rf, ok := ret.Get(0).(func(*AuthRequest, context.Context) ConnDB); ok {
+	if rf, ok := ret.Get(0).(func(*models.AuthRequest, context.Context) ConnDB); ok {
 		r0 = rf(request, ctx)
 	} else {
 		if ret.Get(0) != nil {
@@ -312,13 +312,13 @@ func (_m *MockStorage) OpenConn(request *AuthRequest, ctx context.Context) (Conn
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(*AuthRequest, context.Context) string); ok {
+	if rf, ok := ret.Get(1).(func(*models.AuthRequest, context.Context) string); ok {
 		r1 = rf(request, ctx)
 	} else {
 		r1 = ret.Get(1).(string)
 	}
 
-	if rf, ok := ret.Get(2).(func(*AuthRequest, context.Context) error); ok {
+	if rf, ok := ret.Get(2).(func(*models.AuthRequest, context.Context) error); ok {
 		r2 = rf(request, ctx)
 	} else {
 		r2 = ret.Error(2)

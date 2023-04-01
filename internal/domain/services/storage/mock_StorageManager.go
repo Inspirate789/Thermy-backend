@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -10,7 +11,7 @@ type MockStorageManager struct {
 	mock.Mock
 }
 
-func (m *MockStorageManager) OpenConn(request *AuthRequest, ctx context.Context) (ConnDB, string, error) {
+func (m *MockStorageManager) OpenConn(request *entities.AuthRequest, ctx context.Context) (ConnDB, string, error) {
 	args := m.Called(request, ctx)
 	return args.Get(0), "admin", args.Error(2)
 }

@@ -596,14 +596,14 @@ func TestStorageService_OpenConn(t *testing.T) {
 
 	mockStorage := new(MockStorage)
 	mockStorage.
-		On("OpenConn", &AuthRequest{
+		On("OpenConn", &entities.AuthRequest{
 			Username: "initial_admin",
 			Password: "12345",
 		}, mock.Anything).
 		Return(nil, "admin", nil)
 
 	type args struct {
-		request *AuthRequest
+		request *entities.AuthRequest
 		ctx     context.Context
 	}
 	tests := []struct {
@@ -621,7 +621,7 @@ func TestStorageService_OpenConn(t *testing.T) {
 				log:     mockLog,
 			},
 			args: args{
-				request: &AuthRequest{
+				request: &entities.AuthRequest{
 					Username: "initial_admin",
 					Password: "12345",
 				},

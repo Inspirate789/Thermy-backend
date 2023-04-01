@@ -3,6 +3,7 @@ package authorization
 import (
 	"context"
 	"fmt"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/errors"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/Inspirate789/Thermy-backend/pkg/logger"
@@ -23,7 +24,7 @@ func NewAuthService(log logger.Logger) *AuthService {
 	}
 }
 
-func (as *AuthService) AddSession(sm storage.StorageManager, request *storage.AuthRequest, ctx context.Context) (uint64, error) {
+func (as *AuthService) AddSession(sm storage.StorageManager, request *entities.AuthRequest, ctx context.Context) (uint64, error) {
 	session := NewSession()
 	token, err := session.Open(sm, request, ctx)
 	if err != nil {

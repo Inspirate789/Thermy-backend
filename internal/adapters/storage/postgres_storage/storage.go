@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage/wrappers"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -56,7 +57,7 @@ func getConnRole(conn *sqlx.DB, ctx context.Context) (string, error) {
 	return roles[0], nil
 }
 
-func getPostgresInfo(request *storage.AuthRequest) (string, error) {
+func getPostgresInfo(request *entities.AuthRequest) (string, error) {
 	host := os.Getenv("POSTGRES_HOST") // TODO: get once?
 	if host == "" {
 		return "", errors.New("POSTGRES_HOST must be set")
@@ -88,7 +89,7 @@ func getPostgresInfo(request *storage.AuthRequest) (string, error) {
 	return postgresInfo, nil
 }
 
-func (ps *PostgresStorage) OpenConn(request *storage.AuthRequest, ctx context.Context) (storage.ConnDB, string, error) {
+func (ps *PostgresStorage) OpenConn(request *entities.AuthRequest, ctx context.Context) (storage.ConnDB, string, error) {
 	postgresInfo, err := getPostgresInfo(request)
 	if err != nil {
 		return nil, "", err

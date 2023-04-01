@@ -2,14 +2,14 @@ package server
 
 import (
 	"errors"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
 
 func (s *Server) login(ctx *gin.Context) {
-	var request storage.AuthRequest
+	var request entities.AuthRequest
 	err := ctx.BindJSON(&request)
 	if err != nil {
 		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse AuthRequest from received JSON"))

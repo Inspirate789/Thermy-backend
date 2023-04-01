@@ -2,6 +2,7 @@ package authorization
 
 import (
 	"context"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/stretchr/testify/mock"
@@ -54,7 +55,7 @@ func TestAuthService_AddSession(t *testing.T) {
 
 	type args struct {
 		sm      storage.StorageManager
-		request *storage.AuthRequest
+		request *entities.AuthRequest
 		ctx     context.Context
 	}
 	tests := []struct {
@@ -73,7 +74,7 @@ func TestAuthService_AddSession(t *testing.T) {
 			},
 			args: args{
 				sm: mockSM,
-				request: &storage.AuthRequest{
+				request: &entities.AuthRequest{
 					Username: "initial_admin",
 					Password: "12345",
 				},
@@ -113,7 +114,7 @@ func TestAuthService_RemoveSession(t *testing.T) {
 
 	type args struct {
 		sm      storage.StorageManager
-		request *storage.AuthRequest
+		request *entities.AuthRequest
 		token   uint64
 		ctx     context.Context
 	}
@@ -132,7 +133,7 @@ func TestAuthService_RemoveSession(t *testing.T) {
 			},
 			args: args{
 				sm: mockSM,
-				request: &storage.AuthRequest{
+				request: &entities.AuthRequest{
 					Username: "initial_admin",
 					Password: "12345",
 				},
@@ -150,7 +151,7 @@ func TestAuthService_RemoveSession(t *testing.T) {
 			},
 			args: args{
 				sm: mockSM,
-				request: &storage.AuthRequest{
+				request: &entities.AuthRequest{
 					Username: "initial_admin",
 					Password: "12345",
 				},
@@ -193,7 +194,7 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 
 	type args struct {
 		sm      storage.StorageManager
-		request *storage.AuthRequest
+		request *entities.AuthRequest
 		token   uint64
 		ctx     context.Context
 	}
@@ -212,7 +213,7 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 			},
 			args: args{
 				sm: mockSM,
-				request: &storage.AuthRequest{
+				request: &entities.AuthRequest{
 					Username: "initial_admin",
 					Password: "12345",
 				},
@@ -230,7 +231,7 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 			},
 			args: args{
 				sm: mockSM,
-				request: &storage.AuthRequest{
+				request: &entities.AuthRequest{
 					Username: "initial_admin",
 					Password: "12345",
 				},
@@ -274,7 +275,7 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 
 	type args struct {
 		sm      storage.StorageManager
-		request *storage.AuthRequest
+		request *entities.AuthRequest
 		token   uint64
 		ctx     context.Context
 	}
@@ -294,7 +295,7 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 			},
 			args: args{
 				sm: mockSM,
-				request: &storage.AuthRequest{
+				request: &entities.AuthRequest{
 					Username: "initial_admin",
 					Password: "12345",
 				},
@@ -313,7 +314,7 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 			},
 			args: args{
 				sm: mockSM,
-				request: &storage.AuthRequest{
+				request: &entities.AuthRequest{
 					Username: "initial_admin",
 					Password: "12345",
 				},

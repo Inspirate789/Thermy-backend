@@ -3,12 +3,12 @@ package authorization
 import (
 	"context"
 	"fmt"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
-	"hash/fnv"
 )
 
 type Session struct {
-	authData *storage.AuthRequest
+	authData *entities.AuthRequest
 	token    uint64
 	role     string
 	connDB   storage.ConnDB
@@ -18,7 +18,7 @@ func NewSession() *Session {
 	return &Session{}
 }
 
-func (s *Session) GetAuthData() *storage.AuthRequest {
+func (s *Session) GetAuthData() *entities.AuthRequest {
 	return s.authData
 }
 
@@ -34,25 +34,14 @@ func (s *Session) GetConn() storage.ConnDB {
 	return s.connDB
 }
 
-func generateToken(request *storage.AuthRequest) (uint64, error) {
-	h := fnv.New64a()
-
-	_, err := h.Write([]byte(request.Username))
-	if err != nil {
-		return 0, err
-	}
-
-	return h.Sum64(), err
-}
-
-func (s *Session) Open(sm storage.StorageManager, request *storage.AuthRequest, ctx context.Context) (uint64, error) {
+func (s *Session) Open(sm storage.StorageManager, request *entities.AuthRequest, ctx context.Context) (uint64, error) {
 	conn, role, err := sm.OpenConn(request, ctx)
 	if err != nil {
 		return 0, fmt.Errorf("cannot open session: %w", err)
 	}
 
 	s.authData = request
-	s.token, err = generateToken(request)
+	s.token, err = entities.NewUser(request).GetHash()
 	s.role = role
 	s.connDB = conn
 

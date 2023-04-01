@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 )
@@ -20,7 +21,7 @@ func NewStorageService(storage Storage, log logger.Logger) *StorageService {
 	}
 }
 
-func (ss *StorageService) OpenConn(request *AuthRequest, ctx context.Context) (ConnDB, string, error) {
+func (ss *StorageService) OpenConn(request *entities.AuthRequest, ctx context.Context) (ConnDB, string, error) {
 	return ss.storage.OpenConn(request, ctx)
 }
 

@@ -2,18 +2,14 @@ package storage
 
 import (
 	"context"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 )
-
-type AuthRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
 
 type ConnDB any
 
 type Storage interface { // TODO: split?
-	OpenConn(request *AuthRequest, ctx context.Context) (ConnDB, string, error) // Get conn, role in database and error
+	OpenConn(request *entities.AuthRequest, ctx context.Context) (ConnDB, string, error) // Get conn, role in database and error
 	UsersRepository
 	ModelsRepository
 	ModelElementsRepository
@@ -24,7 +20,7 @@ type Storage interface { // TODO: split?
 }
 
 type ConnManager interface {
-	OpenConn(request *AuthRequest, ctx context.Context) (ConnDB, string, error)
+	OpenConn(request *entities.AuthRequest, ctx context.Context) (ConnDB, string, error)
 	CloseConn(conn ConnDB) error
 }
 
