@@ -84,13 +84,13 @@ type ContextDTO struct {
 
 type OutputUnitsDTO struct {
 	Units    []map[string]OutputUnitDTO `json:"units,omitempty"`
-	Contexts []ContextDTO
+	Contexts []ContextDTO               `json:"contexts,omitempty"`
 }
 
 type UpdateUnitDTO struct {
-	Language     string `json:"language"`
+	Lang         string `json:"lang"`
 	OldText      string `json:"old_text"`
-	NewText      string `json:"new_text,omitempty"`
+	NewText      string `json:"new_text"`
 	PropertiesID []int  `json:"properties_id,omitempty"`
 }
 

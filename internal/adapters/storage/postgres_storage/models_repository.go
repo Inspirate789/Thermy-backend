@@ -9,7 +9,10 @@ import (
 type ModelsPgRepository struct{}
 
 func (r *ModelsPgRepository) GetAllModels(conn storage.ConnDB, layer string) ([]entities.Model, error) {
-	return selectSliceFromScript[[]entities.Model](conn, "sql/select_all_models.sql", layer)
+	args := map[string]interface{}{
+		"layer_name": layer,
+	}
+	return namedSelectSliceFromScript[[]entities.Model](conn, selectAllModelsQuery, args)
 }
 
 func (r *ModelsPgRepository) SaveModels(conn storage.ConnDB, layer string, models []string) ([]int, error) {

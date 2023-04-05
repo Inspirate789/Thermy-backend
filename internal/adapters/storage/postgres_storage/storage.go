@@ -5,17 +5,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage/wrappers"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
+	"github.com/Inspirate789/Thermy-backend/pkg/sqlx_utils"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"os"
 )
-
-// Execute from current directory: go-bindata -pkg postgres_storage -o sqlscripts.go ./sql
-// or execute in GoLand
-//go:generate go-bindata -pkg postgres_storage -o sqlscripts.go ./sql
 
 type PostgresStorage struct {
 	LayersPgRepository
@@ -40,21 +36,13 @@ func NewPostgresStorage() *PostgresStorage {
 //	}
 
 func getConnRole(conn *sqlx.DB, ctx context.Context) (string, error) {
-	script, err := Asset("sql/select_role.sql")
+	var role string
+	err := sqlx_utils.Get(ctx, conn, &role, selectRoleQuery)
 	if err != nil {
 		return "", err
 	}
 
-	var roles []string
-	err = wrappers.Select(ctx, conn, &roles, string(script))
-	if err != nil {
-		return "", err
-	}
-	if len(roles) != 1 {
-		return "", errors.New("")
-	}
-
-	return roles[0], nil
+	return role, nil
 }
 
 func getPostgresInfo(request *entities.AuthRequest) (string, error) {

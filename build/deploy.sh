@@ -77,11 +77,6 @@ echo -e "REDIS_PASSWORD=${redis_password}" >> .env
 backend_port=8080
 echo -e "BACKEND_PORT=${backend_port}" >> .env
 
-# Generate code for backend:
-cd internal/adapters/storage/postgres_storage
-go-bindata -pkg postgres_storage -o sqlscripts.go ./sql
-cd ../../../../
-
 # Set backend wait time:
 backend_init_sleep_time=6
 echo -e "BACKEND_INIT_SLEEP_TIME=${backend_init_sleep_time}" >> .env
@@ -130,23 +125,20 @@ docker exec -ti $influx_container_name influx bucket create -n $backend_bucket_n
 
 
 # Setup PostgreSQL database:
+psql postgresql://$postgres_user:$postgres_password@$postgres_host:$postgres_port/$postgres_dbname \
+  -f db/initdb.sql \
+  -v dbname=${postgres_dbname}
+
 admin_name="initial_admin"
 admin_password=$(echo $RANDOM | md5sum | head -c 20)
 
 echo -e "POSTGRES_ADMIN_USERNAME=${admin_name}" >> .env
 echo -e "POSTGRES_ADMIN_PASSWORD=${admin_password}" >> .env
-
 psql postgresql://$postgres_user:$postgres_password@$postgres_host:$postgres_port/$postgres_dbname \
-  -f sql/init_db/create_fixed_tables.sql
-psql postgresql://$postgres_user:$postgres_password@$postgres_host:$postgres_port/$postgres_dbname \
-  -f sql/init_db/create_roles.sql
-psql postgresql://$postgres_user:$postgres_password@$postgres_host:$postgres_port/$postgres_dbname \
-  -f sql/init_db/create_admin.sql \
+  -f db/create_admin.sql \
   -v username="${admin_name}" \
   -v quoted_username="'${admin_name}'" \
   -v quoted_password="'${admin_password}'"
-
-docker exec -ti $postgres_container_name createuser --superuser postgres
 
 
 

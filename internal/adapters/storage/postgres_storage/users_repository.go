@@ -8,14 +8,20 @@ import (
 type UsersPgRepository struct{}
 
 func (r *UsersPgRepository) AddUser(conn storage.ConnDB, username string, role string) error {
-	passwd, err := password.Generate(20, 10, 0, false, false)
+	_, err := password.Generate(20, 10, 0, false, false) // TODO: take from frontend
 	if err != nil {
 		return err
 	}
 
-	return executeScript(conn, "sql/insert_user.sql", username, passwd, role)
+	args := map[string]interface{}{
+		"username": username,
+		"password": "passwd",
+		"role":     role,
+	}
+
+	return executeNamedScript(conn, insertUserQuery, args)
 }
 
-func (r *UsersPgRepository) GetUserPassword(conn storage.ConnDB, username string) (string, error) {
-	return selectValueFromScript[string](conn, "sql/select_user_password.sql", username)
+func (r *UsersPgRepository) GetUserPassword(conn storage.ConnDB, username string) (string, error) { // TODO: remove
+	return selectValueFromScript[string](conn, selectUserPasswordQuery, username)
 }

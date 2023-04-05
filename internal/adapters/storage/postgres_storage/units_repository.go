@@ -5,6 +5,7 @@ import (
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
+	"github.com/lib/pq"
 )
 
 type UnitsPgRepository struct{}
@@ -21,12 +22,17 @@ type JoinedUnits struct {
 }
 
 func makeOutputUnitDTO(conn storage.ConnDB, layer string, lang string, unit entities.Unit) (interfaces.OutputUnitDTO, error) {
-	propertiesID, err := selectSliceFromScript[[]int](conn, "sql/select_properties_id_by_unit.sql", layer, lang, unit.ID)
+	args := map[string]interface{}{
+		"layer_name": layer,
+		"lang":       lang,
+		"unit_id":    unit.ID,
+	}
+	propertiesID, err := namedSelectSliceFromScript[[]int](conn, selectPropertiesIdByUnitIdQuery, args)
 	if err != nil {
 		return interfaces.OutputUnitDTO{}, err
 	}
 
-	contextsID, err := selectSliceFromScript[[]int](conn, "sql/select_contexts_id_by_unit.sql", layer, lang, unit.ID)
+	contextsID, err := namedSelectSliceFromScript[[]int](conn, selectContextsIdByUnitQuery, args)
 	if err != nil {
 		return interfaces.OutputUnitDTO{}, err
 	}
@@ -43,17 +49,25 @@ func makeOutputUnitDTO(conn storage.ConnDB, layer string, lang string, unit enti
 }
 
 func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (interfaces.OutputUnitsDTO, error) {
-	unlinkedUnitsRu, err := selectSliceFromScript[[]entities.Unit](conn, "sql/select_unlinked_units_by_lang.sql", layer, "ru")
+	unlinkedUnitsRu, err := namedSelectSliceFromScript[[]entities.Unit](conn, selectUnlinkedUnitsByLangQuery, map[string]interface{}{
+		"layer_name": layer,
+		"lang":       "ru",
+	})
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	unlinkedUnitsEn, err := selectSliceFromScript[[]entities.Unit](conn, "sql/select_unlinked_units_by_lang.sql", layer, "en")
+	unlinkedUnitsEn, err := namedSelectSliceFromScript[[]entities.Unit](conn, selectUnlinkedUnitsByLangQuery, map[string]interface{}{
+		"layer_name": layer,
+		"lang":       "en",
+	})
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	linkedUnits, err := selectSliceFromScript[[]JoinedUnits](conn, "sql/select_linked_units.sql", layer)
+	linkedUnits, err := namedSelectSliceFromScript[[]JoinedUnits](conn, selectAllLinkedUnitsQuery, map[string]interface{}{
+		"layer_name": layer,
+	})
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
@@ -128,7 +142,7 @@ func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (inte
 		contextsID = append(contextsID, id)
 	}
 
-	contexts, err := selectSliceFromScript[[]interfaces.ContextDTO](conn, "sql/select_contexts_by_id.sql", contextsID)
+	contexts, err := selectSliceFromScript[[]interfaces.ContextDTO](conn, selectContextsByIdQuery, pq.Array(contextsID))
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
