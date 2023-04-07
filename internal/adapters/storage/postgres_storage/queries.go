@@ -10,12 +10,15 @@ var (
 	selectUserPasswordQuery = `select password from public.users where name = $1 limit 1;`
 
 	selectAllModelsQuery = `select * from public.select_all_models(:layer_name);`
+	insertModelsQuery    = `select * from public.insert_models(:layer_name, :models_array);`
 
 	selectAllModelElementsQuery = `select * from public.select_all_model_elements(:layer_name);`
+	insertModelElementsQuery    = `select * from public.insert_model_elements(:layer_name, :elements_array);`
 
 	selectAllPropertiesQuery        = `select * from public.properties;`
 	selectPropertiesByUnitQuery     = `select * from public.select_properties_by_unit(:layer_name, :lang, :unit_text);`
 	selectPropertiesIdByUnitIdQuery = `select * from public.select_properties_id_by_unit_id(:layer_name, :lang, :unit_id);`
+	insertPropertiesQuery           = `select * from public.insert_properties(:properties_array);`
 
 	selectContextsByIdQuery     = `select id, text from public.contexts where id = any($1);`
 	selectContextsIdByUnitQuery = `select * from public.select_contexts_id_by_unit(:layer_name, :lang, :unit_id);`

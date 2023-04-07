@@ -289,6 +289,7 @@ CREATE OR REPLACE FUNCTION public.select_all_models(layer_name text)
 AS
 $func$
 BEGIN
+    RETURN QUERY
     EXECUTE format(
             'select *
             from %I.models;',
@@ -305,9 +306,9 @@ CREATE OR REPLACE FUNCTION public.select_all_model_elements(layer_name text)
 AS
 $func$
 BEGIN
+    RETURN QUERY
     EXECUTE format(
-            'select *
-            from %I.elements;',
+            'select * from %I.elements;',
             (layer_name || '_layer')
         );
 END
@@ -320,6 +321,7 @@ CREATE OR REPLACE FUNCTION public.select_contexts_id_by_unit(layer_name text, la
 AS
 $func$
 BEGIN
+    RETURN QUERY
     EXECUTE format(
             'select context_id
             from %I.%I
@@ -345,6 +347,7 @@ CREATE OR REPLACE FUNCTION public.select_all_linked_units(layer_name text)
 AS
 $func$
 BEGIN
+    RETURN QUERY
     EXECUTE format(
             'select %I.units_ru.id as unit_ru_id,
                %I.units_ru.model_id as unit_ru_model_id,
@@ -382,6 +385,7 @@ CREATE OR REPLACE FUNCTION public.select_properties_by_unit(layer_name text, lan
 AS
 $func$
 BEGIN
+    RETURN QUERY
     EXECUTE format(
             E'select *
              from public.properties
@@ -435,6 +439,64 @@ BEGIN
             ('units_' || lang),
             (layer_name || '_layer'),
             ('unit_' || lang || '_id')
+        );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.insert_properties(property_texts text[])
+    RETURNS table (
+        id int
+                  )
+AS
+$func$
+BEGIN
+    RETURN QUERY
+    insert into public.properties(id, property) overriding user value -- or overriding system value
+    values (null, unnest(property_texts))
+    returning public.properties.id;
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.insert_models(layer_name text, model_texts text[])
+    RETURNS table (
+        id int
+                  )
+AS
+$func$
+BEGIN
+    RETURN QUERY
+        EXECUTE format(
+            E'insert into %I.models(id, name) overriding user value -- or overriding system value
+            values (null, unnest(array[%s]))
+            returning %I.models.id;',
+            (layer_name || '_layer'),
+            format(
+                    E'\'%s\'',
+                    array_to_string(model_texts, E'\',\'')
+                ),
+            (layer_name || '_layer')
+        );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.insert_model_elements(layer_name text, element_texts text[])
+    RETURNS table (
+        id int
+                  )
+AS
+$func$
+BEGIN
+    RETURN QUERY
+    EXECUTE format(
+            E'insert into %I.elements(id, name) overriding user value -- or overriding system value
+            values (null, unnest(array[%s]))
+            returning %I.elements.id;',
+            (layer_name || '_layer'),
+            format(
+                E'\'%s\'',
+                array_to_string(element_texts, E'\',\'')
+                ),
+            (layer_name || '_layer')
         );
 END
 $func$ LANGUAGE plpgsql;

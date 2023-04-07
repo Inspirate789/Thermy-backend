@@ -159,7 +159,7 @@ func (ss *StorageService) GetModels(conn ConnDB, layer string) (interfaces.Outpu
 	}
 
 	modelsDTO := make([]interfaces.OutputModelDTO, 0, len(models))
-	for i := range modelsDTO {
+	for i := range models {
 		modelsDTO = append(modelsDTO, interfaces.OutputModelDTO(models[i]))
 	}
 
@@ -197,7 +197,7 @@ func (ss *StorageService) GetModelElements(conn ConnDB, layer string) (interface
 	}
 
 	modelElementsDTO := make([]interfaces.OutputModelElementDTO, 0, len(modelElements))
-	for i := range modelElementsDTO {
+	for i := range modelElements {
 		modelElementsDTO = append(modelElementsDTO, interfaces.OutputModelElementDTO(modelElements[i]))
 	}
 
@@ -216,7 +216,7 @@ func (ss *StorageService) GetProperties(conn ConnDB) (interfaces.OutputPropertie
 	}
 
 	propertiesDTO := make([]interfaces.OutputPropertyDTO, 0, len(properties))
-	for i := range propertiesDTO {
+	for i := range properties {
 		propertiesDTO = append(propertiesDTO, interfaces.OutputPropertyDTO(properties[i]))
 	}
 
@@ -235,7 +235,7 @@ func (ss *StorageService) GetPropertiesByUnit(conn ConnDB, layer string, unit in
 	}
 
 	propertiesDTO := make([]interfaces.OutputPropertyDTO, 0, len(properties))
-	for i := range propertiesDTO {
+	for i := range properties {
 		propertiesDTO = append(propertiesDTO, interfaces.OutputPropertyDTO(properties[i]))
 	}
 

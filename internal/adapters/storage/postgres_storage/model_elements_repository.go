@@ -1,9 +1,9 @@
 package postgres_storage
 
 import (
-	"errors"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
+	"github.com/lib/pq"
 )
 
 type ModelElementsPgRepository struct{}
@@ -16,5 +16,9 @@ func (r *ModelElementsPgRepository) GetAllModelElements(conn storage.ConnDB, lay
 }
 
 func (r *ModelElementsPgRepository) SaveModelElements(conn storage.ConnDB, layer string, modelElements []string) ([]int, error) {
-	return nil, errors.New("postgres storage does not support function SaveModelElements") // TODO: implement me
+	args := map[string]interface{}{
+		"layer_name":     layer,
+		"elements_array": pq.Array(modelElements),
+	}
+	return namedSelectSliceFromScript[[]int](conn, insertModelElementsQuery, args)
 }

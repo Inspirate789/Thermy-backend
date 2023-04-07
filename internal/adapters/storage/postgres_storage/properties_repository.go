@@ -1,10 +1,10 @@
 package postgres_storage
 
 import (
-	"errors"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
+	"github.com/lib/pq"
 )
 
 type PropertiesPgRepository struct{}
@@ -23,5 +23,8 @@ func (r *PropertiesPgRepository) GetPropertiesByUnit(conn storage.ConnDB, layer 
 }
 
 func (r *PropertiesPgRepository) SaveProperties(conn storage.ConnDB, properties []string) ([]int, error) {
-	return nil, errors.New("postgres storage does not support function SaveProperties") // TODO: implement me
+	args := map[string]interface{}{
+		"properties_array": pq.Array(properties),
+	}
+	return namedSelectSliceFromScript[[]int](conn, insertPropertiesQuery, args)
 }
