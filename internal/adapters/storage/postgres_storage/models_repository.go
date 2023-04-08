@@ -12,7 +12,7 @@ func (r *ModelsPgRepository) GetAllModels(conn storage.ConnDB, layer string) ([]
 	args := map[string]any{
 		"layer_name": layer,
 	}
-	return namedSelectSliceFromScript[[]entities.Model](conn, selectAllModelsQuery, args)
+	return namedSelectSliceFromScript[[]entities.Model](conn, selectAllModels, args)
 }
 
 func (r *ModelsPgRepository) SaveModels(conn storage.ConnDB, layer string, models []string) ([]int, error) {
@@ -20,5 +20,5 @@ func (r *ModelsPgRepository) SaveModels(conn storage.ConnDB, layer string, model
 		"layer_name":   layer,
 		"models_array": pq.Array(models),
 	}
-	return namedSelectSliceFromScript[[]int](conn, insertModelsQuery, args)
+	return namedSelectSliceFromScript[[]int](conn, insertModels, args)
 }

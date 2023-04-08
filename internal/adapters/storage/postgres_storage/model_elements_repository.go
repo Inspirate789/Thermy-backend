@@ -12,7 +12,7 @@ func (r *ModelElementsPgRepository) GetAllModelElements(conn storage.ConnDB, lay
 	args := map[string]any{
 		"layer_name": layer,
 	}
-	return namedSelectSliceFromScript[[]entities.ModelElement](conn, selectAllModelElementsQuery, args)
+	return namedSelectSliceFromScript[[]entities.ModelElement](conn, selectAllModelElements, args)
 }
 
 func (r *ModelElementsPgRepository) SaveModelElements(conn storage.ConnDB, layer string, modelElements []string) ([]int, error) {
@@ -20,5 +20,5 @@ func (r *ModelElementsPgRepository) SaveModelElements(conn storage.ConnDB, layer
 		"layer_name":     layer,
 		"elements_array": pq.Array(modelElements),
 	}
-	return namedSelectSliceFromScript[[]int](conn, insertModelElementsQuery, args)
+	return namedSelectSliceFromScript[[]int](conn, insertModelElements, args)
 }

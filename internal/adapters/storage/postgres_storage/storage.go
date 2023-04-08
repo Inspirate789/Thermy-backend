@@ -37,7 +37,7 @@ func NewPostgresStorage() *PostgresStorage {
 
 func getConnRole(conn *sqlx.DB, ctx context.Context) (string, error) {
 	var role string
-	err := sqlx_utils.Get(ctx, conn, &role, selectRoleQuery)
+	err := sqlx_utils.Get(ctx, conn, &role, selectRole)
 	if err != nil {
 		return "", err
 	}

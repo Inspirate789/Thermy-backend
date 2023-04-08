@@ -19,9 +19,9 @@ func (r *UsersPgRepository) AddUser(conn storage.ConnDB, username string, role s
 		"role":     role,
 	}
 
-	return executeNamedScript(conn, insertUserQuery, args)
+	return executeNamedScript(conn, insertUser, args)
 }
 
 func (r *UsersPgRepository) GetUserPassword(conn storage.ConnDB, username string) (string, error) { // TODO: remove
-	return selectValueFromScript[string](conn, selectUserPasswordQuery, username)
+	return selectValueFromScript[string](conn, selectUserPassword, username)
 }

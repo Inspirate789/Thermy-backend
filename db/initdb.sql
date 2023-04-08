@@ -7,26 +7,26 @@ create schema if not exists public;
 -- Пользователи
 -- drop table if exists public.users;
 create table if not exists public.users(
-                                           id int generated always as identity primary key,
-                                           name text unique not null,
-                                           password text not null,
-                                           role text not null,
-                                           registration_date timestamp not null
+    id int generated always as identity primary key,
+    name text unique not null,
+    password text not null,
+    role text not null,
+    registration_date timestamp not null
 );
 
 -- Контексты употребления
 -- drop table if exists public.contexts;
 create table if not exists public.contexts(
-                                              id int generated always as identity primary key,
-                                              registration_date timestamp not null,
-                                              text text unique not null
+    id int generated always as identity primary key,
+    registration_date timestamp not null,
+    text text unique not null
 );
 
 -- Характеристики единиц языка
 -- drop table if exists public.properties;
 create table if not exists public.properties(
-                                                id int generated always as identity primary key,
-                                                property text unique not null
+    id int generated always as identity primary key,
+    property text unique not null
 );
 
 
@@ -62,10 +62,12 @@ grant references, select, insert, update, delete on all tables in schema public 
 
 -- Хранимые процедуры, функции и триггеры
 
-CREATE OR REPLACE PROCEDURE public.create_layer_tables(layer_name text)
+CREATE OR REPLACE PROCEDURE public.create_layer_tables(layer text)
 AS
 $func$
+DECLARE layer_name text;
 BEGIN
+    select (layer || '_layer') into layer_name;
     EXECUTE format(
             '-- (Структурные) Модели слоя
             create table if not exists %I.models(
@@ -169,21 +171,23 @@ BEGIN
                 unit_id int,
                 foreign key (unit_id) references %I.units_en(id)
             );',
-            (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'),
-            (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'),
-            (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'),
-            (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'),
-            (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'),
-            (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'),
-            (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer')
+            layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name, layer_name, layer_name
         );
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE PROCEDURE public.grant_student_rights_to_layer_tables(layer_name text)
+CREATE OR REPLACE PROCEDURE public.grant_student_rights_to_layer_tables(layer text)
 AS
 $func$
+DECLARE layer_name text;
 BEGIN
+    select (layer || '_layer') into layer_name;
     EXECUTE format(
             'grant select, insert, update on %I.units_ru to student;
             grant select, insert, update on %I.units_en to student;
@@ -197,40 +201,43 @@ BEGIN
             grant select on %I.models to student;
             grant select on %I.elements to student;
             grant select on %I.models_and_elems to student;',
-            (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'),
-            (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer'),
-            (layer_name || '_layer'), (layer_name || '_layer')
+            layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name, layer_name
         );
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE PROCEDURE public.grant_educator_rights_to_layer_tables(layer_name text)
+CREATE OR REPLACE PROCEDURE public.grant_educator_rights_to_layer_tables(layer text)
 AS
 $func$
+DECLARE layer_name text;
 BEGIN
+    select (layer || '_layer') into layer_name;
     EXECUTE format(
             'grant insert, update, delete on %I.models to educator;
             grant insert, update, delete on %I.elements to educator;
             grant insert, update, delete on %I.models_and_elems to educator;',
-            (layer_name || '_layer'), (layer_name || '_layer'), (layer_name || '_layer')
+            layer_name, layer_name, layer_name
         );
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE PROCEDURE public.grant_admin_rights_to_layer_tables(layer_name text)
+CREATE OR REPLACE PROCEDURE public.grant_admin_rights_to_layer_tables(layer text)
 AS
 $func$
+DECLARE layer_name text;
 BEGIN
+    select (layer || '_layer') into layer_name;
     EXECUTE format(
             'grant usage, create on schema %I to admin;
             grant select, insert, update, delete on all tables in schema %I to admin;',
-            (layer_name || '_layer'),
-            (layer_name || '_layer')
+            layer_name, layer_name
         );
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE PROCEDURE public.grant_rights_to_layer_tables(layer_name text)
+CREATE OR REPLACE PROCEDURE public.grant_rights_to_layer_tables(layer text)
 AS
 $func$
 BEGIN
@@ -238,12 +245,12 @@ BEGIN
             E'call public.grant_student_rights_to_layer_tables(\'%s\');
             call public.grant_educator_rights_to_layer_tables(\'%s\');
             call public.grant_admin_rights_to_layer_tables(\'%s\');',
-            layer_name, layer_name, layer_name
+            layer, layer, layer
         );
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE PROCEDURE public.create_layer(layer_name text)
+CREATE OR REPLACE PROCEDURE public.create_layer(layer text)
 AS
 $func$
 BEGIN
@@ -252,9 +259,7 @@ BEGIN
             create schema if not exists %I;
             call public.create_layer_tables(\'%s\');
             call public.grant_rights_to_layer_tables(\'%s\');',
-            (layer_name || '_layer'),
-            layer_name,
-            layer_name
+            (layer || '_layer'), layer, layer
         );
 END
 $func$ LANGUAGE plpgsql;
@@ -263,7 +268,7 @@ CREATE OR REPLACE FUNCTION public.insert_user(username text, password text, role
     RETURNS int
 AS
 $func$
-    DECLARE result int;
+DECLARE result int;
 BEGIN
     EXECUTE format(
             E'set role admin;
@@ -281,59 +286,65 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.select_all_models(layer_name text)
+CREATE OR REPLACE FUNCTION public.select_all_models(layer text)
     RETURNS table (
                       id int,
                       name text
                   )
 AS
 $func$
+DECLARE layer_name text;
 BEGIN
+    select (layer || '_layer') into layer_name;
     RETURN QUERY
     EXECUTE format(
             'select *
             from %I.models;',
-            (layer_name || '_layer')
+            layer_name
         );
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.select_all_model_elements(layer_name text)
+CREATE OR REPLACE FUNCTION public.select_all_model_elements(layer text)
     RETURNS table (
                       id int,
                       name text
                   )
 AS
 $func$
+DECLARE layer_name text;
 BEGIN
+    select (layer || '_layer') into layer_name;
     RETURN QUERY
     EXECUTE format(
             'select * from %I.elements;',
-            (layer_name || '_layer')
+            layer_name
         );
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.select_contexts_id_by_unit(layer_name text, lang text, unit_id int)
+CREATE OR REPLACE FUNCTION public.select_contexts_id_by_unit(layer text, lang text, unit_id int)
     RETURNS table (
         id int
                   )
 AS
 $func$
+DECLARE layer_name text;
 BEGIN
+    select (layer || '_layer') into layer_name;
     RETURN QUERY
     EXECUTE format(
             'select context_id
             from %I.%I
             where unit_id = $1;',
-            (layer_name || '_layer'),
+            layer_name,
             ('contexts_and_units_' || lang)
         )
         USING unit_id;
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.select_all_linked_units(layer_name text)
+CREATE OR REPLACE FUNCTION public.select_all_linked_units(layer text)
     RETURNS table (
                       unit_ru_id int,
                       unit_ru_model_id int,
@@ -346,7 +357,9 @@ CREATE OR REPLACE FUNCTION public.select_all_linked_units(layer_name text)
                   )
 AS
 $func$
+DECLARE layer_name text;
 BEGIN
+    select (layer || '_layer') into layer_name;
     RETURN QUERY
     EXECUTE format(
             'select %I.units_ru.id as unit_ru_id,
@@ -360,69 +373,96 @@ BEGIN
             from  %I.units_ru
                 inner join %I.units_ru_and_en on %I.units_ru.id = unit_ru_id
                 inner join %I.units_en on %I.units_en.id = unit_en_id;',
-            (layer_name || '_layer'),
-            (layer_name || '_layer'),
-            (layer_name || '_layer'),
-            (layer_name || '_layer'),
-            (layer_name || '_layer'),
-            (layer_name || '_layer'),
-            (layer_name || '_layer'),
-            (layer_name || '_layer'),
-            (layer_name || '_layer'),
-            (layer_name || '_layer'),
-            (layer_name || '_layer'),
-            (layer_name || '_layer'),
-            (layer_name || '_layer')
+            layer_name, layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name, layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name
         );
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.select_properties_by_unit(layer_name text, lang text, unit_text text)
+CREATE OR REPLACE FUNCTION public.select_linked_units_by_models_id(layer text, models_id int[])
     RETURNS table (
-                      id int,
-                      property text
+                      unit_ru_id int,
+                      unit_ru_model_id int,
+                      unit_ru_registration_date timestamp,
+                      unit_ru_text text,
+                      unit_en_id int,
+                      unit_en_model_id int,
+                      unit_en_registration_date timestamp,
+                      unit_en_text text
                   )
 AS
 $func$
+DECLARE layer_name text;
+        id_string text;
 BEGIN
+    select (layer || '_layer') into layer_name;
+    select format('%s', array_to_string(models_id, ',')) into id_string;
     RETURN QUERY
     EXECUTE format(
-            E'select *
-             from public.properties
-                inner join %I.%I on public.properties.id = property_id
-                inner join %I.%I on %I.%I.id = unit_id and %I.%I.text = \'%s\';',
-            (layer_name || '_layer'),
-            ('properties_and_units_' || lang),
-            (layer_name || '_layer'),
-            ('units_' || lang),
-            (layer_name || '_layer'),
-            ('units_' || lang),
-            (layer_name || '_layer'),
-            ('units_' || lang),
-            unit_text
+        'select %I.units_ru.id as unit_ru_id,
+           %I.units_ru.model_id as unit_ru_model_id,
+           %I.units_ru.registration_date as unit_ru_registration_date,
+           %I.units_ru.text as unit_ru_text,
+           %I.units_en.id as unit_en_id,
+           %I.units_en.model_id as unit_en_model_id,
+           %I.units_en.registration_date as unit_en_registration_date,
+           %I.units_en.text as unit_en_text
+        from  %I.units_ru
+            inner join %I.units_ru_and_en on %I.units_ru.id = unit_ru_id and %I.units_ru.model_id = any(array[%s])
+            inner join %I.units_en on %I.units_en.id = unit_en_id and %I.units_en.model_id = any(array[%s]);',
+        layer_name, layer_name, layer_name, layer_name, layer_name, layer_name,
+        layer_name, layer_name, layer_name, layer_name, layer_name, layer_name,
+        id_string,
+        layer_name, layer_name, layer_name,
+        id_string
+    );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.select_linked_units_by_properties_id(layer text, properties_id int[])
+    RETURNS table (
+                      unit_ru_id int,
+                      unit_ru_model_id int,
+                      unit_ru_registration_date timestamp,
+                      unit_ru_text text,
+                      unit_en_id int,
+                      unit_en_model_id int,
+                      unit_en_registration_date timestamp,
+                      unit_en_text text
+                  )
+AS
+$func$
+DECLARE layer_name text;
+        id_string text;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    select format('%s', array_to_string(properties_id, ',')) into id_string;
+    RETURN QUERY
+        EXECUTE format(
+            E'select %I.units_ru.id as unit_ru_id,
+               %I.units_ru.model_id as unit_ru_model_id,
+               %I.units_ru.registration_date as unit_ru_registration_date,
+               %I.units_ru.text as unit_ru_text,
+               %I.units_en.id as unit_en_id,
+               %I.units_en.model_id as unit_en_model_id,
+               %I.units_en.registration_date as unit_en_registration_date,
+               %I.units_en.text as unit_en_text
+            from  %I.units_ru
+                inner join %I.units_ru_and_en on %I.units_ru.id = unit_ru_id
+                inner join %I.units_en on %I.units_en.id = unit_en_id
+            where array[%s] <@ array(select * from public.select_properties_id_by_unit_id(\'%s\', \'ru\', %I.units_ru.id))
+                or array[%s] <@ array(select * from public.select_properties_id_by_unit_id(\'%s\', \'en\', %I.units_en.id));',
+            layer_name, layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name, layer_name, layer_name, layer_name, layer_name, layer_name,
+            layer_name,
+            id_string, layer_name, layer_name,
+            id_string, layer_name, layer_name
         );
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.select_properties_id_by_unit_id(layer_name text, lang text, unit_id int)
-    RETURNS table (
-        id int
-                  )
-AS
-$func$
-BEGIN
-    EXECUTE format(
-            'select property_id
-            from %I.%I
-            where unit_id = $1;',
-            (layer_name || '_layer'),
-            ('properties_and_units_' || lang)
-        )
-        USING unit_id;
-END
-$func$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION public.select_unlinked_units_by_lang(layer_name text, lang text)
+CREATE OR REPLACE FUNCTION public.select_unlinked_units_by_lang(layer text, lang text)
     RETURNS table (
                       id int,
                       model_id int,
@@ -431,15 +471,121 @@ CREATE OR REPLACE FUNCTION public.select_unlinked_units_by_lang(layer_name text,
                   )
 AS
 $func$
+DECLARE layer_name text;
 BEGIN
+    select (layer || '_layer') into layer_name;
+    RETURN QUERY
     EXECUTE format(
-            'select *
+            'select id, model_id ,registration_date, text
             from %I.%I left join %I.units_ru_and_en on id <> %I;',
-            (layer_name || '_layer'),
+            layer_name,
             ('units_' || lang),
-            (layer_name || '_layer'),
+            layer_name,
             ('unit_' || lang || '_id')
         );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.select_unlinked_units_by_lang_and_models_id(layer text, lang text, models_id int[])
+    RETURNS table (
+                      id int,
+                      model_id int,
+                      registration_date timestamp,
+                      text text
+                  )
+AS
+$func$
+DECLARE layer_name text;
+        id_string text;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    select format('%s', array_to_string(models_id, ',')) into id_string;
+    RETURN QUERY
+    EXECUTE format(
+            'select id, model_id ,registration_date, text
+            from %I.%I left join %I.units_ru_and_en on id <> %I and %I.%I.model_id = any(array[%s]);',
+            layer_name, ('units_' || lang),
+            layer_name, ('unit_' || lang || '_id'),
+            layer_name, ('units_' || lang),
+            id_string
+        );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.select_unlinked_units_by_lang_and_properties_id(layer text, lang text, properties_id int[])
+    RETURNS table (
+                      id int,
+                      model_id int,
+                      registration_date timestamp,
+                      text text
+                  )
+AS
+$func$
+DECLARE layer_name text;
+        id_string text;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    select format('%s', array_to_string(properties_id, ',')) into id_string;
+    RETURN QUERY
+        EXECUTE format(
+            E'select id, model_id ,registration_date, text
+            from %I.%I left join %I.units_ru_and_en on id <> %I
+                and array[%s] <@ array(select * from public.select_properties_id_by_unit_id(\'%s\', \'%s\', %I.%I.id));',
+            layer_name, ('units_' || lang),
+            layer_name, ('unit_' || lang || '_id'),
+            id_string, layer_name, lang,
+            layer_name, ('units_' || lang)
+        );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.select_properties_by_unit(layer text, lang text, unit_text text)
+    RETURNS table (
+                      id int,
+                      property text
+                  )
+AS
+$func$
+DECLARE layer_name text;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    RETURN QUERY
+    EXECUTE format(
+            E'select public.properties.id, public.properties.property
+             from public.properties
+                inner join %I.%I on public.properties.id = property_id
+                inner join %I.%I on %I.%I.id = unit_id and %I.%I.text = \'%s\';',
+            layer_name,
+            ('properties_and_units_' || lang),
+            layer_name,
+            ('units_' || lang),
+            layer_name,
+            ('units_' || lang),
+            layer_name,
+            ('units_' || lang),
+            unit_text
+        );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.select_properties_id_by_unit_id(layer text, lang text, unit_id int)
+    RETURNS table (
+        id int
+                  )
+AS
+$func$
+DECLARE layer_name text;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    RETURN QUERY
+    EXECUTE format(
+            'select property_id
+            from %I.%I
+            where unit_id = $1;',
+            layer_name,
+            ('properties_and_units_' || lang)
+        )
+        USING unit_id;
 END
 $func$ LANGUAGE plpgsql;
 
@@ -457,46 +603,50 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.insert_models(layer_name text, model_texts text[])
+CREATE OR REPLACE FUNCTION public.insert_models(layer text, model_texts text[])
     RETURNS table (
         id int
                   )
 AS
 $func$
+DECLARE layer_name text;
 BEGIN
+    select (layer || '_layer') into layer_name;
     RETURN QUERY
-        EXECUTE format(
-            E'insert into %I.models(id, name) overriding user value -- or overriding system value
-            values (null, unnest(array[%s]))
-            returning %I.models.id;',
-            (layer_name || '_layer'),
-            format(
-                    E'\'%s\'',
-                    array_to_string(model_texts, E'\',\'')
-                ),
-            (layer_name || '_layer')
-        );
+    EXECUTE format(
+        E'insert into %I.models(id, name) overriding user value -- or overriding system value
+        values (null, unnest(array[%s]))
+        returning %I.models.id;',
+        layer_name,
+        format(
+                E'\'%s\'',
+                array_to_string(model_texts, E'\',\'')
+            ),
+        layer_name
+    );
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.insert_model_elements(layer_name text, element_texts text[])
+CREATE OR REPLACE FUNCTION public.insert_model_elements(layer text, element_texts text[])
     RETURNS table (
         id int
                   )
 AS
 $func$
+DECLARE layer_name text;
 BEGIN
+    select (layer || '_layer') into layer_name;
     RETURN QUERY
     EXECUTE format(
             E'insert into %I.elements(id, name) overriding user value -- or overriding system value
             values (null, unnest(array[%s]))
             returning %I.elements.id;',
-            (layer_name || '_layer'),
+            layer_name,
             format(
                 E'\'%s\'',
                 array_to_string(element_texts, E'\',\'')
                 ),
-            (layer_name || '_layer')
+            layer_name
         );
 END
 $func$ LANGUAGE plpgsql;
