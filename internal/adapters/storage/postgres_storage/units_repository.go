@@ -10,19 +10,8 @@ import (
 
 type UnitsPgRepository struct{}
 
-type JoinedUnits struct {
-	UnitRuID      int    `db:"unit_ru_id"`
-	UnitRuModelID int    `db:"unit_ru_model_id"`
-	UnitRuRegDate string `db:"unit_ru_registration_date"`
-	UnitRuText    string `db:"unit_ru_text"`
-	UnitEnID      int    `db:"unit_en_id"`
-	UnitEnModelID int    `db:"unit_en_model_id"`
-	UnitEnRegDate string `db:"unit_en_registration_date"`
-	UnitEnText    string `db:"unit_en_text"`
-}
-
 func makeOutputUnitDTO(conn storage.ConnDB, layer string, lang string, unit entities.Unit) (interfaces.OutputUnitDTO, error) {
-	args := map[string]interface{}{
+	args := map[string]any{
 		"layer_name": layer,
 		"lang":       lang,
 		"unit_id":    unit.ID,
@@ -48,8 +37,86 @@ func makeOutputUnitDTO(conn storage.ConnDB, layer string, lang string, unit enti
 	return unitDTO, nil
 }
 
+func (r *UnitsPgRepository) combineUnlinkedUnits(conn storage.ConnDB, layer string, unlinkedUnits entities.UnitsMap, combinedUnits interfaces.UnitDtoMaps) (interfaces.UnitDtoMaps, []int, error) {
+	uniqueContextsID := make(map[int]bool)
+
+	for lang := range unlinkedUnits {
+		for _, unit := range unlinkedUnits[lang] {
+			unitDTO, err := makeOutputUnitDTO(conn, layer, lang, unit)
+			if err != nil {
+				return nil, nil, err
+			}
+
+			for _, contextID := range unitDTO.ContextsID {
+				uniqueContextsID[contextID] = true
+			}
+
+			combinedUnits = append(combinedUnits, map[string]interfaces.OutputUnitDTO{
+				lang: unitDTO,
+			})
+		}
+	}
+
+	contextsID := make([]int, 0, len(uniqueContextsID))
+	for id := range uniqueContextsID {
+		contextsID = append(contextsID, id)
+	}
+
+	return combinedUnits, contextsID, nil
+}
+
+func (r *UnitsPgRepository) combineLinkedUnits(conn storage.ConnDB, layer string, linkedUnits joinedUnitMaps, combinedUnits interfaces.UnitDtoMaps) (interfaces.UnitDtoMaps, []int, error) {
+	uniqueContextsID := make(map[int]bool)
+
+	for _, unitMap := range linkedUnits {
+		unitMapDTO := make(map[string]interfaces.OutputUnitDTO)
+		for lang := range unitMap {
+			unit := unitMap[lang]
+			unitDTO, err := makeOutputUnitDTO(conn, layer, lang, unit)
+			if err != nil {
+				return nil, nil, err
+			}
+			unitMapDTO[lang] = unitDTO
+
+			for _, contextID := range unitDTO.ContextsID {
+				uniqueContextsID[contextID] = true
+			}
+		}
+
+		combinedUnits = append(combinedUnits, unitMapDTO)
+	}
+
+	contextsID := make([]int, 0, len(uniqueContextsID))
+	for id := range uniqueContextsID {
+		contextsID = append(contextsID, id)
+	}
+
+	return combinedUnits, contextsID, nil
+}
+
+func (r *UnitsPgRepository) combineUnits(conn storage.ConnDB, layer string, linkedUnits joinedUnitMaps, unlinkedUnits entities.UnitsMap) (interfaces.UnitDtoMaps, []int, error) {
+	unlinkedUnitsLen := 0
+	for lang := range unlinkedUnits {
+		unlinkedUnitsLen += len(unlinkedUnits[lang])
+	}
+
+	combinedUnits := make(interfaces.UnitDtoMaps, 0, unlinkedUnitsLen+len(linkedUnits))
+
+	combinedUnits, contextsID1, err := r.combineUnlinkedUnits(conn, layer, unlinkedUnits, combinedUnits)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	combinedUnits, contextsID2, err := r.combineLinkedUnits(conn, layer, linkedUnits, combinedUnits)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return combinedUnits, append(contextsID1, contextsID2...), nil
+}
+
 func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (interfaces.OutputUnitsDTO, error) {
-	unlinkedUnitsRu, err := namedSelectSliceFromScript[[]entities.Unit](conn, selectUnlinkedUnitsByLangQuery, map[string]interface{}{
+	unlinkedUnitsRu, err := namedSelectSliceFromScript[[]entities.Unit](conn, selectUnlinkedUnitsByLangQuery, map[string]any{
 		"layer_name": layer,
 		"lang":       "ru",
 	})
@@ -57,7 +124,7 @@ func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (inte
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	unlinkedUnitsEn, err := namedSelectSliceFromScript[[]entities.Unit](conn, selectUnlinkedUnitsByLangQuery, map[string]interface{}{
+	unlinkedUnitsEn, err := namedSelectSliceFromScript[[]entities.Unit](conn, selectUnlinkedUnitsByLangQuery, map[string]any{
 		"layer_name": layer,
 		"lang":       "en",
 	})
@@ -65,82 +132,17 @@ func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (inte
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	linkedUnits, err := namedSelectSliceFromScript[[]JoinedUnits](conn, selectAllLinkedUnitsQuery, map[string]interface{}{
+	linkedUnits, err := namedSelectSliceFromScript[joinedUnits](conn, selectAllLinkedUnitsQuery, map[string]any{
 		"layer_name": layer,
 	})
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	combinedUnits := make([]map[string]interfaces.OutputUnitDTO, len(unlinkedUnitsRu)+len(unlinkedUnitsEn)+len(linkedUnits))
-	uniqueContextsID := make(map[int]bool)
-
-	i := 0
-	for _, unit := range unlinkedUnitsRu {
-		unitDTO, err := makeOutputUnitDTO(conn, layer, "ru", unit)
-		if err != nil {
-			return interfaces.OutputUnitsDTO{}, err
-		}
-
-		for _, contextID := range unitDTO.ContextsID {
-			uniqueContextsID[contextID] = true
-		}
-
-		combinedUnits[i]["ru"] = unitDTO
-		i++
-	}
-	for _, unit := range unlinkedUnitsEn {
-		unitDTO, err := makeOutputUnitDTO(conn, layer, "en", unit)
-		if err != nil {
-			return interfaces.OutputUnitsDTO{}, err
-		}
-
-		for _, contextID := range unitDTO.ContextsID {
-			uniqueContextsID[contextID] = true
-		}
-
-		combinedUnits[i]["en"] = unitDTO
-		i++
-	}
-	for _, unitPair := range linkedUnits {
-		unitRu := entities.Unit{
-			ID:      unitPair.UnitRuID,
-			ModelID: unitPair.UnitRuModelID,
-			RegDate: unitPair.UnitRuRegDate,
-			Text:    unitPair.UnitRuText,
-		}
-		unitEn := entities.Unit{
-			ID:      unitPair.UnitEnID,
-			ModelID: unitPair.UnitEnModelID,
-			RegDate: unitPair.UnitEnRegDate,
-			Text:    unitPair.UnitEnText,
-		}
-
-		unitRuDTO, err := makeOutputUnitDTO(conn, layer, "ru", unitRu)
-		if err != nil {
-			return interfaces.OutputUnitsDTO{}, err
-		}
-		unitEnDTO, err := makeOutputUnitDTO(conn, layer, "en", unitEn)
-		if err != nil {
-			return interfaces.OutputUnitsDTO{}, err
-		}
-
-		for _, contextID := range unitRuDTO.ContextsID {
-			uniqueContextsID[contextID] = true
-		}
-		for _, contextID := range unitEnDTO.ContextsID {
-			uniqueContextsID[contextID] = true
-		}
-
-		combinedUnits[i]["ru"] = unitRuDTO
-		combinedUnits[i]["en"] = unitEnDTO
-		i++
-	}
-
-	contextsID := make([]int, 0, len(uniqueContextsID))
-	for id := range uniqueContextsID {
-		contextsID = append(contextsID, id)
-	}
+	combinedUnits, contextsID, err := r.combineUnits(conn, layer, linkedUnits.toMaps(), entities.UnitsMap{
+		"ru": unlinkedUnitsRu,
+		"en": unlinkedUnitsEn,
+	})
 
 	contexts, err := selectSliceFromScript[[]interfaces.ContextDTO](conn, selectContextsByIdQuery, pq.Array(contextsID))
 	if err != nil {

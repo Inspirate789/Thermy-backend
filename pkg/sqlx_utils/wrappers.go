@@ -10,11 +10,11 @@ import (
 	"go.uber.org/multierr"
 )
 
-func sqlErr(err error, query string, args ...interface{}) error {
+func sqlErr(err error, query string, args ...any) error {
 	return fmt.Errorf(`run query "%s" with args %+v: %w`, query, args, err)
 }
 
-func namedQuery(query string, arg interface{}) (nq string, args []interface{}, err error) {
+func namedQuery(query string, arg any) (nq string, args []any, err error) {
 	nq, args, err = sqlx.Named(query, arg)
 	if err != nil {
 		return "", nil, sqlErr(err, query, args...)
@@ -22,7 +22,7 @@ func namedQuery(query string, arg interface{}) (nq string, args []interface{}, e
 	return nq, args, nil
 }
 
-func Exec(ctx context.Context, db sqlx.ExecerContext, query string, args ...interface{}) (sql.Result, error) {
+func Exec(ctx context.Context, db sqlx.ExecerContext, query string, args ...any) (sql.Result, error) {
 	res, err := db.ExecContext(ctx, query, args...)
 	if err != nil {
 		return res, sqlErr(err, query, args...)
@@ -31,7 +31,7 @@ func Exec(ctx context.Context, db sqlx.ExecerContext, query string, args ...inte
 	return res, nil
 }
 
-func NamedExec(ctx context.Context, db sqlx.ExtContext, query string, arg interface{}) (sql.Result, error) {
+func NamedExec(ctx context.Context, db sqlx.ExtContext, query string, arg any) (sql.Result, error) {
 	nq, args, err := namedQuery(query, arg)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func NamedExec(ctx context.Context, db sqlx.ExtContext, query string, arg interf
 	return Exec(ctx, db, db.Rebind(nq), args...)
 }
 
-func Select(ctx context.Context, db sqlx.QueryerContext, dest interface{}, query string, args ...interface{}) error {
+func Select(ctx context.Context, db sqlx.QueryerContext, dest any, query string, args ...any) error {
 	if err := sqlx.SelectContext(ctx, db, dest, query, args...); err != nil {
 		return sqlErr(err, query, args...)
 	}
@@ -48,7 +48,7 @@ func Select(ctx context.Context, db sqlx.QueryerContext, dest interface{}, query
 	return nil
 }
 
-func NamedSelect(ctx context.Context, db sqlx.ExtContext, dest interface{}, query string, arg interface{}) error {
+func NamedSelect(ctx context.Context, db sqlx.ExtContext, dest any, query string, arg any) error {
 	nq, args, err := namedQuery(query, arg)
 	if err != nil {
 		return err
@@ -57,7 +57,7 @@ func NamedSelect(ctx context.Context, db sqlx.ExtContext, dest interface{}, quer
 	return Select(ctx, db, dest, db.Rebind(nq), args...)
 }
 
-func Get(ctx context.Context, db sqlx.QueryerContext, dest interface{}, query string, args ...interface{}) error {
+func Get(ctx context.Context, db sqlx.QueryerContext, dest any, query string, args ...any) error {
 	if err := sqlx.GetContext(ctx, db, dest, query, args...); err != nil {
 		return sqlErr(err, query, args...)
 	}
@@ -65,7 +65,7 @@ func Get(ctx context.Context, db sqlx.QueryerContext, dest interface{}, query st
 	return nil
 }
 
-func NamedGet(ctx context.Context, db sqlx.ExtContext, dest interface{}, query string, arg interface{}) error {
+func NamedGet(ctx context.Context, db sqlx.ExtContext, dest any, query string, arg any) error {
 	nq, args, err := namedQuery(query, arg)
 	if err != nil {
 		return err
@@ -74,7 +74,7 @@ func NamedGet(ctx context.Context, db sqlx.ExtContext, dest interface{}, query s
 	return Get(ctx, db, dest, db.Rebind(nq), args...)
 }
 
-func SelectMaps(ctx context.Context, db sqlx.QueryerContext, query string, args ...interface{}) (ret []map[string]interface{}, err error) {
+func SelectMaps(ctx context.Context, db sqlx.QueryerContext, query string, args ...any) (ret []map[string]any, err error) {
 	rows, err := db.QueryxContext(ctx, query, args...)
 	if err != nil {
 		return nil, sqlErr(err, query, args...)
@@ -84,14 +84,14 @@ func SelectMaps(ctx context.Context, db sqlx.QueryerContext, query string, args 
 		err = multierr.Combine(err, rows.Close())
 	}()
 
-	ret = []map[string]interface{}{}
+	ret = []map[string]any{}
 	numCols := -1
 	for rows.Next() {
-		var m map[string]interface{}
+		var m map[string]any
 		if numCols < 0 {
-			m = map[string]interface{}{}
+			m = map[string]any{}
 		} else {
-			m = make(map[string]interface{}, numCols)
+			m = make(map[string]any, numCols)
 		}
 
 		if err = rows.MapScan(m); err != nil {
@@ -108,7 +108,7 @@ func SelectMaps(ctx context.Context, db sqlx.QueryerContext, query string, args 
 	return ret, nil
 }
 
-func NamedSelectMaps(ctx context.Context, db sqlx.ExtContext, query string, arg interface{}) (ret []map[string]interface{}, err error) {
+func NamedSelectMaps(ctx context.Context, db sqlx.ExtContext, query string, arg any) (ret []map[string]any, err error) {
 	nq, args, err := namedQuery(query, arg)
 	if err != nil {
 		return nil, err
@@ -117,13 +117,13 @@ func NamedSelectMaps(ctx context.Context, db sqlx.ExtContext, query string, arg 
 	return SelectMaps(ctx, db, db.Rebind(nq), args...)
 }
 
-func GetMap(ctx context.Context, db sqlx.QueryerContext, query string, args ...interface{}) (ret map[string]interface{}, err error) {
+func GetMap(ctx context.Context, db sqlx.QueryerContext, query string, args ...any) (ret map[string]any, err error) {
 	row := db.QueryRowxContext(ctx, query, args...)
 	if row.Err() != nil {
 		return nil, sqlErr(row.Err(), query, args...)
 	}
 
-	ret = map[string]interface{}{}
+	ret = map[string]any{}
 	if err := row.MapScan(ret); err != nil {
 		return nil, sqlErr(err, query, args...)
 	}
@@ -131,7 +131,7 @@ func GetMap(ctx context.Context, db sqlx.QueryerContext, query string, args ...i
 	return ret, nil
 }
 
-func NamedGetMap(ctx context.Context, db sqlx.ExtContext, query string, arg interface{}) (ret map[string]interface{}, err error) {
+func NamedGetMap(ctx context.Context, db sqlx.ExtContext, query string, arg any) (ret map[string]any, err error) {
 	nq, args, err := namedQuery(query, arg)
 	if err != nil {
 		return nil, err

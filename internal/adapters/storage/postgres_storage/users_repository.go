@@ -13,7 +13,7 @@ func (r *UsersPgRepository) AddUser(conn storage.ConnDB, username string, role s
 		return err
 	}
 
-	args := map[string]interface{}{
+	args := map[string]any{
 		"username": username,
 		"password": "passwd",
 		"role":     role,

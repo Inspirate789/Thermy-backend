@@ -19,7 +19,7 @@ func executeScript(conn storage.ConnDB, script string, args ...any) error {
 	return err
 }
 
-func executeNamedScript(conn storage.ConnDB, script string, args map[string]interface{}) error {
+func executeNamedScript(conn storage.ConnDB, script string, args map[string]any) error {
 	sqlxDB, ok := conn.(*sqlx.DB)
 	if !ok {
 		return errors.New("cannot get *sqlx.DB from argument")
@@ -46,7 +46,7 @@ func selectValueFromScript[T any](conn storage.ConnDB, script string, args ...an
 	return value, nil
 }
 
-func selectValueFromNamedScript[T any](conn storage.ConnDB, script string, args map[string]interface{}) (T, error) {
+func selectValueFromNamedScript[T any](conn storage.ConnDB, script string, args map[string]any) (T, error) {
 	var value T
 
 	sqlxDB, ok := conn.(*sqlx.DB)
@@ -77,7 +77,7 @@ func selectSliceFromScript[S ~[]E, E any](conn storage.ConnDB, script string, ar
 	return slice, nil
 }
 
-func namedSelectSliceFromScript[S ~[]E, E any](conn storage.ConnDB, script string, args map[string]interface{}) (S, error) {
+func namedSelectSliceFromScript[S ~[]E, E any](conn storage.ConnDB, script string, args map[string]any) (S, error) {
 	sqlxDB, ok := conn.(*sqlx.DB)
 	if !ok {
 		return nil, errors.New("cannot get *sqlx.DB from argument") // TODO: log and wrap

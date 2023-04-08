@@ -77,6 +77,8 @@ type OutputUnitDTO struct {
 	ContextsID   []int  `json:"contexts_id,omitempty"`
 }
 
+type UnitDtoMaps []map[string]OutputUnitDTO
+
 type ContextDTO struct {
 	ID   int    `json:"id"`
 	Text string `json:"text"`

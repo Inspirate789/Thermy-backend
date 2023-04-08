@@ -9,14 +9,14 @@ import (
 type ModelElementsPgRepository struct{}
 
 func (r *ModelElementsPgRepository) GetAllModelElements(conn storage.ConnDB, layer string) ([]entities.ModelElement, error) {
-	args := map[string]interface{}{
+	args := map[string]any{
 		"layer_name": layer,
 	}
 	return namedSelectSliceFromScript[[]entities.ModelElement](conn, selectAllModelElementsQuery, args)
 }
 
 func (r *ModelElementsPgRepository) SaveModelElements(conn storage.ConnDB, layer string, modelElements []string) ([]int, error) {
-	args := map[string]interface{}{
+	args := map[string]any{
 		"layer_name":     layer,
 		"elements_array": pq.Array(modelElements),
 	}

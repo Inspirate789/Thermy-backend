@@ -7,7 +7,7 @@ import (
 type LayersPgRepository struct{}
 
 func (r *LayersPgRepository) LayerExist(conn storage.ConnDB, layer string) (bool, error) {
-	layers, err := namedSelectSliceFromScript[[]string](conn, selectLayerNamesQuery, make(map[string]interface{})) // TODO: any?
+	layers, err := namedSelectSliceFromScript[[]string](conn, selectLayerNamesQuery, make(map[string]any))
 	if err != nil {
 		return false, err
 	}
@@ -21,11 +21,11 @@ func (r *LayersPgRepository) LayerExist(conn storage.ConnDB, layer string) (bool
 }
 
 func (r *LayersPgRepository) GetAllLayers(conn storage.ConnDB) ([]string, error) {
-	return namedSelectSliceFromScript[[]string](conn, selectLayerNamesQuery, make(map[string]interface{}))
+	return namedSelectSliceFromScript[[]string](conn, selectLayerNamesQuery, make(map[string]any))
 }
 
 func (r *LayersPgRepository) SaveLayer(conn storage.ConnDB, name string) error {
-	args := map[string]interface{}{
+	args := map[string]any{
 		"layer_name": name,
 	}
 	return executeNamedScript(conn, createLayerQuery, args)

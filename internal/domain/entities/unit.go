@@ -12,6 +12,8 @@ type Unit struct {
 	Text    string `db:"text"`
 }
 
+type UnitsMap map[string][]Unit
+
 func (u *Unit) IsValid() error {
 	var err error
 	switch {

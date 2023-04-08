@@ -430,7 +430,7 @@ func TestStorageService_GetUnitsByModels(t *testing.T) {
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("GetUnitsByModels", mock.Anything, "test_layer", []int{}).Return(interfaces.OutputUnitsDTO{
-		Units:    make([]map[string]interfaces.OutputUnitDTO, 0),
+		Units:    make(interfaces.UnitDtoMaps, 0),
 		Contexts: []interfaces.ContextDTO{},
 	}, nil)
 	mockStorage.On("LayerExist", mock.Anything, "test_layer").Return(true, nil)
@@ -461,7 +461,7 @@ func TestStorageService_GetUnitsByModels(t *testing.T) {
 				},
 			},
 			want: interfaces.OutputUnitsDTO{
-				Units:    make([]map[string]interfaces.OutputUnitDTO, 0),
+				Units:    make(interfaces.UnitDtoMaps, 0),
 				Contexts: []interfaces.ContextDTO{},
 			},
 			wantErr: false,
@@ -490,7 +490,7 @@ func TestStorageService_GetUnitsByProperties(t *testing.T) {
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("GetUnitsByProperties", mock.Anything, "test_layer", []int{}).Return(interfaces.OutputUnitsDTO{
-		Units:    make([]map[string]interfaces.OutputUnitDTO, 0),
+		Units:    make(interfaces.UnitDtoMaps, 0),
 		Contexts: []interfaces.ContextDTO{},
 	}, nil)
 	mockStorage.On("LayerExist", mock.Anything, "test_layer").Return(true, nil)
@@ -519,7 +519,7 @@ func TestStorageService_GetUnitsByProperties(t *testing.T) {
 				propertiesDTO: interfaces.PropertiesIdDTO{Properties: []int{}},
 			},
 			want: interfaces.OutputUnitsDTO{
-				Units:    make([]map[string]interfaces.OutputUnitDTO, 0),
+				Units:    make(interfaces.UnitDtoMaps, 0),
 				Contexts: []interfaces.ContextDTO{},
 			},
 			wantErr: false,

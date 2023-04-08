@@ -10,11 +10,11 @@ import (
 type PropertiesPgRepository struct{}
 
 func (r *PropertiesPgRepository) GetAllProperties(conn storage.ConnDB) ([]entities.Property, error) {
-	return namedSelectSliceFromScript[[]entities.Property](conn, selectAllPropertiesQuery, make(map[string]interface{}))
+	return namedSelectSliceFromScript[[]entities.Property](conn, selectAllPropertiesQuery, make(map[string]any))
 }
 
 func (r *PropertiesPgRepository) GetPropertiesByUnit(conn storage.ConnDB, layer string, unit interfaces.SearchUnitDTO) ([]entities.Property, error) {
-	args := map[string]interface{}{
+	args := map[string]any{
 		"layer_name": layer,
 		"lang":       unit.Lang,
 		"unit_text":  unit.Text,
@@ -23,7 +23,7 @@ func (r *PropertiesPgRepository) GetPropertiesByUnit(conn storage.ConnDB, layer 
 }
 
 func (r *PropertiesPgRepository) SaveProperties(conn storage.ConnDB, properties []string) ([]int, error) {
-	args := map[string]interface{}{
+	args := map[string]any{
 		"properties_array": pq.Array(properties),
 	}
 	return namedSelectSliceFromScript[[]int](conn, insertPropertiesQuery, args)
