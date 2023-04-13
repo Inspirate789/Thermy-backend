@@ -479,7 +479,7 @@ func TestStorageService_GetUnitsByModels(t *testing.T) {
 			}
 		})
 
-		mockStorage.AssertNumberOfCalls(t, "GetUnitsByModels", i+1)
+		mockStorage.AssertNumberOfCalls(t, "GetUnitsByModels", 0)
 		mockStorage.AssertNumberOfCalls(t, "LayerExist", i+1)
 	}
 }
@@ -537,7 +537,7 @@ func TestStorageService_GetUnitsByProperties(t *testing.T) {
 			}
 		})
 
-		mockStorage.AssertNumberOfCalls(t, "GetUnitsByProperties", i+1)
+		mockStorage.AssertNumberOfCalls(t, "GetUnitsByProperties", 0)
 		mockStorage.AssertNumberOfCalls(t, "LayerExist", i+1)
 	}
 }

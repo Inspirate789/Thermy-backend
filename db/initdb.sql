@@ -106,7 +106,8 @@ BEGIN
                 model_id int,
                 foreign key (model_id) references %I.models(id),
                 elem_id int,
-                foreign key (elem_id) references %I.elements(id)
+                foreign key (elem_id) references %I.elements(id),
+                unique(model_id, elem_id)
             );
 
             -- Таблица-связка (единицы русского языка и единицы иностранного языка)
@@ -115,7 +116,8 @@ BEGIN
                 unit_ru_id int,
                 foreign key (unit_ru_id) references %I.units_ru(id),
                 unit_en_id int,
-                foreign key (unit_en_id) references %I.units_en(id)
+                foreign key (unit_en_id) references %I.units_en(id),
+                unique(unit_ru_id, unit_en_id)
             );
 
             -- Таблица-связка (характеристики и единицы русского языка)
@@ -124,7 +126,8 @@ BEGIN
                 property_id int,
                 foreign key (property_id) references public.properties(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_ru(id)
+                foreign key (unit_id) references %I.units_ru(id),
+                unique(property_id, unit_id)
             );
 
             -- Таблица-связка (характеристики и единицы иностранного языка)
@@ -133,7 +136,8 @@ BEGIN
                 property_id int,
                 foreign key (property_id) references public.properties(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_en(id)
+                foreign key (unit_id) references %I.units_en(id),
+                unique(property_id, unit_id)
             );
 
             -- Таблица-связка (контексты и единицы русского языка)
@@ -142,16 +146,18 @@ BEGIN
                 context_id int,
                 foreign key (context_id) references public.contexts(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_ru(id)
+                foreign key (unit_id) references %I.units_ru(id),
+                unique(context_id, unit_id)
             );
 
             -- Таблица-связка (контексты и единицы иностранного языка)
             -- drop table if exists %I.contexts_and_units_en;
             create table if not exists %I.contexts_and_units_en(
-                ctx_id int,
-                foreign key (ctx_id) references public.contexts(id),
+                context_id int,
+                foreign key (context_id) references public.contexts(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_en(id)
+                foreign key (unit_id) references %I.units_en(id),
+                unique(context_id, unit_id)
             );
 
             -- Таблица-связка (пользователи и единицы русского языка)
@@ -160,7 +166,8 @@ BEGIN
                 user_id int,
                 foreign key (user_id) references public.users(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_ru(id)
+                foreign key (unit_id) references %I.units_ru(id),
+                unique(user_id, unit_id)
             );
 
             -- Таблица-связка (пользователи и единицы иностранного языка)
@@ -169,7 +176,8 @@ BEGIN
                 user_id int,
                 foreign key (user_id) references public.users(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_en(id)
+                foreign key (unit_id) references %I.units_en(id),
+                unique(user_id, unit_id)
             );',
             layer_name, layer_name, layer_name, layer_name, layer_name,
             layer_name, layer_name, layer_name, layer_name, layer_name,
@@ -265,7 +273,7 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.insert_user(username text, password text, role text)
-    RETURNS int
+RETURNS int
 AS
 $func$
 DECLARE result int;
@@ -287,10 +295,10 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.select_all_models(layer text)
-    RETURNS table (
-                      id int,
-                      name text
-                  )
+RETURNS table (
+    id int,
+    name text
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -306,10 +314,10 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.select_all_model_elements(layer text)
-    RETURNS table (
-                      id int,
-                      name text
-                  )
+RETURNS table (
+    id int,
+    name text
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -324,9 +332,9 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.select_contexts_id_by_unit(layer text, lang text, unit_id int)
-    RETURNS table (
-        id int
-                  )
+RETURNS table (
+    id int
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -345,16 +353,16 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.select_all_linked_units(layer text)
-    RETURNS table (
-                      unit_ru_id int,
-                      unit_ru_model_id int,
-                      unit_ru_registration_date timestamp,
-                      unit_ru_text text,
-                      unit_en_id int,
-                      unit_en_model_id int,
-                      unit_en_registration_date timestamp,
-                      unit_en_text text
-                  )
+RETURNS table (
+    unit_ru_id int,
+    unit_ru_model_id int,
+    unit_ru_registration_date timestamp,
+    unit_ru_text text,
+    unit_en_id int,
+    unit_en_model_id int,
+    unit_en_registration_date timestamp,
+    unit_en_text text
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -381,16 +389,16 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.select_linked_units_by_models_id(layer text, models_id int[])
-    RETURNS table (
-                      unit_ru_id int,
-                      unit_ru_model_id int,
-                      unit_ru_registration_date timestamp,
-                      unit_ru_text text,
-                      unit_en_id int,
-                      unit_en_model_id int,
-                      unit_en_registration_date timestamp,
-                      unit_en_text text
-                  )
+RETURNS table (
+    unit_ru_id int,
+    unit_ru_model_id int,
+    unit_ru_registration_date timestamp,
+    unit_ru_text text,
+    unit_en_id int,
+    unit_en_model_id int,
+    unit_en_registration_date timestamp,
+    unit_en_text text
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -421,16 +429,16 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.select_linked_units_by_properties_id(layer text, properties_id int[])
-    RETURNS table (
-                      unit_ru_id int,
-                      unit_ru_model_id int,
-                      unit_ru_registration_date timestamp,
-                      unit_ru_text text,
-                      unit_en_id int,
-                      unit_en_model_id int,
-                      unit_en_registration_date timestamp,
-                      unit_en_text text
-                  )
+RETURNS table (
+    unit_ru_id int,
+    unit_ru_model_id int,
+    unit_ru_registration_date timestamp,
+    unit_ru_text text,
+    unit_en_id int,
+    unit_en_model_id int,
+    unit_en_registration_date timestamp,
+    unit_en_text text
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -463,12 +471,12 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.select_unlinked_units_by_lang(layer text, lang text)
-    RETURNS table (
-                      id int,
-                      model_id int,
-                      registration_date timestamp,
-                      text text
-                  )
+RETURNS table (
+    id int,
+    model_id int,
+    registration_date timestamp,
+    text text
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -487,12 +495,12 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.select_unlinked_units_by_lang_and_models_id(layer text, lang text, models_id int[])
-    RETURNS table (
-                      id int,
-                      model_id int,
-                      registration_date timestamp,
-                      text text
-                  )
+RETURNS table (
+    id int,
+    model_id int,
+    registration_date timestamp,
+    text text
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -513,12 +521,12 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.select_unlinked_units_by_lang_and_properties_id(layer text, lang text, properties_id int[])
-    RETURNS table (
-                      id int,
-                      model_id int,
-                      registration_date timestamp,
-                      text text
-                  )
+RETURNS table (
+    id int,
+    model_id int,
+    registration_date timestamp,
+    text text
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -540,10 +548,10 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.select_properties_by_unit(layer text, lang text, unit_text text)
-    RETURNS table (
-                      id int,
-                      property text
-                  )
+RETURNS table (
+    id int,
+    property text
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -569,9 +577,9 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.select_properties_id_by_unit_id(layer text, lang text, unit_id int)
-    RETURNS table (
-        id int
-                  )
+RETURNS table (
+    id int
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -590,9 +598,9 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.insert_properties(property_texts text[])
-    RETURNS table (
-        id int
-                  )
+RETURNS table (
+    id int
+)
 AS
 $func$
 BEGIN
@@ -604,9 +612,9 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.insert_models(layer text, model_texts text[])
-    RETURNS table (
-        id int
-                  )
+RETURNS table (
+    id int
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -628,9 +636,9 @@ END
 $func$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.insert_model_elements(layer text, element_texts text[])
-    RETURNS table (
-        id int
-                  )
+RETURNS table (
+    id int
+)
 AS
 $func$
 DECLARE layer_name text;
@@ -647,6 +655,109 @@ BEGIN
                 array_to_string(element_texts, E'\',\'')
                 ),
             layer_name
+        );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.insert_units(layer text, lang text, models_id int[], unit_texts text[])
+RETURNS table (
+    id int
+)
+AS
+$func$
+DECLARE layer_name text;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    RETURN QUERY
+        EXECUTE format(
+            'insert into %I.units_%I(id, model_id, registration_date, text) overriding user value -- or overriding system value
+            values(null, unnest(array[%s]), now()::timestamp, unnest(array[%s]))
+            returning %I.units_%I.id;',
+            layer_name, lang,
+            format('%s', array_to_string(models_id, ',')),
+            format(
+                    E'\'%s\'',
+                    array_to_string(unit_texts, E'\',\'')
+            ),
+            layer_name, lang
+        );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE public.update_unit_names(layer text, lang text, old_name text, new_name text)
+AS
+$func$
+DECLARE layer_name text;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    EXECUTE format(
+        E'update %I.units_%I
+        set text = \'%s\'
+        where text = \'%s\';',
+        layer_name, lang, new_name, old_name
+    );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE public.insert_unit_properties(layer text, lang text, unit_id int, properties_id int[])
+AS
+$func$
+DECLARE layer_name text;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    EXECUTE format(
+        'insert into %I.properties_and_units_%I(property_id, unit_id) overriding user value -- or overriding system value
+        values (unnest(array[%s]), %s)
+        on conflict do nothing;',
+        layer_name, lang,
+        format('%s', array_to_string(properties_id, ',')),
+        unit_id
+    );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE public.update_unit_properties(layer text, lang text, unit_name text, properties_id int[])
+AS
+$func$
+DECLARE layer_name text;
+        target_unit_id int;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    EXECUTE format(
+        E'select max(id)
+        from %I.units_%I
+        where text = \'%s\'
+        limit 1;',
+        layer_name, lang, unit_name
+    )
+    INTO target_unit_id;
+    EXECUTE format(
+        'delete from %I.properties_and_units_%I
+        where unit_id = %s and property_id <> any(array[%s]);',
+        layer_name, lang, target_unit_id, format('%s', array_to_string(properties_id, ','))
+    );
+    EXECUTE format(
+        'insert into %I.properties_and_units_%I(property_id, unit_id) overriding user value -- or overriding system value
+        values (unnest(array[%s]), %s)
+        on conflict do nothing;',
+        layer_name, lang,
+        format('%s', array_to_string(properties_id, ',')),
+        target_unit_id
+    );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE public.insert_context_units(layer text, lang text, context_id int, units_id int[])
+AS
+$func$
+DECLARE layer_name text;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    EXECUTE format(
+            'insert into %I.contexts_and_units_%I(context_id, unit_id) overriding user value -- or overriding system value
+            values (%s, unnest(array[%s]))
+            on conflict do nothing;',
+            layer_name, lang, context_id, format('%s', array_to_string(units_id, ','))
         );
 END
 $func$ LANGUAGE plpgsql;

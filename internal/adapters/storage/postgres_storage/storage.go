@@ -92,7 +92,7 @@ func (ps *PostgresStorage) OpenConn(request *entities.AuthRequest, ctx context.C
 	if !exists {
 		return nil, "", errors.New("POSTGRES_DRIVER_NAME must be set")
 	}
-	sqlxDB := sqlx.NewDb(sqlDB, driverName) // "postgres" // TODO: delete comment
+	sqlxDB := sqlx.NewDb(sqlDB, driverName)
 
 	role, err := getConnRole(sqlxDB, ctx)
 	if err != nil {

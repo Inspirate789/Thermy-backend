@@ -1,11 +1,15 @@
 package postgres_storage
 
 import (
+	"context"
 	"errors"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
+	"github.com/Inspirate789/Thermy-backend/pkg/sqlx_utils"
+	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
+	"sync"
 )
 
 type UnitsPgRepository struct{}
@@ -154,7 +158,7 @@ func (r *UnitsPgRepository) getUnitsByQueries(conn storage.ConnDB, layer string,
 
 func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (interfaces.OutputUnitsDTO, error) {
 	linkedUnits, unlinkedUnits, err := r.getUnitsByQueries(conn, layer, []string{"ru", "en"}, unitQueries{
-		unlinkedUnitsQuery: selectUnlinkedUnitsByLang,
+		unlinkedUnitsQuery: selectUnlinkedUnits,
 		linkedUnitsQuery:   selectAllLinkedUnits,
 		optionalArgs:       nil,
 	})
@@ -177,7 +181,7 @@ func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (inte
 
 func (r *UnitsPgRepository) GetUnitsByModels(conn storage.ConnDB, layer string, modelsID []int) (interfaces.OutputUnitsDTO, error) {
 	linkedUnits, unlinkedUnits, err := r.getUnitsByQueries(conn, layer, []string{"ru", "en"}, unitQueries{
-		unlinkedUnitsQuery: selectUnlinkedUnitsByLangAndModelsId,
+		unlinkedUnitsQuery: selectUnlinkedUnitsAndModelsId,
 		linkedUnitsQuery:   selectLinkedUnitsByModelsId,
 		optionalArgs: map[string]any{
 			"models_id_array": pq.Array(modelsID),
@@ -202,7 +206,7 @@ func (r *UnitsPgRepository) GetUnitsByModels(conn storage.ConnDB, layer string, 
 
 func (r *UnitsPgRepository) GetUnitsByProperties(conn storage.ConnDB, layer string, propertiesID []int) (interfaces.OutputUnitsDTO, error) {
 	linkedUnits, unlinkedUnits, err := r.getUnitsByQueries(conn, layer, []string{"ru", "en"}, unitQueries{
-		unlinkedUnitsQuery: selectUnlinkedUnitsByLangAndPropertiesId,
+		unlinkedUnitsQuery: selectUnlinkedUnitsAndPropertiesId,
 		linkedUnitsQuery:   selectLinkedUnitsByPropertiesId,
 		optionalArgs: map[string]any{
 			"properties_id_array": pq.Array(propertiesID),
@@ -225,14 +229,137 @@ func (r *UnitsPgRepository) GetUnitsByProperties(conn storage.ConnDB, layer stri
 	return interfaces.OutputUnitsDTO{Units: combinedUnits, Contexts: contexts}, nil
 }
 
+func (r *UnitsPgRepository) insertContext(tx sqlx.ExtContext, ctxText string) (int, error) {
+	return selectValueFromScript[int](tx, insertContext, ctxText)
+}
+
+func (r *UnitsPgRepository) insertUnits(tx sqlx.ExtContext, layer, lang string, modelsID []int, unitTexts []string) ([]int, error) {
+	args := map[string]any{
+		"layer_name": layer,
+		"lang":       lang,
+		"models_id":  pq.Array(modelsID),
+		"unit_texts": pq.Array(unitTexts),
+	}
+	return namedSelectSliceFromScript[[]int](tx, insertUnits, args)
+}
+
+func (r *UnitsPgRepository) insertUnitProperties(tx sqlx.ExtContext, layer, lang string, unitID int, propertiesID []int) error {
+	args := map[string]any{
+		"layer_name":    layer,
+		"lang":          lang,
+		"unit_id":       unitID,
+		"properties_id": pq.Array(propertiesID),
+	}
+	return executeNamedScript(tx, insertUnitProperties, args)
+}
+
+func (r *UnitsPgRepository) insertContextUnits(tx sqlx.ExtContext, layer, lang string, contextID int, unitsID []int) error {
+	args := map[string]any{
+		"layer_name": layer,
+		"lang":       lang,
+		"context_id": contextID,
+		"units_id":   pq.Array(unitsID),
+	}
+	return executeNamedScript(tx, insertContextUnits, args)
+}
+
+func (r *UnitsPgRepository) saveUnitsTX(ctx context.Context, tx sqlx.ExtContext, layer string, data interfaces.SaveUnitsDTO) error {
+	wg := sync.WaitGroup{}
+	var globalErr error
+
+	for lang, ctxText := range data.Contexts {
+		contextID, err := r.insertContext(tx, ctxText)
+		if err != nil {
+			return err
+		}
+
+		modelsID := make([]int, 0, len(data.Units))
+		unitTexts := make([]string, 0, len(data.Units))
+		for _, linkedUnitsDTO := range data.Units {
+			unitDTO, inMap := linkedUnitsDTO[lang]
+			if !inMap {
+				continue
+			}
+			modelsID = append(modelsID, unitDTO.ModelID)
+			unitTexts = append(unitTexts, unitDTO.Text)
+		}
+
+		unitsID, err := r.insertUnits(tx, layer, lang, modelsID, unitTexts)
+		if err != nil {
+			return err
+		}
+
+		go func(lang string, unitsID []int) {
+			wg.Add(1)
+			defer wg.Done()
+			for i, linkedUnitsDTO := range data.Units {
+				unitDTO, inMap := linkedUnitsDTO[lang]
+				if !inMap || len(unitDTO.PropertiesID) == 0 {
+					continue
+				}
+				err = r.insertUnitProperties(tx, layer, lang, unitsID[i], unitDTO.PropertiesID)
+				if err != nil {
+					globalErr = err
+				}
+			}
+		}(lang, unitsID)
+
+		go func(lang string, contextID int, unitsID []int) {
+			wg.Add(1)
+			defer wg.Done()
+			err = r.insertContextUnits(tx, layer, lang, contextID, unitsID)
+			if err != nil {
+				globalErr = err
+			}
+		}(lang, contextID, unitsID)
+
+	}
+
+	wg.Wait()
+
+	return globalErr
+}
+
 func (r *UnitsPgRepository) SaveUnits(conn storage.ConnDB, layer string, data interfaces.SaveUnitsDTO) error {
-	return errors.New("postgres storage does not support function SaveUnits") // TODO: implement me
+	sqlxDB, ok := conn.(sqlx_utils.TxRunner)
+	if !ok {
+		return errors.New("cannot get TxRunner from argument")
+	}
+
+	return sqlx_utils.RunTx(context.Background(), sqlxDB, func(tx *sqlx.Tx) error {
+		err := r.saveUnitsTX(context.Background(), tx, layer, data)
+		return err
+	})
 }
 
-func (r *UnitsPgRepository) RenameUnit(conn storage.ConnDB, layer string, oldName string, newName string) error {
-	return errors.New("postgres storage does not support function RenameUnit") // TODO: implement me
+func (r *UnitsPgRepository) RenameUnit(conn storage.ConnDB, layer, lang string, oldName string, newName string) error {
+	args := map[string]any{
+		"layer_name": layer,
+		"lang":       lang,
+		"old_name":   oldName,
+		"new_name":   newName,
+	}
+	return executeNamedScript(conn, updateUnitNames, args)
 }
 
-func (r *UnitsPgRepository) SetUnitProperties(conn storage.ConnDB, layer string, unitName string, propertiesID []int) error {
-	return errors.New("postgres storage does not support function SetUnitProperties") // TODO: implement me
+func (r *UnitsPgRepository) setUnitPropertiesTX(ctx context.Context, tx sqlx.ExtContext, layer, lang, unitName string, propertiesID []int) error {
+	args := map[string]any{
+		"layer_name":    layer,
+		"lang":          lang,
+		"unit_name":     unitName,
+		"properties_id": pq.Array(propertiesID),
+	}
+	return executeNamedScript(tx, updateUnitProperties, args)
+}
+
+func (r *UnitsPgRepository) SetUnitProperties(conn storage.ConnDB, layer, lang, unitName string, propertiesID []int) error {
+	sqlxDB, ok := conn.(sqlx_utils.TxRunner)
+	if !ok {
+		return errors.New("cannot get TxRunner from argument")
+	}
+
+	return sqlx_utils.RunTx(context.Background(), sqlxDB, func(tx *sqlx.Tx) error {
+		err := r.setUnitPropertiesTX(context.Background(), tx, layer, lang, unitName, propertiesID)
+		return err
+	})
 }

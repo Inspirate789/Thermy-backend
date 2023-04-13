@@ -31,8 +31,8 @@ type UnitsRepository interface {
 	GetUnitsByModels(conn ConnDB, layer string, modelsID []int) (interfaces.OutputUnitsDTO, error)
 	GetUnitsByProperties(conn ConnDB, layer string, propertiesID []int) (interfaces.OutputUnitsDTO, error)
 	SaveUnits(conn ConnDB, layer string, data interfaces.SaveUnitsDTO) error // stored procedure (SQL)
-	RenameUnit(conn ConnDB, layer string, oldName string, newName string) error
-	SetUnitProperties(conn ConnDB, layer string, unitName string, propertiesID []int) error
+	RenameUnit(conn ConnDB, layer, lang, oldName, newName string) error
+	SetUnitProperties(conn ConnDB, layer, lang, unitName string, propertiesID []int) error
 }
 
 type LayersRepository interface {

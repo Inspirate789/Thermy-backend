@@ -14,7 +14,7 @@ type Unit struct {
 
 type UnitsMap map[string][]Unit
 
-func (u *Unit) IsValid() error {
+func (u Unit) IsValid() error {
 	var err error
 	switch {
 	case u.ID < 0:
@@ -34,7 +34,7 @@ func (u *Unit) IsValid() error {
 	return err
 }
 
-func (u *Unit) SetModel(model *Model) error {
+func (u Unit) SetModel(model *Model) error {
 	err := model.IsValid()
 	if err != nil {
 		return err
@@ -45,14 +45,14 @@ func (u *Unit) SetModel(model *Model) error {
 	return nil
 }
 
-func (u *Unit) SetRegDate(t time.Time) {
+func (u Unit) SetRegDate(t time.Time) {
 	u.RegDate = t.Format(entityDateFormat)
 }
 
-func (u *Unit) GetRegDate() (time.Time, error) {
+func (u Unit) GetRegDate() (time.Time, error) {
 	return time.Parse(entityDateFormat, u.RegDate)
 }
 
-func (u *Unit) GetNuclearElem() (*Unit, error) {
+func (u Unit) GetNuclearElem() (*Unit, error) {
 	return nil, errors.ErrFeatureNotExistWrap("GetNuclearElem")
 }

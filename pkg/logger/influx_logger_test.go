@@ -78,8 +78,9 @@ func TestInfluxLogger_Print(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
-	if err := godotenv.Load("tests.env"); err != nil {
-		log.Fatal("No .env file found")
+	err := godotenv.Load("tests.env")
+	if err != nil {
+		log.Fatal("File tests.env not found")
 	}
 	code := m.Run()
 	// shutdown()

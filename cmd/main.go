@@ -22,11 +22,6 @@ func init() {
 		panic("File backend.env not found")
 	}
 
-	//err = os.Remove("backend.env")
-	//if err != nil {
-	//	panic(err)
-	//}
-
 	initTimeStr := os.Getenv("BACKEND_INIT_SLEEP_TIME")
 	if initTimeStr == "" {
 		panic("BACKEND_INIT_SLEEP_TIME must be set")
@@ -37,19 +32,6 @@ func init() {
 	}
 	time.Sleep(time.Duration(initTime) * time.Second)
 }
-
-//func observe() {
-//	observer, err := monitoring.NewProcStatObserver(time.Minute)
-//	if err != nil {
-//		panic(err)
-//	}
-//	go func() {
-//		err = observer.Observe(context.Background(), "./statistic")
-//		if err != nil {
-//			panic(err)
-//		}
-//	}()
-//}
 
 func exitServer(mainLog logger.Logger, srv *server.Server) {
 	quit := make(chan os.Signal)
@@ -104,8 +86,6 @@ func main() { // TODO: decompose main into initServer, startServer, stopServer?
 	if err != nil {
 		panic(err)
 	}
-
-	// observe()
 
 	srv := server.NewServer(port, authService, storageService, mainLog)
 

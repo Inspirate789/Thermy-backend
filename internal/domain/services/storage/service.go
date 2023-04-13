@@ -82,6 +82,13 @@ func (ss *StorageService) GetUnitsByModels(conn ConnDB, layer string, modelsDTO 
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
+	if len(modelsDTO.Models) == 0 {
+		return interfaces.OutputUnitsDTO{
+			Units:    make([]map[string]interfaces.OutputUnitDTO, 0),
+			Contexts: make([]interfaces.ContextDTO, 0),
+		}, nil
+	}
+
 	units, err := ss.storage.GetUnitsByModels(conn, layer, modelsDTO.Models)
 	if err != nil {
 		ss.log.Print(logger.LogRecord{
@@ -113,6 +120,13 @@ func (ss *StorageService) GetUnitsByProperties(conn ConnDB, layer string, proper
 			Msg:  err.Error(),
 		})
 		return interfaces.OutputUnitsDTO{}, err
+	}
+
+	if len(propertiesDTO.Properties) == 0 {
+		return interfaces.OutputUnitsDTO{
+			Units:    make([]map[string]interfaces.OutputUnitDTO, 0),
+			Contexts: make([]interfaces.ContextDTO, 0),
+		}, nil
 	}
 
 	units, err := ss.storage.GetUnitsByProperties(conn, layer, propertiesDTO.Properties)
@@ -313,7 +327,7 @@ func (ss *StorageService) UpdateUnits(conn ConnDB, layer string, unitsDTO interf
 		name := unit.OldText
 
 		if unit.NewText != "" {
-			err = ss.storage.RenameUnit(conn, layer, unit.OldText, unit.NewText)
+			err = ss.storage.RenameUnit(conn, layer, unit.Lang, unit.OldText, unit.NewText)
 			if err != nil {
 				ss.log.Print(logger.LogRecord{
 					Name: "StorageService",
@@ -326,7 +340,7 @@ func (ss *StorageService) UpdateUnits(conn ConnDB, layer string, unitsDTO interf
 		}
 
 		if len(unit.PropertiesID) != 0 {
-			err = ss.storage.SetUnitProperties(conn, layer, name, unit.PropertiesID)
+			err = ss.storage.SetUnitProperties(conn, layer, unit.Lang, name, unit.PropertiesID)
 			if err != nil {
 				ss.log.Print(logger.LogRecord{
 					Name: "StorageService",

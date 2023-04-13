@@ -1,3 +1,5 @@
+github.com/Inspirate789/go-randomdata v0.0.0-20221102062709-3f5c1661795c h1:a0MOFNOmpPXlCOuWZRyUvTR3RizSAXxem8XJAeX3GLQ=
+github.com/Inspirate789/go-randomdata v0.0.0-20221102062709-3f5c1661795c/go.mod h1:Ec5DZJtOyjcY3uHmbUgkijESSRdnLy+FtO0NVnKLdf8=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/cyberdelia/templates v0.0.0-20141128023046-ca7fffd4298c/go.mod h1:GyV+0YP4qX0UQ7r2MoYZ+AvYDp12OF5yg4q8rGnyNh4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

@@ -3,6 +3,7 @@ module github.com/Inspirate789/Thermy-backend
 go 1.20
 
 require (
+	github.com/Inspirate789/go-randomdata v0.0.0-20221102062709-3f5c1661795c
 	github.com/gin-gonic/gin v1.8.2
 	github.com/influxdata/influxdb-client-go/v2 v2.12.2
 	github.com/jmoiron/sqlx v1.3.5
