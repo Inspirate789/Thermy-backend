@@ -2,7 +2,6 @@
 
 ## Build
 FROM golang:1.20.2-alpine3.17 AS build
-
 WORKDIR /app
 
 # Install dependencies
@@ -26,7 +25,6 @@ COPY --from=build /backend /backend
 COPY backend.env /
 
 EXPOSE ${BACKEND_PORT}
-
 # USER nonroot:nonroot
 
 # Run the binary

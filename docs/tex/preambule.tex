@@ -62,6 +62,7 @@
 
 % Гиперссылки \toc с кликабельностью
 \usepackage{hyperref}
+\usepackage[toc,page]{appendix}
 
 \hypersetup{
 	linktoc=all,
@@ -74,50 +75,109 @@
 \setsansfont{Arial}
 \setmonofont{Courier New}
 
-\usepackage{color} % Цвета для гиперссылок и листингов
-%\definecolor{comment}{rgb}{0,0.5,0}
-%\definecolor{plain}{rgb}{0.2,0.2,0.2}
-%\definecolor{string}{rgb}{0.91,0.45,0.32}
+\usepackage{xcolor} % Цвета для гиперссылок и листингов
+\definecolor{comment}{rgb}{0,0.5,0}
+\definecolor{plain}{rgb}{0.2,0.2,0.2}
+\definecolor{string}{rgb}{0.91,0.45,0.32}
 %\hypersetup{citecolor=blue}
 \hypersetup{citecolor=black}
 
 \usepackage{listings}
 \lstset{
-	basicstyle=\footnotesize\ttfamily,
-	language=[Sharp]C, % Или другой ваш язык -- см. документацию пакета
-	commentstyle=\color{comment},
-	numbers=left,
-	numberstyle=\tiny\color{plain},
-	numbersep=5pt,
-	tabsize=4,
-	extendedchars=\true,
-	breaklines=true,
+	language={SQL},
+	backgroundcolor=\color{white},
+	basicstyle=\fontsize{12}{14}\ttfamily, % \footnotesize
 	keywordstyle=\color{blue},
-	frame=b,
-	stringstyle=\ttfamily\color{string}\ttfamily,
-	showspaces=false,
-	showtabs=false,
-	xleftmargin=17pt,
-	framexleftmargin=17pt,
-	framexrightmargin=5pt,
-	framexbottommargin=4pt,
-	showstringspaces=false,
-	inputencoding=utf8x,
-	keepspaces=true
+	stringstyle=\color{red},
+	commentstyle=\color{gray},
+	numbers=left,
+	numberstyle=\footnotesize,
+	stepnumber=1,
+	numbersep=5pt,
+	frame=single,
+	tabsize=4,
+	captionpos=t,
+	breaklines=true
 }
 
-\DeclareCaptionLabelSeparator{line}{\ --\ }
-\DeclareCaptionFont{white}{\color{white}}
-\DeclareCaptionFormat{listing}{\colorbox[cmyk]{0.43,0.35,0.35,0.01}{\parbox{\textwidth}{\hspace{15pt}#1#2#3}}}
-\captionsetup[lstlisting]{
-	format=listing,
-	labelfont=white,
-	textfont=white,
-	singlelinecheck=false,
-	margin=0pt,
-	font={bf,footnotesize},
-	labelsep=line
+\captionsetup[lstlisting]{format=hang, justification=justified}
+
+\usepackage{listingsutf8}
+
+\lstdefinelanguage{docker}{
+	keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
+	keywordstyle=\color{blue}\bfseries,
+	identifierstyle=\color{black},
+	sensitive=false,
+	comment=[l]{\#},
+	commentstyle=\color{purple}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	morestring=[b]',
+	morestring=[b]"
 }
+
+\lstdefinelanguage{docker-compose}{
+	keywords={image, environment, ports, container_name, ports, volumes, links},
+	keywordstyle=\color{blue}\bfseries,
+	identifierstyle=\color{black},
+	sensitive=false,
+	comment=[l]{\#},
+	commentstyle=\color{purple}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	morestring=[b]',
+	morestring=[b]"
+}
+
+\lstdefinelanguage{docker-compose-3}{
+	keywords={version, volumes, services, networks},
+	keywordstyle=\color{blue}\bfseries,
+	keywords=[2]{image, environment, ports, container_name, ports, links, build, restart, healthcheck, depends_on, command, volumes, networks},
+	keywordstyle=[2]\color{olive}\bfseries,
+	identifierstyle=\color{black},
+	sensitive=false,
+	comment=[l]{\#},
+	commentstyle=\color{purple}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	morestring=[b]',
+	morestring=[b]"
+}
+
+%\lstset{
+%	basicstyle=\footnotesize\ttfamily,
+%	language=SQL, % Или другой ваш язык -- см. документацию пакета
+%	commentstyle=\color{comment},
+%	numbers=left,
+%	numberstyle=\tiny\color{plain},
+%	numbersep=5pt,
+%	tabsize=4,
+%	extendedchars=\true,
+%	breaklines=true,
+%	keywordstyle=\color{blue},
+%	frame=b,
+%	stringstyle=\ttfamily\color{string}\ttfamily,
+%	showspaces=false,
+%	showtabs=false,
+%	xleftmargin=17pt,
+%	framexleftmargin=17pt,
+%	framexrightmargin=5pt,
+%	framexbottommargin=4pt,
+%	showstringspaces=false,
+%	inputencoding=utf8x,
+%	keepspaces=true
+%}
+%
+%\DeclareCaptionLabelSeparator{line}{\ --\ }
+%\DeclareCaptionFont{white}{\color{white}}
+%\DeclareCaptionFormat{listing}{\colorbox[cmyk]{0.43,0.35,0.35,0.01}{\parbox{\textwidth}{\hspace{15pt}#1#2#3}}}
+%\captionsetup[lstlisting]{
+%	format=listing,
+%	labelfont=white,
+%	textfont=white,
+%	singlelinecheck=false,
+%	margin=0pt,
+%	font={bf,footnotesize},
+%	labelsep=line
+%}
 
 \usepackage{ulem} % Нормальное нижнее подчеркивание
 \usepackage{hhline} % Двойная горизонтальная линия в таблицах

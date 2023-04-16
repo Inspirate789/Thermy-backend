@@ -79,7 +79,7 @@ services:
         container_name: backend
         build:
             context: ./
-            dockerfile: Dockerfile
+            dockerfile: api.Dockerfile
         image: golang-backend
         restart: always
         ports:
