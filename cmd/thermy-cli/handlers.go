@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 )
 
 func login(path string, username, password *string) func(cCtx *cli.Context) error {
@@ -88,7 +89,7 @@ func commonHandler(method, path string, role, option *string, queryParams map[st
 		}
 
 		var body []byte
-		if filenamePtr != nil {
+		if filenamePtr != nil && *filenamePtr != "" {
 			var err error
 			body, err = os.ReadFile(*filenamePtr)
 			if err != nil {
@@ -104,8 +105,22 @@ func commonHandler(method, path string, role, option *string, queryParams map[st
 			return err
 		}
 
-		_, err = doRequest(req)
+		resBody, err := doRequest(req)
+		if err != nil {
+			return err
+		}
 
-		return err
+		if len(resBody) > 0 {
+			err = jsonparser.ObjectEach(resBody, func(key []byte, value []byte, dataType jsonparser.ValueType, offset int) error {
+				k := strings.Replace(string(key), "_", " ", -1) + ": "
+				fmt.Printf("%s\n%s\n", k, string(value))
+				return nil
+			})
+			if err != nil {
+				return fmt.Errorf("client: error iterating the response body: %w", err)
+			}
+		}
+
+		return nil
 	}
 }

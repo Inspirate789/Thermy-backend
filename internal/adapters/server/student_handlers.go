@@ -35,7 +35,7 @@ func (s *Server) postUnits(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"error": "ok"})
+	ctx.Status(http.StatusOK)
 }
 
 func (s *Server) patchUnits(ctx *gin.Context) {
@@ -65,7 +65,7 @@ func (s *Server) patchUnits(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"error": "ok"})
+	ctx.Status(http.StatusOK)
 }
 
 func (s *Server) getAllUnits(ctx *gin.Context) {

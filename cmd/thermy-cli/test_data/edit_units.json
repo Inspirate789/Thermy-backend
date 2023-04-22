@@ -1,0 +1,15 @@
+{
+    "units": [
+        {
+            "lang": "ru",
+            "old_text": "термин1",
+            "new_text": "изменённый термин1",
+            "properties_id": [2]
+        },
+        {
+            "lang": "en",
+            "old_text": "term1",
+            "new_text": "term1"
+        }
+    ]
+}

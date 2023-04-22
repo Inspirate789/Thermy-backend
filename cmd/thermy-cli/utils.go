@@ -55,7 +55,7 @@ func doRequest(req *http.Request) ([]byte, error) {
 		return nil, fmt.Errorf("client: unexpected http status: %s (response body: %s)", res.Status, string(body))
 	}
 	ct := res.Header.Get("Content-Type")
-	if ct != "application/json; charset=utf-8" {
+	if ct != "" && ct != "application/json; charset=utf-8" {
 		return nil, fmt.Errorf("client: unexpected content-type: %s", ct)
 	}
 

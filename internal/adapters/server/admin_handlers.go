@@ -29,7 +29,7 @@ func (s *Server) postUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"error": "ok"})
+	ctx.Status(http.StatusOK)
 }
 
 //func (s *Server) getUserPassword(ctx *gin.Context) {

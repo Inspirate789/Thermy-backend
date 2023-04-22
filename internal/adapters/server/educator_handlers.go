@@ -88,5 +88,5 @@ func (s *Server) postLayer(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"error": "ok"})
+	ctx.Status(http.StatusOK)
 }

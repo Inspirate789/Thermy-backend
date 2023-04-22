@@ -14,14 +14,19 @@ const appUrl = "http://localhost:8080"
 
 var roles = []string{"student", "educator", "admin"}
 var unitFilters = []string{"all", "models", "properties"}
+var propertyFilters = []string{"all", "unit"}
 
 func main() {
 	var username, password, token, layer, filter, role string
-	var filenamePtr *string
+	filenamePtr := new(string)
 
 	defaultQueryParams := map[string]*string{
 		"token": &token,
 		"layer": &layer,
+	}
+
+	tokenQueryParam := map[string]*string{
+		"token": &token,
 	}
 
 	app := &cli.App{
@@ -83,8 +88,215 @@ func main() {
 				Action: stat("/admin/stat", &token),
 			},
 			{
-				Name:  "unit",
-				Usage: "options for working with units",
+				Name:  "layers",
+				Usage: "commands for working with layers",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:        "token",
+						Aliases:     []string{"t"},
+						Usage:       "specify an authentication `TOKEN` that is issued at login",
+						Destination: &token,
+						Action:      checkStringFlag("token"),
+						Required:    true,
+					},
+					&cli.StringFlag{
+						Name:        "role",
+						Aliases:     []string{"r"},
+						Usage:       fmt.Sprintf("specify a user `ROLE` (one of %v)", roles),
+						Destination: &role,
+						Action:      checkRoleFlag(roles),
+						Required:    true,
+					},
+				},
+				Subcommands: []*cli.Command{
+					{
+						Name:   "list",
+						Usage:  "show all text markup layers",
+						Action: commonHandler(http.MethodGet, "/layers/all", &role, nil, tokenQueryParam, nil),
+					},
+					{
+						Name:  "add",
+						Usage: "add text markup layer",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:        "layer",
+								Aliases:     []string{"l"},
+								Usage:       "specify a text markup `LAYER`",
+								Destination: &layer,
+								Action:      checkStringFlag("layer"),
+								Required:    true,
+							},
+						},
+						Action: commonHandler(http.MethodPost, "/layers", &role, nil, defaultQueryParams, nil),
+					},
+				},
+			},
+			{
+				Name:  "models",
+				Usage: "commands for working with structural models",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:        "token",
+						Aliases:     []string{"t"},
+						Usage:       "specify an authentication `TOKEN` that is issued at login",
+						Destination: &token,
+						Action:      checkStringFlag("token"),
+						Required:    true,
+					},
+					&cli.StringFlag{
+						Name:        "layer",
+						Aliases:     []string{"l"},
+						Usage:       "specify a text markup `LAYER`",
+						Destination: &layer,
+						Action:      checkStringFlag("layer"),
+						Required:    true,
+					},
+					&cli.StringFlag{
+						Name:        "role",
+						Aliases:     []string{"r"},
+						Usage:       fmt.Sprintf("specify a user `ROLE` (one of %v)", roles),
+						Destination: &role,
+						Action:      checkRoleFlag(roles),
+						Required:    true,
+					},
+				},
+				Subcommands: []*cli.Command{
+					{
+						Name:   "list",
+						Usage:  "show a list of models",
+						Action: commonHandler(http.MethodGet, "/models/all", &role, nil, defaultQueryParams, nil),
+					},
+					{
+						Name:  "add",
+						Usage: "add models",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:        "file",
+								Aliases:     []string{"f"},
+								Usage:       "Load request body from input `FILE`",
+								Destination: filenamePtr,
+								Action:      checkJSON,
+								Required:    true,
+							},
+						},
+						Action: commonHandler(http.MethodPost, "/models", &role, nil, defaultQueryParams, filenamePtr),
+					},
+				},
+			},
+			{
+				Name:  "elements",
+				Usage: "commands for working with elements of structural models",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:        "token",
+						Aliases:     []string{"t"},
+						Usage:       "specify an authentication `TOKEN` that is issued at login",
+						Destination: &token,
+						Action:      checkStringFlag("token"),
+						Required:    true,
+					},
+					&cli.StringFlag{
+						Name:        "layer",
+						Aliases:     []string{"l"},
+						Usage:       "specify a text markup `LAYER`",
+						Destination: &layer,
+						Action:      checkStringFlag("layer"),
+						Required:    true,
+					},
+					&cli.StringFlag{
+						Name:        "role",
+						Aliases:     []string{"r"},
+						Usage:       fmt.Sprintf("specify a user `ROLE` (one of %v)", roles),
+						Destination: &role,
+						Action:      checkRoleFlag(roles),
+						Required:    true,
+					},
+				},
+				Subcommands: []*cli.Command{
+					{
+						Name:   "list",
+						Usage:  "show a list of model elements",
+						Action: commonHandler(http.MethodGet, "/elements/all", &role, nil, defaultQueryParams, nil),
+					},
+					{
+						Name:  "add",
+						Usage: "add models",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:        "file",
+								Aliases:     []string{"f"},
+								Usage:       "Load request body from input `FILE`",
+								Destination: filenamePtr,
+								Action:      checkJSON,
+								Required:    true,
+							},
+						},
+						Action: commonHandler(http.MethodPost, "/elements", &role, nil, defaultQueryParams, filenamePtr),
+					},
+				},
+			},
+			{
+				Name:  "properties",
+				Usage: "commands for working with properties",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:        "token",
+						Aliases:     []string{"t"},
+						Usage:       "specify an authentication `TOKEN` that is issued at login",
+						Destination: &token,
+						Action:      checkStringFlag("token"),
+						Required:    true,
+					},
+					&cli.StringFlag{
+						Name:        "role",
+						Aliases:     []string{"r"},
+						Usage:       fmt.Sprintf("specify a user `ROLE` (one of %v)", roles),
+						Destination: &role,
+						Action:      checkRoleFlag(roles),
+						Required:    true,
+					},
+					&cli.StringFlag{
+						Name:        "file",
+						Aliases:     []string{"f"},
+						Usage:       "Load request body from input `FILE`",
+						Destination: filenamePtr,
+						Action:      checkJSON,
+						Required:    false,
+					},
+				},
+				Subcommands: []*cli.Command{
+					{
+						Name:  "list",
+						Usage: "show a list of properties according to the filter",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:        "filter",
+								Usage:       fmt.Sprintf("specify a filter `OPTION` for searching properties (one of %v)", propertyFilters),
+								Destination: &filter,
+								Action:      checkFilterFlag(propertyFilters),
+								Required:    true,
+							},
+							&cli.StringFlag{
+								Name:        "layer",
+								Aliases:     []string{"l"},
+								Usage:       "specify a text markup `LAYER`",
+								Destination: &layer,
+								Action:      checkStringFlag("layer"),
+								Required:    false,
+							},
+						},
+						Action: commonHandler(http.MethodGet, "/properties", &role, &filter, defaultQueryParams, filenamePtr),
+					},
+					{
+						Name:   "add",
+						Usage:  "add properties",
+						Action: commonHandler(http.MethodPost, "/properties", &role, nil, tokenQueryParam, filenamePtr),
+					},
+				},
+			},
+			{
+				Name:  "units",
+				Usage: "commands for working with units",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:        "token",
@@ -121,8 +333,8 @@ func main() {
 				},
 				Subcommands: []*cli.Command{
 					{
-						Name:  "search",
-						Usage: "search units",
+						Name:  "list",
+						Usage: "show a list of units according to the filter",
 						Flags: []cli.Flag{
 							&cli.StringFlag{
 								Name:        "filter",
@@ -135,8 +347,8 @@ func main() {
 						Action: commonHandler(http.MethodGet, "/units", &role, &filter, defaultQueryParams, filenamePtr),
 					},
 					{
-						Name:   "store",
-						Usage:  "store units",
+						Name:   "add",
+						Usage:  "add units",
 						Action: commonHandler(http.MethodPost, "/units", &role, nil, defaultQueryParams, filenamePtr),
 					},
 					{

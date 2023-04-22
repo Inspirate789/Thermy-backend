@@ -23,7 +23,6 @@ func (s *Server) login(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"error": "ok",
 		"token": strconv.FormatUint(token, 10),
 	})
 }
@@ -41,5 +40,5 @@ func (s *Server) logout(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"error": "ok"})
+	ctx.Status(http.StatusOK)
 }
