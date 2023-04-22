@@ -10,7 +10,7 @@ COPY go.sum ./
 RUN go mod download
 
 # Copy source code
-COPY cmd/main.go ./
+COPY ./cmd/backend/main.go ./
 COPY ./internal ./internal
 COPY ./pkg ./pkg
 

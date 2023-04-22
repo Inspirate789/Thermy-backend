@@ -32,28 +32,28 @@ func (s *Server) postUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"error": "ok"})
 }
 
-func (s *Server) getUserPassword(ctx *gin.Context) {
-	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
-	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
-		return
-	}
-	username := ctx.Query("username")
-
-	conn, err := s.authService.GetSessionConn(token)
-	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	password, err := s.storageService.GetUserPassword(conn, username)
-	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{"password": password, "error": "ok"})
-}
+//func (s *Server) getUserPassword(ctx *gin.Context) {
+//	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
+//	if err != nil {
+//		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
+//		return
+//	}
+//	username := ctx.Query("username")
+//
+//	conn, err := s.authService.GetSessionConn(token)
+//	if err != nil {
+//		_ = ctx.AbortWithError(http.StatusBadRequest, err)
+//		return
+//	}
+//
+//	password, err := s.storageService.GetUserPassword(conn, username)
+//	if err != nil {
+//		_ = ctx.AbortWithError(http.StatusBadRequest, err)
+//		return
+//	}
+//
+//	ctx.JSON(http.StatusOK, gin.H{"password": password, "error": "ok"})
+//}
 
 func (s *Server) getStat(ctx *gin.Context) {
 	observer, err := monitoring.NewProcStatObserver()

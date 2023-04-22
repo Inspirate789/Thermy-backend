@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/Inspirate789/go-randomdata v0.0.0-20221102062709-3f5c1661795c
+	github.com/buger/jsonparser v1.1.1
 	github.com/gin-gonic/gin v1.8.2
 	github.com/influxdata/influxdb-client-go/v2 v2.12.2
 	github.com/jmoiron/sqlx v1.3.5
@@ -12,11 +13,13 @@ require (
 	github.com/prometheus/procfs v0.9.0
 	github.com/sethvargo/go-password v0.2.0
 	github.com/stretchr/testify v1.8.1
+	github.com/urfave/cli/v2 v2.25.1
 	go.uber.org/multierr v1.9.0
 	periph.io/x/host/v3 v3.8.0
 )
 
 require (
+	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deepmap/oapi-codegen v1.8.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
@@ -33,8 +36,10 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
+	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
 	golang.org/x/net v0.4.0 // indirect

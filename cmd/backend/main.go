@@ -61,7 +61,7 @@ func exitServer(mainLog logger.Logger, srv *server.Server) {
 	})
 }
 
-func main() { // TODO: decompose main into initServer, startServer, stopServer?
+func main() {
 	mainLog := logger.NewInfluxLogger()
 
 	logBucketName := os.Getenv("INFLUXDB_BACKEND_BUCKET_NAME")

@@ -46,7 +46,7 @@ func (s *Server) addEducatorRoutes(rg *gin.RouterGroup) {
 
 func (s *Server) addAdminRoutes(rg *gin.RouterGroup) {
 	rg.POST("/user/create", s.postUser)
-	rg.GET("/user/get/password", s.getUserPassword)
+	//rg.GET("/user/get/password", s.getUserPassword)
 	rg.GET("/stat", s.getStat)
 }
 
@@ -63,10 +63,10 @@ func (s *Server) setupHandlers(router *gin.Engine) {
 	router.UseRawPath = true
 	router.UnescapePathValues = false
 
+	router.Use(middleware.ErrorHandler(s.log))
+
 	router.GET("/login", s.login)
 	router.POST("/logout", s.logout)
-
-	router.Use(middleware.ErrorHandler(s.log))
 
 	studentRG := router.Group("/student")
 	studentRG.Use(middleware.RoleCheck(s.authService, parseRole))
