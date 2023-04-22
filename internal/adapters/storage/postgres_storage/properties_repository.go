@@ -1,7 +1,6 @@
 package postgres_storage
 
 import (
-	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
@@ -20,7 +19,6 @@ func (r *PropertiesPgRepository) GetPropertiesByUnit(conn storage.ConnDB, layer 
 		"lang":       unit.Lang,
 		"unit_text":  unit.Text,
 	}
-	fmt.Println(args)
 	return namedSelectSliceFromScript[[]entities.Property](conn, selectPropertiesByUnit, args)
 }
 
