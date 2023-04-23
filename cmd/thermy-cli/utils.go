@@ -15,7 +15,7 @@ func createRequest(method, path string, queryParams url.Values, body any) (*http
 	if err != nil {
 		return nil, fmt.Errorf("client: could not parse url: %s", appUrl)
 	}
-	reqUrl.Path = path
+	reqUrl.Path = apiPrefix + path
 	reqUrl.RawQuery = queryParams.Encode()
 
 	var reqBody io.ReadWriter

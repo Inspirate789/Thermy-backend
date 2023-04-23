@@ -91,6 +91,8 @@ cat .env
 # Setup environment for backend program:
 rm -f backend.env
 
+api_version=1
+echo -e "API_PREFIX=/api/v${api_version}" >> backend.env
 echo -e "INFLUXDB_ORG=${influx_org}" >> backend.env
 echo -e "INFLUXDB_URL=${influx_url}" >> backend.env
 echo -e "INFLUXDB_BACKEND_BUCKET_NAME=${backend_bucket_name}" >> backend.env

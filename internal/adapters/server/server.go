@@ -8,6 +8,7 @@ import (
 	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"regexp"
 )
 
@@ -59,10 +60,7 @@ func parseRole(ctx *gin.Context) (string, error) {
 	return exp.Split(ctx.FullPath(), 3)[1], nil // "/role/..." --> "role"
 }
 
-func (s *Server) setupHandlers(router *gin.Engine) {
-	router.UseRawPath = true
-	router.UnescapePathValues = false
-
+func (s *Server) setupHandlers(router *gin.RouterGroup) {
 	router.Use(middleware.ErrorHandler(s.log))
 
 	router.GET("/login", s.login)
@@ -87,6 +85,8 @@ func (s *Server) setupHandlers(router *gin.Engine) {
 func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.StorageManager, log logger.Logger) *Server {
 	router := gin.Default()
 	// router.SetTrustedProxies([]string{"192.168.52.38"}) // TODO?
+	router.UseRawPath = true
+	router.UnescapePathValues = false
 
 	s := Server{ // TODO: Enabling SSL/TLS encryption
 		srv: &http.Server{
@@ -97,7 +97,9 @@ func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.S
 		authService:    authMgr,
 		log:            log,
 	}
-	s.setupHandlers(router)
+
+	apiRG := router.Group(os.Getenv("API_PREFIX"))
+	s.setupHandlers(apiRG)
 
 	return &s
 }

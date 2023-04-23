@@ -11,6 +11,7 @@ import (
 )
 
 const appUrl = "http://localhost:8080"
+const apiPrefix = "/api/v1"
 
 var roles = []string{"student", "educator", "admin"}
 var unitFilters = []string{"all", "models", "properties"}
