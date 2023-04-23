@@ -359,6 +359,45 @@ func main() {
 					},
 				},
 			},
+			{
+				Name:  "users",
+				Usage: "commands for working with users",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:        "token",
+						Aliases:     []string{"t"},
+						Usage:       "specify an authentication `TOKEN` that is issued at login",
+						Destination: &token,
+						Action:      checkStringFlag("token"),
+						Required:    true,
+					},
+					&cli.StringFlag{
+						Name:        "role",
+						Aliases:     []string{"r"},
+						Usage:       fmt.Sprintf("specify a user `ROLE` (one of %v)", roles),
+						Destination: &role,
+						Action:      checkRoleFlag(roles),
+						Required:    true,
+					},
+				},
+				Subcommands: []*cli.Command{
+					{
+						Name:  "add",
+						Usage: "add user",
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:        "file",
+								Aliases:     []string{"f"},
+								Usage:       "Load request body from input `FILE`",
+								Destination: filenamePtr,
+								Action:      checkJSON,
+								Required:    true,
+							},
+						},
+						Action: commonHandler(http.MethodPost, "/users", &role, nil, tokenQueryParam, filenamePtr),
+					},
+				},
+			},
 		},
 	}
 
