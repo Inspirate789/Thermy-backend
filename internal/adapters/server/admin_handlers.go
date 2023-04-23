@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/Inspirate789/Thermy-backend/pkg/monitoring"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -14,8 +15,13 @@ func (s *Server) postUser(ctx *gin.Context) {
 		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
 		return
 	}
-	username := ctx.Query("username")
-	role := ctx.Query("role")
+
+	var user interfaces.UserDTO
+	err = ctx.BindJSON(&user)
+	if err != nil {
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse UserDTO from received JSON"))
+		return
+	}
 
 	conn, err := s.authService.GetSessionConn(token)
 	if err != nil {
@@ -23,7 +29,7 @@ func (s *Server) postUser(ctx *gin.Context) {
 		return
 	}
 
-	err = s.storageService.AddUser(conn, username, role)
+	err = s.storageService.AddUser(conn, user)
 	if err != nil {
 		_ = ctx.AbortWithError(http.StatusBadRequest, err)
 		return

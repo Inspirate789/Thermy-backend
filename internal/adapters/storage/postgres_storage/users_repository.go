@@ -1,22 +1,17 @@
 package postgres_storage
 
 import (
+	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
-	"github.com/sethvargo/go-password/password"
 )
 
 type UsersPgRepository struct{}
 
-func (r *UsersPgRepository) AddUser(conn storage.ConnDB, username string, role string) error {
-	_, err := password.Generate(20, 10, 0, false, false) // TODO: take from frontend
-	if err != nil {
-		return err
-	}
-
+func (r *UsersPgRepository) AddUser(conn storage.ConnDB, user interfaces.UserDTO) error {
 	args := map[string]any{
-		"username": username,
-		"password": "passwd",
-		"role":     role,
+		"username": user.Name,
+		"password": user.Password,
+		"role":     user.Role,
 	}
 
 	return executeNamedScript(conn, insertUser, args)

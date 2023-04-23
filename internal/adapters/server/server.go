@@ -57,7 +57,9 @@ func parseRole(ctx *gin.Context) (string, error) {
 		return "", err
 	}
 
-	return exp.Split(ctx.FullPath(), 3)[1], nil // "/role/..." --> "role"
+	tokenIndex := len(exp.Split(os.Getenv("API_PREFIX"), -1))
+
+	return exp.Split(ctx.FullPath(), -1)[tokenIndex], nil // "/role/..." --> "role"
 }
 
 func (s *Server) setupHandlers(router *gin.RouterGroup) {

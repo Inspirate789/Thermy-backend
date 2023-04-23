@@ -449,8 +449,8 @@ func (ss *StorageService) SaveLayer(conn ConnDB, layer string) error {
 	return nil
 }
 
-func (ss *StorageService) AddUser(conn ConnDB, username string, role string) error {
-	return ss.storage.AddUser(conn, username, role)
+func (ss *StorageService) AddUser(conn ConnDB, user interfaces.UserDTO) error {
+	return ss.storage.AddUser(conn, user)
 }
 
 func (ss *StorageService) GetUserPassword(conn ConnDB, username string) (string, error) {

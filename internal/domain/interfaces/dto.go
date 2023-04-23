@@ -2,6 +2,12 @@ package interfaces
 
 // DTO - Data Transfer Object
 
+type UserDTO struct {
+	Name     string `json:"name"`
+	Password string `json:"password"`
+	Role     string `json:"role"`
+}
+
 type ModelsIdDTO struct {
 	Models []int `json:"models_id,omitempty"`
 }

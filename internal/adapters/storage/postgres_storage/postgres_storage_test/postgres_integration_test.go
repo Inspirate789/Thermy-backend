@@ -28,9 +28,8 @@ func TestPgStorageService_AddUser(t *testing.T) {
 	mockLog.On("Print", mock.Anything).Return()
 
 	type args struct {
-		conn     storage.ConnDB
-		username string
-		role     string
+		conn storage.ConnDB
+		user interfaces.UserDTO
 	}
 	tests := []struct {
 		name    string
@@ -42,16 +41,19 @@ func TestPgStorageService_AddUser(t *testing.T) {
 			name: "Simple positive test",
 			ss:   storage.NewStorageService(pgStorage, mockLog),
 			args: args{
-				conn:     pgConn,
-				username: randomdata.SillyName(),
-				role:     "admin",
+				conn: pgConn,
+				user: interfaces.UserDTO{
+					Name:     randomdata.SillyName(),
+					Password: randomdata.IpV6Address(),
+					Role:     "admin",
+				},
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.ss.AddUser(tt.args.conn, tt.args.username, tt.args.role)
+			err := tt.ss.AddUser(tt.args.conn, tt.args.user)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AddUser() error = %v, wantErr %v", err, tt.wantErr)
 			}

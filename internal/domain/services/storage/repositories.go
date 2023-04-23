@@ -6,7 +6,7 @@ import (
 )
 
 type UsersRepository interface {
-	AddUser(conn ConnDB, username string, role string) error
+	AddUser(conn ConnDB, user interfaces.UserDTO) error
 	GetUserPassword(conn ConnDB, username string) (string, error)
 }
 

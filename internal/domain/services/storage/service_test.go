@@ -56,12 +56,15 @@ func TestStorageService_AddUser(t *testing.T) {
 	mockLog.On("Print", mock.Anything).Return()
 
 	mockStorage := new(MockStorage)
-	mockStorage.On("AddUser", mock.Anything, "initial_admin", "admin").Return(nil)
+	mockStorage.On("AddUser", mock.Anything, interfaces.UserDTO{
+		Name:     "initial_admin",
+		Password: "abcdefgh",
+		Role:     "admin",
+	}).Return(nil)
 
 	type args struct {
-		conn     ConnDB
-		username string
-		role     string
+		conn ConnDB
+		user interfaces.UserDTO
 	}
 	tests := []struct {
 		name    string
@@ -76,16 +79,19 @@ func TestStorageService_AddUser(t *testing.T) {
 				log:     mockLog,
 			},
 			args: args{
-				conn:     nil,
-				username: "initial_admin",
-				role:     "admin",
+				conn: nil,
+				user: interfaces.UserDTO{
+					Name:     "initial_admin",
+					Password: "abcdefgh",
+					Role:     "admin",
+				},
 			},
 			wantErr: false,
 		},
 	}
 	for i, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.ss.AddUser(tt.args.conn, tt.args.username, tt.args.role)
+			err := tt.ss.AddUser(tt.args.conn, tt.args.user)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AddUser() error = %v, wantErr %v", err, tt.wantErr)
 			}

@@ -16,13 +16,13 @@ type MockStorage struct {
 	mock.Mock
 }
 
-// AddUser provides a mock function with given fields: conn, username, role
-func (_m *MockStorage) AddUser(conn ConnDB, username string, role string) error {
-	ret := _m.Called(conn, username, role)
+// AddUser provides a mock function with given fields: conn, user
+func (_m *MockStorage) AddUser(conn ConnDB, user interfaces.UserDTO) error {
+	ret := _m.Called(conn, user)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(ConnDB, string, string) error); ok {
-		r0 = rf(conn, username, role)
+	if rf, ok := ret.Get(0).(func(ConnDB, interfaces.UserDTO) error); ok {
+		r0 = rf(conn, user)
 	} else {
 		r0 = ret.Error(0)
 	}
