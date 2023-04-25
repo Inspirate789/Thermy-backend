@@ -11,7 +11,7 @@ echo -e "CURRENT_IP=${cur_ip}" >> .env
 
 
 # Init Influx service:
-influx_container_name="influx_log"
+influx_container_name="influx"
 echo -e "INFLUXDB_CONTAINER_NAME=${influx_container_name}" >> .env
 
 # Init Influx database:
@@ -108,6 +108,7 @@ echo -e "BACKEND_API_PREFIX=/api/v${api_version}" >> backend.env
 echo -e "BACKEND_PORT=${backend_port}" >> backend.env
 echo -e "BACKEND_INIT_SLEEP_TIME=${backend_init_sleep_time}" >> backend.env
 echo -e "BACKEND_LOGLEVEL=trace" >> backend.env
+echo -e "GIN_MODE=release" >> backend.env
 
 echo -e "backend.env before run: "
 cat backend.env

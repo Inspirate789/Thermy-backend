@@ -85,12 +85,14 @@ func (s *Server) setupHandlers(router *gin.RouterGroup) {
 }
 
 func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.StorageManager, logger *log.Logger) *Server {
+	gin.SetMode(os.Getenv("GIN_MODE"))
 	router := gin.Default()
 	// router.SetTrustedProxies([]string{"192.168.52.38"}) // TODO?
 	router.UseRawPath = true
 	router.UnescapePathValues = false
 
 	router.Use(gin.LoggerWithWriter(logger.Out))
+	router.Use(gin.RecoveryWithWriter(logger.Out))
 
 	s := Server{ // TODO: Enabling SSL/TLS encryption
 		srv: &http.Server{
