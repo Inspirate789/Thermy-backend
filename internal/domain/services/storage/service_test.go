@@ -4,21 +4,22 @@ import (
 	"context"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
-	"github.com/Inspirate789/Thermy-backend/pkg/logger"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
+	"io"
 	"reflect"
 	"testing"
 )
 
 func TestNewStorageService(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 
 	type args struct {
 		storage Storage
-		log     logger.Logger
+		logger  *log.Logger
 	}
 	tests := []struct {
 		name string
@@ -29,31 +30,27 @@ func TestNewStorageService(t *testing.T) {
 			name: "Simple positive test",
 			args: args{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			want: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := NewStorageService(tt.args.storage, tt.args.log)
+			got := NewStorageService(tt.args.storage, tt.args.logger)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewStorageService() = %v, want %v", got, tt.want)
 			}
 		})
-
-		mockLog.AssertNumberOfCalls(t, "Open", 0)
-		mockLog.AssertNumberOfCalls(t, "Print", 0)
-		mockLog.AssertNumberOfCalls(t, "Close", 0)
 	}
 }
 
 func TestStorageService_AddUser(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("AddUser", mock.Anything, interfaces.UserDTO{
@@ -76,7 +73,7 @@ func TestStorageService_AddUser(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn: nil,
@@ -102,8 +99,8 @@ func TestStorageService_AddUser(t *testing.T) {
 }
 
 func TestStorageService_CloseConn(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("CloseConn", mock.Anything).Return(nil)
@@ -121,7 +118,7 @@ func TestStorageService_CloseConn(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args:    args{conn: nil},
 			wantErr: false,
@@ -139,8 +136,8 @@ func TestStorageService_CloseConn(t *testing.T) {
 }
 
 func TestStorageService_GetAllUnits(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("GetAllUnits", mock.Anything, "test_layer").Return(interfaces.OutputUnitsDTO{}, nil)
@@ -161,7 +158,7 @@ func TestStorageService_GetAllUnits(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:  nil,
@@ -189,8 +186,8 @@ func TestStorageService_GetAllUnits(t *testing.T) {
 }
 
 func TestStorageService_GetLayers(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("GetAllLayers", mock.Anything).Return([]string{}, nil)
@@ -209,7 +206,7 @@ func TestStorageService_GetLayers(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args:    args{conn: nil},
 			want:    interfaces.LayersDTO{Layers: []string{}},
@@ -233,8 +230,8 @@ func TestStorageService_GetLayers(t *testing.T) {
 }
 
 func TestStorageService_GetModelElements(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("GetAllModelElements", mock.Anything, "test_layer").Return([]entities.ModelElement{}, nil)
@@ -255,7 +252,7 @@ func TestStorageService_GetModelElements(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:  nil,
@@ -283,8 +280,8 @@ func TestStorageService_GetModelElements(t *testing.T) {
 }
 
 func TestStorageService_GetModels(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("GetAllModels", mock.Anything, "test_layer").Return([]entities.Model{}, nil)
@@ -305,7 +302,7 @@ func TestStorageService_GetModels(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:  nil,
@@ -333,8 +330,8 @@ func TestStorageService_GetModels(t *testing.T) {
 }
 
 func TestStorageService_GetProperties(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("GetAllProperties", mock.Anything).Return([]entities.Property{}, nil)
@@ -353,7 +350,7 @@ func TestStorageService_GetProperties(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args:    args{conn: nil},
 			want:    interfaces.OutputPropertiesDTO{Properties: []interfaces.OutputPropertyDTO{}},
@@ -377,8 +374,8 @@ func TestStorageService_GetProperties(t *testing.T) {
 }
 
 func TestStorageService_GetPropertiesByUnit(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.
@@ -401,7 +398,7 @@ func TestStorageService_GetPropertiesByUnit(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:  nil,
@@ -431,8 +428,8 @@ func TestStorageService_GetPropertiesByUnit(t *testing.T) {
 }
 
 func TestStorageService_GetUnitsByModels(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("GetUnitsByModels", mock.Anything, "test_layer", []int{}).Return(interfaces.OutputUnitsDTO{
@@ -457,7 +454,7 @@ func TestStorageService_GetUnitsByModels(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:  nil,
@@ -491,8 +488,8 @@ func TestStorageService_GetUnitsByModels(t *testing.T) {
 }
 
 func TestStorageService_GetUnitsByProperties(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("GetUnitsByProperties", mock.Anything, "test_layer", []int{}).Return(interfaces.OutputUnitsDTO{
@@ -517,7 +514,7 @@ func TestStorageService_GetUnitsByProperties(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:          nil,
@@ -549,8 +546,8 @@ func TestStorageService_GetUnitsByProperties(t *testing.T) {
 }
 
 func TestStorageService_GetUserPassword(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("GetUserPassword", mock.Anything, "test_user").Return("test_password", nil)
@@ -570,7 +567,7 @@ func TestStorageService_GetUserPassword(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:     nil,
@@ -597,8 +594,8 @@ func TestStorageService_GetUserPassword(t *testing.T) {
 }
 
 func TestStorageService_OpenConn(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.
@@ -624,7 +621,7 @@ func TestStorageService_OpenConn(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				request: &entities.AuthRequest{
@@ -658,8 +655,8 @@ func TestStorageService_OpenConn(t *testing.T) {
 }
 
 func TestStorageService_SaveLayer(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("SaveLayer", mock.Anything, "test_layer").Return(nil)
@@ -678,7 +675,7 @@ func TestStorageService_SaveLayer(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:  nil,
@@ -699,8 +696,8 @@ func TestStorageService_SaveLayer(t *testing.T) {
 }
 
 func TestStorageService_SaveModelElements(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("SaveModelElements", mock.Anything, "test_layer", []string{}).Return([]int{}, nil)
@@ -722,7 +719,7 @@ func TestStorageService_SaveModelElements(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:             nil,
@@ -751,8 +748,8 @@ func TestStorageService_SaveModelElements(t *testing.T) {
 }
 
 func TestStorageService_SaveModels(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("SaveModels", mock.Anything, "test_layer", []string{}).Return([]int{}, nil)
@@ -774,7 +771,7 @@ func TestStorageService_SaveModels(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:      nil,
@@ -803,8 +800,8 @@ func TestStorageService_SaveModels(t *testing.T) {
 }
 
 func TestStorageService_SaveProperties(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("SaveProperties", mock.Anything, []string{}).Return([]int{}, nil)
@@ -824,7 +821,7 @@ func TestStorageService_SaveProperties(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:          nil,
@@ -851,8 +848,8 @@ func TestStorageService_SaveProperties(t *testing.T) {
 }
 
 func TestStorageService_SaveUnits(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("SaveUnits", mock.Anything, "test_layer", interfaces.SaveUnitsDTO{
@@ -876,7 +873,7 @@ func TestStorageService_SaveUnits(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:  nil,
@@ -902,8 +899,8 @@ func TestStorageService_SaveUnits(t *testing.T) {
 }
 
 func TestStorageService_UpdateUnits(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockStorage := new(MockStorage)
 	mockStorage.On("RenameUnit", mock.Anything, "test_layer", mock.Anything, mock.Anything).Return(nil)
@@ -925,7 +922,7 @@ func TestStorageService_UpdateUnits(t *testing.T) {
 			name: "Simple positive test",
 			ss: &StorageService{
 				storage: mockStorage,
-				log:     mockLog,
+				logger:  mockLogger,
 			},
 			args: args{
 				conn:  nil,

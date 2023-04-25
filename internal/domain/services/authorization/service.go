@@ -2,25 +2,24 @@ package authorization
 
 import (
 	"context"
-	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/errors"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
-	"github.com/Inspirate789/Thermy-backend/pkg/logger"
+	log "github.com/sirupsen/logrus"
 	"sync"
 )
 
 type AuthService struct {
 	mx       sync.RWMutex
 	sessions map[uint64]*Session
-	log      logger.Logger
+	logger   *log.Logger
 }
 
-func NewAuthService(log logger.Logger) *AuthService {
+func NewAuthService(logger *log.Logger) *AuthService {
 	return &AuthService{
 		mx:       sync.RWMutex{},
 		sessions: make(map[uint64]*Session),
-		log:      log,
+		logger:   logger,
 	}
 }
 
@@ -35,11 +34,7 @@ func (as *AuthService) AddSession(sm storage.StorageManager, request *entities.A
 	as.sessions[token] = session
 	as.mx.Unlock()
 
-	as.log.Print(logger.LogRecord{
-		Name: "AuthService",
-		Type: logger.Debug,
-		Msg:  fmt.Sprintf("Add session with token %d, role %s", session.GetToken(), session.GetRole()),
-	})
+	as.logger.Infof("AuthService: add session with token %d, role %s", session.GetToken(), session.GetRole())
 
 	return token, nil
 }
@@ -57,11 +52,7 @@ func (as *AuthService) RemoveSession(sm storage.StorageManager, token uint64) er
 		return err // TODO: wrap errors on every layer
 	}
 
-	as.log.Print(logger.LogRecord{
-		Name: "AuthService",
-		Type: logger.Debug,
-		Msg:  fmt.Sprintf("Remove session with token %d, role %s", session.GetToken(), session.GetRole()),
-	})
+	as.logger.Infof("AuthService: remove session with token %d, role %s", session.GetToken(), session.GetRole())
 
 	as.mx.Lock()
 	delete(as.sessions, token)

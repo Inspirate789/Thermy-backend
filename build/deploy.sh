@@ -91,8 +91,6 @@ cat .env
 # Setup environment for backend program:
 rm -f backend.env
 
-api_version=1
-echo -e "API_PREFIX=/api/v${api_version}" >> backend.env
 echo -e "INFLUXDB_ORG=${influx_org}" >> backend.env
 echo -e "INFLUXDB_URL=${influx_url}" >> backend.env
 echo -e "INFLUXDB_BACKEND_BUCKET_NAME=${backend_bucket_name}" >> backend.env
@@ -105,8 +103,11 @@ echo -e "POSTGRES_DRIVER_NAME=${postgres_driver_name}" >> backend.env
 echo -e "REDIS_HOST=${redis_host}" >> backend.env
 echo -e "REDIS_PORT=${redis_port}" >> backend.env
 echo -e "REDIS_PASSWORD=${redis_password}" >> backend.env
+api_version=1
+echo -e "BACKEND_API_PREFIX=/api/v${api_version}" >> backend.env
 echo -e "BACKEND_PORT=${backend_port}" >> backend.env
 echo -e "BACKEND_INIT_SLEEP_TIME=${backend_init_sleep_time}" >> backend.env
+echo -e "BACKEND_LOGLEVEL=trace" >> backend.env
 
 echo -e "backend.env before run: "
 cat backend.env

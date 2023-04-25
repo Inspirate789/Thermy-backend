@@ -6,27 +6,23 @@ import (
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
-	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/Inspirate789/go-randomdata"
 	"github.com/joho/godotenv"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-	"log"
+	"io"
 	"os"
 	"testing"
 )
 
 var (
+	mockLogger    *log.Logger
 	pgConn        storage.ConnDB
 	pgStorage     = postgres_storage.NewPostgresStorage()
-	mockLog       = new(logger.MockLogger)
 	testLayerName = randomdata.SillyName()
 )
 
 func TestPgStorageService_AddUser(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
-
 	type args struct {
 		conn storage.ConnDB
 		user interfaces.UserDTO
@@ -39,7 +35,7 @@ func TestPgStorageService_AddUser(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn: pgConn,
 				user: interfaces.UserDTO{
@@ -75,7 +71,7 @@ func TestPgStorageService_GetAllUnits(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:  pgConn,
 				layer: testLayerName,
@@ -112,7 +108,7 @@ func TestPgStorageService_GetLayers(t *testing.T) {
 	}{
 		{
 			name:    "Simple positive test",
-			ss:      storage.NewStorageService(pgStorage, mockLog),
+			ss:      storage.NewStorageService(pgStorage, mockLogger),
 			args:    args{conn: pgConn},
 			wantErr: false,
 		},
@@ -146,7 +142,7 @@ func TestPgStorageService_GetModelElements(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:  pgConn,
 				layer: testLayerName,
@@ -181,7 +177,7 @@ func TestPgStorageService_GetModels(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:  pgConn,
 				layer: testLayerName,
@@ -214,7 +210,7 @@ func TestPgStorageService_GetProperties(t *testing.T) {
 	}{
 		{
 			name:    "Simple positive test",
-			ss:      storage.NewStorageService(pgStorage, mockLog),
+			ss:      storage.NewStorageService(pgStorage, mockLogger),
 			args:    args{conn: pgConn},
 			wantErr: false,
 		},
@@ -246,7 +242,7 @@ func TestPgStorageService_GetPropertiesByUnit(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:  pgConn,
 				layer: testLayerName,
@@ -285,7 +281,7 @@ func TestPgStorageService_GetUnitsByModels(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:  pgConn,
 				layer: testLayerName,
@@ -327,7 +323,7 @@ func TestPgStorageService_GetUnitsByProperties(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:          pgConn,
 				layer:         testLayerName,
@@ -366,7 +362,7 @@ func TestPgStorageService_GetUserPassword(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:     pgConn,
 				username: os.Getenv("POSTGRES_ADMIN_USERNAME"),
@@ -404,7 +400,7 @@ func TestPgStorageService_SaveModelElements(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:             pgConn,
 				layer:            testLayerName,
@@ -443,7 +439,7 @@ func TestPgStorageService_SaveModels(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:      pgConn,
 				layer:     testLayerName,
@@ -481,7 +477,7 @@ func TestPgStorageService_SaveProperties(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:          pgConn,
 				propertiesDTO: interfaces.PropertyNamesDTO{Properties: []string{}},
@@ -516,7 +512,7 @@ func TestPgStorageService_SaveUnits(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:  pgConn,
 				layer: testLayerName,
@@ -551,7 +547,7 @@ func TestPgStorageService_UpdateUnits(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLog),
+			ss:   storage.NewStorageService(pgStorage, mockLogger),
 			args: args{
 				conn:  pgConn,
 				layer: testLayerName,
@@ -585,8 +581,10 @@ func setup() {
 		log.Fatal(err)
 	}
 
-	mockLog.On("Print", mock.Anything).Return()
-	err = storage.NewStorageService(pgStorage, mockLog).SaveLayer(pgConn, testLayerName)
+	mockLogger = log.New()
+	mockLogger.SetOutput(io.Discard)
+
+	err = storage.NewStorageService(pgStorage, mockLogger).SaveLayer(pgConn, testLayerName)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -2,23 +2,19 @@ package middleware
 
 import (
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/authorization"
-	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
 )
 
-func ErrorHandler(log logger.Logger) gin.HandlerFunc {
+func ErrorHandler(logger *log.Logger) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.Next()
 
 		if len(ctx.Errors) > 0 {
 			for _, ginErr := range ctx.Errors {
-				log.Print(logger.LogRecord{
-					Name: "Middleware",
-					Type: logger.Error,
-					Msg:  ginErr.Err.Error(),
-				})
+				log.Error(ginErr.Err.Error())
 			}
 
 			// Put the last error message (possible fatal) to response body
@@ -31,20 +27,20 @@ func RoleCheck(svc authorization.AuthManager, parseRole func(*gin.Context) (stri
 	return func(ctx *gin.Context) {
 		token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, err)
+			_ = ctx.AbortWithError(http.StatusBadRequest, err)
 		}
 
 		requiredRole, err := parseRole(ctx)
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, err)
+			_ = ctx.AbortWithError(http.StatusBadRequest, err)
 		}
 
 		sessionRole, err := svc.GetSessionRole(token)
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, err)
+			_ = ctx.AbortWithError(http.StatusBadRequest, err)
 		}
 		if requiredRole != sessionRole {
-			ctx.AbortWithError(http.StatusBadRequest, ErrInvalidRole(sessionRole, requiredRole))
+			_ = ctx.AbortWithError(http.StatusBadRequest, ErrInvalidRole(sessionRole, requiredRole))
 		}
 
 		ctx.Next()

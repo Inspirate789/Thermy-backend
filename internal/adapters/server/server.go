@@ -5,8 +5,8 @@ import (
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/server/middleware"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/authorization"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
-	"github.com/Inspirate789/Thermy-backend/pkg/logger"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"regexp"
@@ -16,7 +16,7 @@ type Server struct {
 	srv            *http.Server
 	storageService storage.StorageManager
 	authService    authorization.AuthManager
-	log            logger.Logger
+	logger         *log.Logger
 }
 
 func (s *Server) addStudentRoutes(rg *gin.RouterGroup) {
@@ -57,13 +57,13 @@ func parseRole(ctx *gin.Context) (string, error) {
 		return "", err
 	}
 
-	tokenIndex := len(exp.Split(os.Getenv("API_PREFIX"), -1))
+	tokenIndex := len(exp.Split(os.Getenv("BACKEND_API_PREFIX"), -1))
 
-	return exp.Split(ctx.FullPath(), -1)[tokenIndex], nil // "/role/..." --> "role"
+	return exp.Split(ctx.FullPath(), -1)[tokenIndex], nil // "/.../role/..." --> "role"
 }
 
 func (s *Server) setupHandlers(router *gin.RouterGroup) {
-	router.Use(middleware.ErrorHandler(s.log))
+	//router.Use(middleware.ErrorHandler(s.log))
 
 	router.GET("/login", s.login)
 	router.POST("/logout", s.logout)
@@ -84,11 +84,13 @@ func (s *Server) setupHandlers(router *gin.RouterGroup) {
 	s.addAdminRoutes(adminRG)
 }
 
-func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.StorageManager, log logger.Logger) *Server {
+func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.StorageManager, logger *log.Logger) *Server {
 	router := gin.Default()
 	// router.SetTrustedProxies([]string{"192.168.52.38"}) // TODO?
 	router.UseRawPath = true
 	router.UnescapePathValues = false
+
+	router.Use(gin.LoggerWithWriter(logger.Out))
 
 	s := Server{ // TODO: Enabling SSL/TLS encryption
 		srv: &http.Server{
@@ -97,10 +99,10 @@ func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.S
 		},
 		storageService: storageMgr,
 		authService:    authMgr,
-		log:            log,
+		logger:         logger,
 	}
 
-	apiRG := router.Group(os.Getenv("API_PREFIX"))
+	apiRG := router.Group(os.Getenv("BACKEND_API_PREFIX"))
 	s.setupHandlers(apiRG)
 
 	return &s

@@ -1,13 +1,17 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/server"
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/authorization"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
-	"github.com/Inspirate789/Thermy-backend/pkg/logger"
+	influx "github.com/Inspirate789/Thermy-backend/pkg/influx_writer"
+	runtime "github.com/banzaicloud/logrus-runtime-formatter"
 	"github.com/joho/godotenv"
+	log "github.com/sirupsen/logrus"
+	"io"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,10 +20,21 @@ import (
 	"time"
 )
 
+var configFilename string
+var startConfig []byte
+
 func init() {
-	err := godotenv.Load("backend.env") // TODO: read filename from flag
+	flag.StringVar(&configFilename, "env", "backend.env", ".env file for backend")
+	flag.Parse()
+
+	var err error
+	startConfig, err = os.ReadFile(configFilename)
 	if err != nil {
-		panic("File backend.env not found")
+		log.Fatalf("File %s not readed: %v", configFilename, err)
+	}
+	err = godotenv.Load(configFilename) // TODO: read filename from flag
+	if err != nil {
+		log.Fatalf("File %s not loaded: %v", configFilename, err)
 	}
 
 	initTimeStr := os.Getenv("BACKEND_INIT_SLEEP_TIME")
@@ -33,77 +48,71 @@ func init() {
 	time.Sleep(time.Duration(initTime) * time.Second)
 }
 
-func exitServer(mainLog logger.Logger, srv *server.Server) {
+func exitServer(logger *log.Logger, srv *server.Server) {
 	quit := make(chan os.Signal)
 	// kill (no param) default send syscall.SIGTERM
 	// kill -2 is syscall.SIGINT
 	// kill -9 is syscall.SIGKILL but can't be caught, so don't need to add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	mainLog.Print(logger.LogRecord{
-		Name: "Main",
-		Type: logger.Debug,
-		Msg:  "Shutdown Server ...",
-	})
+	logger.Info("Shutdown Server ...")
 
 	err := srv.Stop()
 	if err != nil {
-		mainLog.Print(logger.LogRecord{
-			Name: "Main",
-			Type: logger.Error,
-			Msg:  fmt.Sprintf("Server Shutdown: %v", err),
-		})
+		logger.Errorf("Server Shutdown: %v", err)
 	}
-	mainLog.Print(logger.LogRecord{
-		Name: "Main",
-		Type: logger.Debug,
-		Msg:  "Server exited",
-	})
+	logger.Info("Server exited")
+}
+
+func NewLogger(w io.Writer) *log.Logger {
+	level, err := log.ParseLevel(os.Getenv("BACKEND_LOGLEVEL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	logger := log.New()
+	logger.SetOutput(w)
+	logger.SetLevel(level)
+	formatter := runtime.Formatter{
+		ChildFormatter: &log.TextFormatter{
+			FullTimestamp: true,
+		},
+		Package: true,
+		File:    true,
+		Line:    true,
+	}
+	formatter.Line = true
+	logger.SetFormatter(&formatter)
+
+	return logger
 }
 
 func main() {
-	mainLog := logger.NewInfluxLogger()
-
-	logBucketName := os.Getenv("INFLUXDB_BACKEND_BUCKET_NAME")
-	if logBucketName == "" {
-		panic("INFLUXDB_BACKEND_BUCKET_NAME must be set")
-	}
-
-	err := mainLog.Open(logBucketName)
+	w := influx.NewInfluxWriter()
+	err := w.Open()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	defer mainLog.Close()
+	defer w.Close()
+	logger := NewLogger(w)
 
-	authService := authorization.NewAuthService(mainLog)
-	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(), mainLog)
+	authService := authorization.NewAuthService(logger)
+	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(), logger)
 
-	portStr := os.Getenv("BACKEND_PORT")
-	if portStr == "" {
-		panic("BACKEND_PORT must be set")
-	}
-	port, err := strconv.Atoi(portStr)
+	port, err := strconv.Atoi(os.Getenv("BACKEND_PORT"))
 	if err != nil {
-		panic(err)
+		logger.Fatal(err)
 	}
 
-	srv := server.NewServer(port, authService, storageService, mainLog)
+	srv := server.NewServer(port, authService, storageService, logger)
 
 	go func() {
 		err = srv.Start()
 		if err != nil && err != http.ErrServerClosed {
-			mainLog.Print(logger.LogRecord{
-				Name: "Main",
-				Type: logger.Error,
-				Msg:  fmt.Sprintf("listen: %s\n", err),
-			})
+			logger.Error(fmt.Sprintf("listen: %s\n", err))
 		}
 	}()
-	mainLog.Print(logger.LogRecord{
-		Name: "Main",
-		Type: logger.Debug,
-		Msg:  "Server started",
-	})
+	logger.Infof("Server started at port %s with configuration: \n%s", os.Getenv("BACKEND_PORT"), string(startConfig))
 
-	exitServer(mainLog, srv)
+	exitServer(logger, srv)
 }

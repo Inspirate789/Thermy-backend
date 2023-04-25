@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/Inspirate789/go-randomdata v0.0.0-20221102062709-3f5c1661795c
+	github.com/banzaicloud/logrus-runtime-formatter v0.0.0-20190729070250-5ae5475bae5e
 	github.com/buger/jsonparser v1.1.1
 	github.com/gin-gonic/gin v1.8.2
 	github.com/influxdata/influxdb-client-go/v2 v2.12.2
@@ -11,7 +12,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.7
 	github.com/prometheus/procfs v0.9.0
-	github.com/sethvargo/go-password v0.2.0
+	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.1
 	github.com/urfave/cli/v2 v2.25.1
 	go.uber.org/multierr v1.9.0

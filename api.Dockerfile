@@ -28,4 +28,4 @@ EXPOSE ${BACKEND_PORT}
 # USER nonroot:nonroot
 
 # Run the binary
-ENTRYPOINT ["/backend"]
+ENTRYPOINT ["/backend", "-env=backend.env"]

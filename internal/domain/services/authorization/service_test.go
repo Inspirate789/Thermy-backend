@@ -4,50 +4,47 @@ import (
 	"context"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
-	"github.com/Inspirate789/Thermy-backend/pkg/logger"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
+	"io"
 	"reflect"
 	"sync"
 	"testing"
 )
 
 func TestNewAuthService(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	tests := []struct {
 		name string
-		arg  logger.Logger
+		arg  *log.Logger
 		want *AuthService
 	}{
 		{
 			name: "Simple positive test",
-			arg:  mockLog,
+			arg:  mockLogger,
 			want: &AuthService{
 				mx:       sync.RWMutex{},
 				sessions: make(map[uint64]*Session),
-				log:      mockLog,
+				logger:   mockLogger,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := NewAuthService(tt.arg)
-			if !reflect.DeepEqual(got.log, tt.want.log) ||
+			if !reflect.DeepEqual(got.logger, tt.want.logger) ||
 				!reflect.DeepEqual(got.sessions, tt.want.sessions) {
 				t.Errorf("NewAuthService() = %v, want %v", got, tt.want)
 			}
 		})
-
-		mockLog.AssertNumberOfCalls(t, "Open", 0)
-		mockLog.AssertNumberOfCalls(t, "Print", 0)
-		mockLog.AssertNumberOfCalls(t, "Close", 0)
 	}
 }
 
 func TestAuthService_AddSession(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockSM := new(storage.MockStorageManager)
 	mockSM.On("OpenConn", mock.Anything, mock.Anything).Return(nil, "admin", nil)
@@ -70,7 +67,7 @@ func TestAuthService_AddSession(t *testing.T) {
 			as: &AuthService{
 				mx:       sync.RWMutex{},
 				sessions: make(map[uint64]*Session),
-				log:      mockLog,
+				logger:   mockLogger,
 			},
 			args: args{
 				sm: mockSM,
@@ -96,17 +93,13 @@ func TestAuthService_AddSession(t *testing.T) {
 			}
 		})
 
-		mockLog.AssertNumberOfCalls(t, "Open", 0)
-		mockLog.AssertNumberOfCalls(t, "Print", i+1)
-		mockLog.AssertNumberOfCalls(t, "Close", 0)
-
 		mockSM.AssertNumberOfCalls(t, "OpenConn", i+1)
 	}
 }
 
 func TestAuthService_RemoveSession(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockSM := new(storage.MockStorageManager)
 	mockSM.On("OpenConn", mock.Anything, mock.Anything).Return(nil, "admin", nil)
@@ -129,7 +122,7 @@ func TestAuthService_RemoveSession(t *testing.T) {
 			as: &AuthService{
 				mx:       sync.RWMutex{},
 				sessions: make(map[uint64]*Session),
-				log:      mockLog,
+				logger:   mockLogger,
 			},
 			args: args{
 				sm: mockSM,
@@ -147,7 +140,7 @@ func TestAuthService_RemoveSession(t *testing.T) {
 			as: &AuthService{
 				mx:       sync.RWMutex{},
 				sessions: make(map[uint64]*Session),
-				log:      mockLog,
+				logger:   mockLogger,
 			},
 			args: args{
 				sm: mockSM,
@@ -173,9 +166,6 @@ func TestAuthService_RemoveSession(t *testing.T) {
 			}
 		})
 
-		mockLog.AssertNumberOfCalls(t, "Open", 0)
-		mockLog.AssertNumberOfCalls(t, "Close", 0)
-
 		mockSM.AssertNumberOfCalls(t, "OpenConn", i+1)
 
 		if !tt.wantErr {
@@ -185,8 +175,8 @@ func TestAuthService_RemoveSession(t *testing.T) {
 }
 
 func TestAuthService_GetSessionConn(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockSM := new(storage.MockStorageManager)
 	mockSM.On("OpenConn", mock.Anything, mock.Anything).Return(nil, "admin", nil)
@@ -209,7 +199,7 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 			as: &AuthService{
 				mx:       sync.RWMutex{},
 				sessions: make(map[uint64]*Session),
-				log:      mockLog,
+				logger:   mockLogger,
 			},
 			args: args{
 				sm: mockSM,
@@ -227,7 +217,7 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 			as: &AuthService{
 				mx:       sync.RWMutex{},
 				sessions: make(map[uint64]*Session),
-				log:      mockLog,
+				logger:   mockLogger,
 			},
 			args: args{
 				sm: mockSM,
@@ -257,17 +247,13 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 			//}
 		})
 
-		mockLog.AssertNumberOfCalls(t, "Open", 0)
-		mockLog.AssertNumberOfCalls(t, "Print", i+1)
-		mockLog.AssertNumberOfCalls(t, "Close", 0)
-
 		mockSM.AssertNumberOfCalls(t, "OpenConn", i+1)
 	}
 }
 
 func TestAuthService_GetSessionRole(t *testing.T) {
-	mockLog := new(logger.MockLogger)
-	mockLog.On("Print", mock.Anything).Return()
+	mockLogger := log.New()
+	mockLogger.SetOutput(io.Discard)
 
 	mockSM := new(storage.MockStorageManager)
 	mockSM.On("OpenConn", mock.Anything, mock.Anything).Return(nil, "admin", nil)
@@ -291,7 +277,7 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 			as: &AuthService{
 				mx:       sync.RWMutex{},
 				sessions: make(map[uint64]*Session),
-				log:      mockLog,
+				logger:   mockLogger,
 			},
 			args: args{
 				sm: mockSM,
@@ -310,7 +296,7 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 			as: &AuthService{
 				mx:       sync.RWMutex{},
 				sessions: make(map[uint64]*Session),
-				log:      mockLog,
+				logger:   mockLogger,
 			},
 			args: args{
 				sm: mockSM,
@@ -340,10 +326,6 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 				t.Errorf("GetSessionRole() got = %v, want %v", got, tt.want)
 			}
 		})
-
-		mockLog.AssertNumberOfCalls(t, "Open", 0)
-		mockLog.AssertNumberOfCalls(t, "Print", i+1)
-		mockLog.AssertNumberOfCalls(t, "Close", 0)
 
 		mockSM.AssertNumberOfCalls(t, "OpenConn", i+1)
 	}
