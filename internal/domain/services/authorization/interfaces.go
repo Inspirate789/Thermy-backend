@@ -11,4 +11,5 @@ type AuthManager interface {
 	RemoveSession(sm storage.StorageManager, token uint64) error
 	GetSessionRole(token uint64) (string, error)
 	GetSessionConn(token uint64) (storage.ConnDB, error)
+	SessionExist(token uint64) bool
 }

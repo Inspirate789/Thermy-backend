@@ -69,15 +69,18 @@ func (s *Server) setupHandlers(router *gin.RouterGroup) {
 	router.POST("/logout", s.logout)
 
 	studentRG := router.Group("/student")
+	studentRG.Use(middleware.SessionCheck(s.authService))
 	studentRG.Use(middleware.RoleCheck(s.authService, parseRole))
 	s.addStudentRoutes(studentRG)
 
 	educatorRG := router.Group("/educator")
+	studentRG.Use(middleware.SessionCheck(s.authService))
 	educatorRG.Use(middleware.RoleCheck(s.authService, parseRole))
 	s.addStudentRoutes(educatorRG)
 	s.addEducatorRoutes(educatorRG)
 
 	adminRG := router.Group("/admin")
+	studentRG.Use(middleware.SessionCheck(s.authService))
 	adminRG.Use(middleware.RoleCheck(s.authService, parseRole))
 	s.addStudentRoutes(adminRG)
 	s.addEducatorRoutes(adminRG)

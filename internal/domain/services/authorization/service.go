@@ -82,3 +82,11 @@ func (as *AuthService) GetSessionConn(token uint64) (storage.ConnDB, error) {
 
 	return session.GetConn(), nil
 }
+
+func (as *AuthService) SessionExist(token uint64) bool {
+	as.mx.RLock()
+	_, exist := as.sessions[token]
+	as.mx.RUnlock()
+
+	return exist
+}

@@ -23,6 +23,21 @@ func ErrorHandler(logger *log.Logger) gin.HandlerFunc {
 	}
 }
 
+func SessionCheck(svc authorization.AuthManager) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
+		if err != nil {
+			_ = ctx.AbortWithError(http.StatusBadRequest, err)
+		}
+
+		if !svc.SessionExist(token) {
+			_ = ctx.AbortWithError(http.StatusBadRequest, ErrUserNotExist(ctx.Query("token")))
+		}
+
+		ctx.Next()
+	}
+}
+
 func RoleCheck(svc authorization.AuthManager, parseRole func(*gin.Context) (string, error)) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
