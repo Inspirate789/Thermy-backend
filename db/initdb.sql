@@ -611,7 +611,7 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.insert_models(layer text, model_texts text[])
+CREATE OR REPLACE FUNCTION public.insert_models_sub(layer text, model_texts text[])
 RETURNS table (
     id int
 )
@@ -621,17 +621,55 @@ DECLARE layer_name text;
 BEGIN
     select (layer || '_layer') into layer_name;
     RETURN QUERY
-    EXECUTE format(
-        E'insert into %I.models(id, name) overriding user value -- or overriding system value
-        values (null, unnest(array[%s]))
-        returning %I.models.id;',
-        layer_name,
-        format(
-                E'\'%s\'',
-                array_to_string(model_texts, E'\',\'')
-            ),
-        layer_name
-    );
+        EXECUTE format(
+            E'insert into %I.models(id, name) overriding user value -- or overriding system value
+            values (null, unnest(array[%s]))
+            returning %I.models.id;',
+            layer_name,
+            format(
+                    E'\'%s\'',
+                    array_to_string(model_texts, E'\',\'')
+                ),
+            layer_name
+        );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE TYPE my_record AS (model_id int, elem_id int);
+
+CREATE OR REPLACE FUNCTION public.insert_models(layer text, model_texts text[])
+RETURNS table (
+    id int
+)
+AS
+$func$
+DECLARE layer_name text;
+        models_id int[];
+        row_record my_record;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    models_id := array(select * from public.insert_models_sub(layer, model_texts));
+    FOR row_record IN
+        EXECUTE format(
+                E'select elems.id as model_id, %I.elements.id as elem_id
+                from (select id, unnest(string_to_array(%I.models.name, \'+\')) as parts
+                      from %I.models
+                      where %I.models.id = any(array[%s])) as elems
+                    inner join %I.elements on elems.parts = %I.elements.name',
+                layer_name, layer_name, layer_name, layer_name,
+                format('%s', array_to_string(models_id, ',')),
+                layer_name, layer_name
+            )
+    LOOP
+        EXECUTE format(
+                'insert into %I.models_and_elems(model_id, elem_id) overriding user value -- or overriding system value
+                values (%s, %s)
+                on conflict do nothing;',
+                layer_name, row_record.model_id, row_record.elem_id
+            );
+    END LOOP;
+    RETURN QUERY
+    SELECT unnest(models_id);
 END
 $func$ LANGUAGE plpgsql;
 
@@ -672,7 +710,8 @@ BEGIN
         EXECUTE format(
             'insert into %I.units_%I(id, model_id, registration_date, text) overriding user value -- or overriding system value
             values(null, unnest(array[%s]), now()::timestamp, unnest(array[%s]))
-            returning %I.units_%I.id;',
+            returning %I.units_%I.id
+            on conflict do nothing;',
             layer_name, lang,
             format('%s', array_to_string(models_id, ',')),
             format(
