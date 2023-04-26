@@ -234,13 +234,13 @@ func (ss *StorageService) UpdateUnits(conn ConnDB, layer string, unitsDTO interf
 	for _, unit := range unitsDTO.Units {
 		name := unit.OldText
 
-		if unit.NewText != "" {
-			err = ss.storage.RenameUnit(conn, layer, unit.Lang, unit.OldText, unit.NewText)
+		if unit.NewText != nil {
+			err = ss.storage.RenameUnit(conn, layer, unit.Lang, unit.OldText, *unit.NewText)
 			if err != nil {
 				ss.logger.Errorf("StorageService: %v", err)
 				return err
 			}
-			name = unit.NewText
+			name = *unit.NewText
 		}
 
 		if len(unit.PropertiesID) != 0 {

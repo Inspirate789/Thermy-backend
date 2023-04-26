@@ -63,8 +63,6 @@ func parseRole(ctx *gin.Context) (string, error) {
 }
 
 func (s *Server) setupHandlers(router *gin.RouterGroup) {
-	//router.Use(middleware.ErrorHandler(s.log))
-
 	router.GET("/login", s.login)
 	router.POST("/logout", s.logout)
 
@@ -74,13 +72,13 @@ func (s *Server) setupHandlers(router *gin.RouterGroup) {
 	s.addStudentRoutes(studentRG)
 
 	educatorRG := router.Group("/educator")
-	studentRG.Use(middleware.SessionCheck(s.authService))
+	educatorRG.Use(middleware.SessionCheck(s.authService))
 	educatorRG.Use(middleware.RoleCheck(s.authService, parseRole))
 	s.addStudentRoutes(educatorRG)
 	s.addEducatorRoutes(educatorRG)
 
 	adminRG := router.Group("/admin")
-	studentRG.Use(middleware.SessionCheck(s.authService))
+	adminRG.Use(middleware.SessionCheck(s.authService))
 	adminRG.Use(middleware.RoleCheck(s.authService, parseRole))
 	s.addStudentRoutes(adminRG)
 	s.addEducatorRoutes(adminRG)
@@ -95,6 +93,7 @@ func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.S
 	router.UnescapePathValues = false
 
 	router.Use(gin.LoggerWithWriter(logger.Out))
+	router.Use(middleware.ErrorResponseWriter(logger))
 	router.Use(gin.RecoveryWithWriter(logger.Out))
 
 	s := Server{ // TODO: Enabling SSL/TLS encryption

@@ -8,8 +8,11 @@
         },
         {
             "lang": "en",
-            "old_text": "term1",
-            "new_text": "term1"
+            "old_text": "term1"
+        },
+        {
+            "lang": "en",
+            "old_text": "term1"
         }
     ]
 }

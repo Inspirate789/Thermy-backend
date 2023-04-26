@@ -96,10 +96,10 @@ type OutputUnitsDTO struct {
 }
 
 type UpdateUnitDTO struct {
-	Lang         string `json:"lang"`
-	OldText      string `json:"old_text"`
-	NewText      string `json:"new_text"`
-	PropertiesID []int  `json:"properties_id,omitempty"`
+	Lang         string  `json:"lang"`
+	OldText      string  `json:"old_text"`
+	NewText      *string `json:"new_text,omitempty"`
+	PropertiesID []int   `json:"properties_id,omitempty"`
 }
 
 type UpdateUnitsDTO struct {

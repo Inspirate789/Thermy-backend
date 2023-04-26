@@ -8,15 +8,11 @@ import (
 	"strconv"
 )
 
-func ErrorHandler(logger *log.Logger) gin.HandlerFunc {
+func ErrorResponseWriter(logger *log.Logger) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.Next()
 
 		if len(ctx.Errors) > 0 {
-			for _, ginErr := range ctx.Errors {
-				log.Error(ginErr.Err.Error())
-			}
-
 			// Put the last error message (possible fatal) to response body
 			ctx.JSON(-1, gin.H{"error": ctx.Errors[len(ctx.Errors)-1].Err.Error()}) // -1 not overwrite HTTP status
 		}
@@ -27,7 +23,7 @@ func SessionCheck(svc authorization.AuthManager) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 		if err != nil {
-			_ = ctx.AbortWithError(http.StatusBadRequest, err)
+			_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		}
 
 		if !svc.SessionExist(token) {
@@ -42,7 +38,7 @@ func RoleCheck(svc authorization.AuthManager, parseRole func(*gin.Context) (stri
 	return func(ctx *gin.Context) {
 		token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 		if err != nil {
-			_ = ctx.AbortWithError(http.StatusBadRequest, err)
+			_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		}
 
 		requiredRole, err := parseRole(ctx)
