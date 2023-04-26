@@ -20,14 +20,15 @@ var (
 	selectPropertiesByUnit     = `select * from public.select_properties_by_unit(:layer_name, :lang, :unit_text);`
 	selectPropertiesIdByUnitId = `select * from public.select_properties_id_by_unit_id(:layer_name, :lang, :unit_id);`
 	insertProperties           = `select * from public.insert_properties(:properties_array);`
-	insertUnitProperties       = `call public.insert_unit_properties(:layer_name, :lang, :unit_id, :properties_id)`
-	updateUnitProperties       = `call public.update_unit_properties(:layer_name, :lang, :unit_name, :properties_id)`
+	insertUnitProperties       = `call public.insert_unit_properties(:layer_name, :lang, :unit_id, :properties_id);`
+	updateUnitProperties       = `call public.update_unit_properties(:layer_name, :lang, :unit_name, :properties_id);`
 	// Contexts
 	selectContextsById     = `select id, text from public.contexts where id = any($1);`
 	selectContextsIdByUnit = `select * from public.select_contexts_id_by_unit(:layer_name, :lang, :unit_id);`
-	insertContextUnits     = `call public.insert_context_units(:layer_name, :lang, :context_id, :units_id)`
+	insertContextUnits     = `call public.insert_context_units(:layer_name, :lang, :context_id, :units_id);`
 	insertContext          = `insert into public.contexts(id, registration_date, text) overriding user value -- or overriding system value
 							  values (null, now()::timestamp, $1)
+							  on conflict do nothing 
 							  returning id;`
 	// Units
 	selectAllLinkedUnits               = `select * from public.select_all_linked_units(:layer_name);`
@@ -36,6 +37,7 @@ var (
 	selectUnlinkedUnits                = `select * from public.select_unlinked_units_by_lang(:layer_name, :lang);`
 	selectUnlinkedUnitsAndModelsId     = `select * from public.select_unlinked_units_by_lang_and_models_id(:layer_name, :lang, :models_id_array);`
 	selectUnlinkedUnitsAndPropertiesId = `select * from public.select_unlinked_units_by_lang_and_properties_id(:layer_name, :lang, :properties_id_array);`
-	insertUnits                        = `select * from public.insert_units(:layer_name, :lang, :models_id, :unit_texts)`
-	updateUnitNames                    = `call public.update_unit_names(:layer_name, :lang, :old_name, :new_name)`
+	insertUnits                        = `select * from public.insert_units(:layer_name, :lang, :models_id, :unit_texts);`
+	linkUnits                          = `call public.link_units(:layer_name, :unit_ru, :unit_en);`
+	updateUnitNames                    = `call public.update_unit_names(:layer_name, :lang, :old_name, :new_name);`
 )

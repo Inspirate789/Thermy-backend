@@ -263,6 +263,15 @@ func (r *UnitsPgRepository) insertContextUnits(tx sqlx.ExtContext, layer, lang s
 	return executeNamedScript(tx, insertContextUnits, args)
 }
 
+func (r *UnitsPgRepository) linkUnits(tx sqlx.ExtContext, layer, unitRu, unitEn string) error {
+	args := map[string]any{
+		"layer_name": layer,
+		"unit_ru":    unitRu,
+		"unit_en":    unitEn,
+	}
+	return executeNamedScript(tx, linkUnits, args)
+}
+
 func (r *UnitsPgRepository) saveUnitsTX(ctx context.Context, tx sqlx.ExtContext, layer string, data interfaces.SaveUnitsDTO) error {
 	wg := sync.WaitGroup{}
 	var globalErr error
@@ -313,6 +322,21 @@ func (r *UnitsPgRepository) saveUnitsTX(ctx context.Context, tx sqlx.ExtContext,
 			}
 		}(lang, contextID, unitsID)
 
+	}
+
+	for _, linkedUnitsDTO := range data.Units {
+		unitRuDTO, inMap := linkedUnitsDTO["ru"]
+		if !inMap {
+			continue
+		}
+		unitEnDTO, inMap := linkedUnitsDTO["en"]
+		if !inMap {
+			continue
+		}
+		err := r.linkUnits(tx, layer, unitRuDTO.Text, unitEnDTO.Text)
+		if err != nil {
+			globalErr = err
+		}
 	}
 
 	wg.Wait()

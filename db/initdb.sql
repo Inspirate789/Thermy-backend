@@ -485,11 +485,10 @@ BEGIN
     RETURN QUERY
     EXECUTE format(
             'select id, model_id ,registration_date, text
-            from %I.%I left join %I.units_ru_and_en on id <> %I;',
+            from %I.%I join %I.units_ru_and_en on id not in (select %I from %I.units_ru_and_en);',
+            layer_name, ('units_' || lang),
             layer_name,
-            ('units_' || lang),
-            layer_name,
-            ('unit_' || lang || '_id')
+            ('unit_' || lang || '_id'), layer_name
         );
 END
 $func$ LANGUAGE plpgsql;
@@ -511,9 +510,11 @@ BEGIN
     RETURN QUERY
     EXECUTE format(
             'select id, model_id ,registration_date, text
-            from %I.%I left join %I.units_ru_and_en on id <> %I and %I.%I.model_id = any(array[%s]);',
+            from %I.%I join %I.units_ru_and_en on id not in (select %I from %I.units_ru_and_en)
+                and %I.%I.model_id = any(array[%s]);',
             layer_name, ('units_' || lang),
-            layer_name, ('unit_' || lang || '_id'),
+            layer_name,
+            ('unit_' || lang || '_id'), layer_name,
             layer_name, ('units_' || lang),
             id_string
         );
@@ -536,11 +537,12 @@ BEGIN
     select format('%s', array_to_string(properties_id, ',')) into id_string;
     RETURN QUERY
         EXECUTE format(
-            E'select id, model_id ,registration_date, text
-            from %I.%I left join %I.units_ru_and_en on id <> %I
+            E'select id, model_id, registration_date, text
+            from %I.%I join %I.units_ru_and_en on id not in (select %I from %I.units_ru_and_en)
                 and array[%s] <@ array(select * from public.select_properties_id_by_unit_id(\'%s\', \'%s\', %I.%I.id));',
             layer_name, ('units_' || lang),
-            layer_name, ('unit_' || lang || '_id'),
+            layer_name,
+            ('unit_' || lang || '_id'), layer_name,
             id_string, layer_name, lang,
             layer_name, ('units_' || lang)
         );
@@ -710,8 +712,8 @@ BEGIN
         EXECUTE format(
             'insert into %I.units_%I(id, model_id, registration_date, text) overriding user value -- or overriding system value
             values(null, unnest(array[%s]), now()::timestamp, unnest(array[%s]))
-            returning %I.units_%I.id
-            on conflict do nothing;',
+            on conflict do nothing
+            returning %I.units_%I.id;',
             layer_name, lang,
             format('%s', array_to_string(models_id, ',')),
             format(
@@ -720,6 +722,23 @@ BEGIN
             ),
             layer_name, lang
         );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE public.link_units(layer text, unit_ru text, unit_en text)
+AS
+$func$
+DECLARE layer_name text;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    EXECUTE format(
+        E'insert into %I.units_ru_and_en(unit_ru_id, unit_en_id) overriding user value -- or overriding system value
+        select %I.units_ru.id, %I.units_en.id
+        from %I.units_ru join %I.units_en on %I.units_ru.text = \'%s\' and %I.units_en.text = \'%s\'
+        on conflict do nothing;',
+        layer_name, layer_name, layer_name, layer_name, layer_name, layer_name,
+        unit_ru, layer_name, unit_en
+    );
 END
 $func$ LANGUAGE plpgsql;
 
