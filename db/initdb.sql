@@ -34,8 +34,8 @@ create table if not exists public.properties(
 -- Роли БД
 create role student;
 
+grant select on public.users to student;
 grant select, insert, update on public.contexts to student;
-
 grant select, insert, update, delete on public.properties to student;
 
 grant select on information_schema.schemata to student;
@@ -637,7 +637,7 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE TYPE my_record AS (model_id int, elem_id int);
+CREATE TYPE model_record AS (model_id int, elem_id int);
 
 CREATE OR REPLACE FUNCTION public.insert_models(layer text, model_texts text[])
 RETURNS table (
@@ -647,7 +647,7 @@ AS
 $func$
 DECLARE layer_name text;
         models_id int[];
-        row_record my_record;
+        row_record model_record;
 BEGIN
     select (layer || '_layer') into layer_name;
     models_id := array(select * from public.insert_models_sub(layer, model_texts));
@@ -699,7 +699,7 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.insert_units(layer text, lang text, models_id int[], unit_texts text[])
+CREATE OR REPLACE FUNCTION public.insert_units_sub(layer text, lang text, models_id int[], unit_texts text[])
 RETURNS table (
     id int
 )
@@ -722,6 +722,37 @@ BEGIN
             ),
             layer_name, lang
         );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE TYPE unit_record AS (model_id int, elem_id int);
+
+CREATE OR REPLACE FUNCTION public.insert_units(layer text, lang text, models_id int[], unit_texts text[])
+RETURNS table (
+    id int
+)
+AS
+$func$
+DECLARE layer_name text;
+        units_id int[];
+        user_id int;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    units_id := array(select * from public.insert_units_sub(layer, lang, models_id, unit_texts));
+    select public.users.id
+    into user_id
+    from public.users
+    where public.users.name = (select session_user)
+    limit 1;
+    EXECUTE format(
+            E'insert into %I.users_and_units_%I(user_id, unit_id) overriding user value -- or overriding system value
+            values (%s, unnest(array[%s]))
+            on conflict do nothing;',
+            layer_name, lang, user_id,
+            format('%s', array_to_string(units_id, ','))
+    );
+    RETURN QUERY
+    SELECT unnest(units_id);
 END
 $func$ LANGUAGE plpgsql;
 
