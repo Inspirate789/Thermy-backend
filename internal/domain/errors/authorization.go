@@ -8,6 +8,8 @@ func (ae AuthorizationError) Error() string {
 
 const (
 	// ErrInvalidToken  = AuthorizationError("invalid token")
-	ErrRemoveSession = AuthorizationError("cannot remove session: invalid token")
-	ErrGetSession    = AuthorizationError("cannot find session: invalid token")
+	ErrOpenSession           = AuthorizationError("cannot add new session")
+	ErrRemoveDatabaseSession = AuthorizationError("cannot remove session: internal database error")
+	ErrRemoveSessionByToken  = AuthorizationError("cannot remove session: invalid token")
+	ErrGetSession            = AuthorizationError("cannot find session: invalid token")
 )

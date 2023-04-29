@@ -26,15 +26,6 @@ func NewPostgresStorage() *PostgresStorage {
 	return &PostgresStorage{}
 }
 
-//	AuthDB Example: { // TODO: delete this
-//		host:    	"postgres"
-//		port:     	5432
-//		username: 	"user"
-//		password: 	"mypassword"
-//		dbname:   	"user_db"
-//		sslmode:  	"disable"
-//	}
-
 func getConnRole(conn *sqlx.DB, ctx context.Context) (string, error) {
 	var role string
 	err := sqlx_utils.Get(ctx, conn, &role, selectRole)

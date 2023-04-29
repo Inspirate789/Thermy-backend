@@ -21,14 +21,14 @@ func TestSession_Open(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		session *Session
+		session *session
 		args    args
 		want    uint64
 		wantErr bool
 	}{
 		{
 			name:    "Simple positive test",
-			session: NewSession(),
+			session: newSession(),
 			args: args{
 				sm: mockSM,
 				request: &entities.AuthRequest{
@@ -67,13 +67,13 @@ func TestSession_Close(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		session *Session
+		session *session
 		args    args
 		wantErr bool
 	}{
 		{
 			name:    "Simple positive test",
-			session: NewSession(),
+			session: newSession(),
 			args: args{
 				sm: mockSM,
 			},
@@ -94,12 +94,12 @@ func TestSession_Close(t *testing.T) {
 func TestSession_GetAuthData(t *testing.T) {
 	tests := []struct {
 		name    string
-		session *Session
+		session *session
 		want    *entities.AuthRequest
 	}{
 		{
 			name: "Simple positive test",
-			session: &Session{
+			session: &session{
 				authData: &entities.AuthRequest{
 					Username: "initial_admin",
 					Password: "12345",
@@ -123,12 +123,12 @@ func TestSession_GetAuthData(t *testing.T) {
 func TestSession_GetConn(t *testing.T) {
 	tests := []struct {
 		name    string
-		session *Session
+		session *session
 		want    storage.ConnDB
 	}{
 		{
 			name:    "Simple positive test",
-			session: &Session{connDB: "conn"},
+			session: &session{connDB: "conn"},
 			want:    "conn",
 		},
 	}
@@ -144,12 +144,12 @@ func TestSession_GetConn(t *testing.T) {
 func TestSession_GetRole(t *testing.T) {
 	tests := []struct {
 		name    string
-		session *Session
+		session *session
 		want    string
 	}{
 		{
 			name:    "Simple positive test",
-			session: &Session{role: "admin"},
+			session: &session{role: "admin"},
 			want:    "admin",
 		},
 	}
@@ -165,12 +165,12 @@ func TestSession_GetRole(t *testing.T) {
 func TestSession_GetToken(t *testing.T) {
 	tests := []struct {
 		name    string
-		session *Session
+		session *session
 		want    uint64
 	}{
 		{
 			name:    "Simple positive test",
-			session: &Session{token: 10063865700249539947},
+			session: &session{token: 10063865700249539947},
 			want:    10063865700249539947,
 		},
 	}

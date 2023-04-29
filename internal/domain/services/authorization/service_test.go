@@ -26,7 +26,7 @@ func TestNewAuthService(t *testing.T) {
 			arg:  mockLogger,
 			want: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]*Session),
+				sessions: make(map[uint64]*session),
 				logger:   mockLogger,
 			},
 		},
@@ -66,7 +66,7 @@ func TestAuthService_AddSession(t *testing.T) {
 			name: "Simple positive test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]*Session),
+				sessions: make(map[uint64]*session),
 				logger:   mockLogger,
 			},
 			args: args{
@@ -121,7 +121,7 @@ func TestAuthService_RemoveSession(t *testing.T) {
 			name: "Simple positive test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]*Session),
+				sessions: make(map[uint64]*session),
 				logger:   mockLogger,
 			},
 			args: args{
@@ -139,7 +139,7 @@ func TestAuthService_RemoveSession(t *testing.T) {
 			name: "Simple negative test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]*Session),
+				sessions: make(map[uint64]*session),
 				logger:   mockLogger,
 			},
 			args: args{
@@ -198,7 +198,7 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 			name: "Simple positive test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]*Session),
+				sessions: make(map[uint64]*session),
 				logger:   mockLogger,
 			},
 			args: args{
@@ -216,7 +216,7 @@ func TestAuthService_GetSessionConn(t *testing.T) {
 			name: "Simple negative test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]*Session),
+				sessions: make(map[uint64]*session),
 				logger:   mockLogger,
 			},
 			args: args{
@@ -276,7 +276,7 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 			name: "Simple positive test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]*Session),
+				sessions: make(map[uint64]*session),
 				logger:   mockLogger,
 			},
 			args: args{
@@ -295,7 +295,7 @@ func TestAuthService_GetSessionRole(t *testing.T) {
 			name: "Simple negative test",
 			as: &AuthService{
 				mx:       sync.RWMutex{},
-				sessions: make(map[uint64]*Session),
+				sessions: make(map[uint64]*session),
 				logger:   mockLogger,
 			},
 			args: args{
