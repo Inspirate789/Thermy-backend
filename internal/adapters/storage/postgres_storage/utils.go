@@ -65,13 +65,13 @@ func namedSelectValueFromScript[T any](conn storage.ConnDB, script string, args 
 func selectSliceFromScript[S ~[]E, E any](conn storage.ConnDB, script string, args ...any) (S, error) {
 	sqlxDB, ok := conn.(sqlx.QueryerContext)
 	if !ok {
-		return nil, errors.New("cannot get sqlx.QueryerContext from argument") // TODO: log and wrap
+		return nil, errors.New("cannot get sqlx.QueryerContext from argument")
 	}
 
 	var slice S
 	err := sqlx_utils.Select(context.Background(), sqlxDB, &slice, script, args...)
 	if err != nil {
-		return nil, err // TODO: log and wrap
+		return nil, err
 	}
 
 	return slice, nil
@@ -80,13 +80,13 @@ func selectSliceFromScript[S ~[]E, E any](conn storage.ConnDB, script string, ar
 func namedSelectSliceFromScript[S ~[]E, E any](conn storage.ConnDB, script string, args map[string]any) (S, error) {
 	sqlxDB, ok := conn.(sqlx.ExtContext)
 	if !ok {
-		return nil, errors.New("cannot get sqlx.ExtContext from argument") // TODO: log and wrap
+		return nil, errors.New("cannot get sqlx.ExtContext from argument")
 	}
 
 	var slice S
 	err := sqlx_utils.NamedSelect(context.Background(), sqlxDB, &slice, script, args)
 	if err != nil {
-		return nil, err // TODO: log and wrap
+		return nil, err
 	}
 
 	return slice, nil

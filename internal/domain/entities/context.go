@@ -16,13 +16,13 @@ func (c *Context) IsValid() error {
 	var err error
 	switch {
 	case c.ID < 0:
-		err = errors.ErrInvalidID
+		err = errors.ErrInvalidIdWrap(c.ID)
 	case c.ID == 0:
-		err = errors.ErrNullID
+		err = errors.ErrNullIdWrap(c.ID)
 	case c.RegDate == "":
-		err = errors.ErrInvalidDate
+		err = errors.ErrInvalidDateWrap(c.RegDate)
 	case c.Text == "":
-		err = errors.ErrInvalidContent
+		err = errors.ErrInvalidContentWrap(c.Text)
 	}
 
 	return err

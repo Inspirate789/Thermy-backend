@@ -55,7 +55,7 @@ type LayersManager interface {
 
 type UsersManager interface {
 	AddUser(conn ConnDB, user interfaces.UserDTO) error
-	GetUserPassword(conn ConnDB, username string) (string, error)
+	//GetUserPassword(conn ConnDB, username string) (string, error)
 }
 
 type StorageManager interface {

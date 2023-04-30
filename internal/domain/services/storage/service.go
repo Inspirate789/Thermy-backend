@@ -290,6 +290,15 @@ func (ss *StorageService) SaveModels(conn ConnDB, layer string, modelsDTO interf
 		return interfaces.ModelsIdDTO{}, err
 	}
 
+	for _, modelName := range modelsDTO.Models {
+		model := entities.Model{Name: modelName}
+		err = model.IsValidName()
+		if err != nil {
+			ss.logger.Error(err)
+			return interfaces.ModelsIdDTO{}, err
+		}
+	}
+
 	modelsID, err := ss.storage.SaveModels(conn, layer, modelsDTO.Models)
 	if err != nil {
 		ss.logger.Error(err)
@@ -341,12 +350,12 @@ func (ss *StorageService) AddUser(conn ConnDB, user interfaces.UserDTO) error {
 	return nil
 }
 
-func (ss *StorageService) GetUserPassword(conn ConnDB, username string) (string, error) {
-	password, err := ss.storage.GetUserPassword(conn, username)
-	if err != nil {
-		ss.logger.Error(err)
-		return "", errors.IdentifyStorageError(err)
-	}
-
-	return password, nil
-}
+//func (ss *StorageService) GetUserPassword(conn ConnDB, username string) (string, error) {
+//	password, err := ss.storage.GetUserPassword(conn, username)
+//	if err != nil {
+//		ss.logger.Error(err)
+//		return "", errors.IdentifyStorageError(err)
+//	}
+//
+//	return password, nil
+//}

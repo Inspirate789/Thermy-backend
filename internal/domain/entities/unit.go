@@ -18,17 +18,17 @@ func (u Unit) IsValid() error {
 	var err error
 	switch {
 	case u.ID < 0:
-		err = errors.ErrInvalidID
+		err = errors.ErrInvalidIdWrap(u.ID)
 	case u.ID == 0:
-		err = errors.ErrNullID
+		err = errors.ErrNullIdWrap(u.ID)
 	case u.ModelID < 0:
-		err = errors.ErrInvalidReference
+		err = errors.ErrInvalidReferenceWrap(u.ModelID)
 	case u.ModelID == 0:
-		err = errors.ErrNullReference
+		err = errors.ErrNullReferenceWrap(u.ModelID)
 	case u.RegDate == "":
-		err = errors.ErrInvalidDate
+		err = errors.ErrInvalidDateWrap(u.RegDate)
 	case u.Text == "":
-		err = errors.ErrInvalidContent
+		err = errors.ErrInvalidContentWrap(u.Text)
 	}
 
 	return err

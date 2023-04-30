@@ -16,11 +16,11 @@ func (p *Property) IsValid() error {
 	var err error
 	switch {
 	case p.ID < 0:
-		err = errors.ErrInvalidID
+		err = errors.ErrInvalidIdWrap(p.ID)
 	case p.ID == 0:
-		err = errors.ErrNullID
+		err = errors.ErrNullIdWrap(p.ID)
 	case p.Name == "":
-		err = errors.ErrInvalidContent
+		err = errors.ErrInvalidContentWrap(p.Name)
 	}
 
 	return err

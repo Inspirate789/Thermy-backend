@@ -2,6 +2,7 @@ package entities
 
 import (
 	"github.com/Inspirate789/Thermy-backend/internal/domain/errors"
+	"regexp"
 	"strings"
 )
 
@@ -17,15 +18,27 @@ type ModelElement struct {
 	Name string `db:"name"`
 }
 
+func (m *Model) IsValidName() error {
+	matched, _ := regexp.MatchString(`^([a-z]+\+)*?[a-z]$`, m.Name)
+
+	if !matched {
+		return errors.ErrInvalidNameWrap(m.Name)
+	}
+	return nil
+}
+
 func (m *Model) IsValid() error {
-	var err error
+	err := m.IsValidName()
+
 	switch {
+	case err != nil:
+		break
 	case m.ID < 0:
-		err = errors.ErrInvalidID
+		err = errors.ErrInvalidIdWrap(m.ID)
 	case m.ID == 0:
-		err = errors.ErrNullID
+		err = errors.ErrNullIdWrap(m.ID)
 	case m.Name == "":
-		err = errors.ErrInvalidContent
+		err = errors.ErrInvalidContentWrap(m.Name)
 	}
 
 	return err
@@ -35,11 +48,11 @@ func (e *ModelElement) IsValid() error {
 	var err error
 	switch {
 	case e.ID < 0:
-		err = errors.ErrInvalidID
+		err = errors.ErrInvalidIdWrap(e.ID)
 	case e.ID == 0:
-		err = errors.ErrNullID
+		err = errors.ErrNullIdWrap(e.ID)
 	case e.Name == "":
-		err = errors.ErrInvalidContent
+		err = errors.ErrInvalidContentWrap(e.ID)
 	}
 
 	return err

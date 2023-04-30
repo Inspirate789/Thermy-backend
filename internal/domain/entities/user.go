@@ -35,17 +35,17 @@ func (u *User) IsValid() error {
 	var err error
 	switch {
 	case u.ID < 0:
-		err = errors.ErrInvalidID
+		err = errors.ErrInvalidIdWrap(u.ID)
 	case u.ID == 0:
-		err = errors.ErrNullID
+		err = errors.ErrNullIdWrap(u.ID)
 	case u.Name == "":
-		return errors.ErrInvalidName
+		return errors.ErrInvalidNameWrap(u.Name)
 	case u.Password == "":
-		return errors.ErrInvalidPassword
+		return errors.ErrInvalidPasswordWrap(u.Password)
 	case u.Role == "":
-		return errors.ErrInvalidRole
+		return errors.ErrInvalidRoleWrap(u.Role)
 	case u.RegDate == "":
-		err = errors.ErrInvalidDate
+		err = errors.ErrInvalidDateWrap(u.RegDate)
 	}
 
 	return err
