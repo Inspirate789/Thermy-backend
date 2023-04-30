@@ -1,7 +1,7 @@
 package server
 
 import (
-	"errors"
+	"github.com/Inspirate789/Thermy-backend/internal/adapters/server/errors"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -12,7 +12,8 @@ func (s *Server) login(ctx *gin.Context) {
 	var request entities.AuthRequest
 	err := ctx.BindJSON(&request)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse AuthRequest from received JSON"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseJSONWrap("AuthRequest"))
 		return
 	}
 
@@ -30,7 +31,8 @@ func (s *Server) login(ctx *gin.Context) {
 func (s *Server) logout(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 

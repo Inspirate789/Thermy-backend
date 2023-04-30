@@ -25,9 +25,9 @@ func ErrUnknownLayerWrap(layer string) StorageError {
 func IdentifyStorageError(err error) StorageError {
 	switch {
 	case strings.Contains(strings.ToLower(err.Error()), "authentication failed"):
-		return ErrConnectDatabase
-	case strings.Contains(strings.ToLower(err.Error()), "bad connection"):
 		return ErrAuthDatabase
+	case strings.Contains(strings.ToLower(err.Error()), "bad connection"):
+		return ErrConnectDatabase
 	case strings.Contains(strings.ToLower(err.Error()), "must be set"):
 		return ErrEnvironment
 	default:

@@ -27,8 +27,9 @@ func (as *AuthService) AddSession(sm storage.StorageManager, request *entities.A
 	s := newSession()
 	token, err := s.Open(sm, request, ctx)
 	if err != nil {
+		err = errors.ErrOpenSessionWrap(err)
 		as.logger.Error(err)
-		return 0, errors.ErrOpenSession
+		return 0, err
 	}
 
 	as.mx.Lock()
@@ -51,8 +52,9 @@ func (as *AuthService) RemoveSession(sm storage.StorageManager, token uint64) er
 
 	err := s.Close(sm)
 	if err != nil {
+		err = errors.ErrCloseDatabaseSessionWrap(err)
 		as.logger.Error(err)
-		return errors.ErrRemoveDatabaseSession
+		return err
 	}
 
 	as.logger.Infof("AuthService: remove session with token %d, role %s", s.GetToken(), s.GetRole())

@@ -24,10 +24,12 @@ func SessionCheck(svc authorization.AuthManager) gin.HandlerFunc {
 		token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 		if err != nil {
 			_ = ctx.AbortWithError(http.StatusInternalServerError, err)
+			return
 		}
 
 		if !svc.SessionExist(token) {
 			_ = ctx.AbortWithError(http.StatusBadRequest, ErrUserNotExist(ctx.Query("token")))
+			return
 		}
 
 		ctx.Next()
@@ -39,19 +41,23 @@ func RoleCheck(svc authorization.AuthManager, parseRole func(*gin.Context) (stri
 		token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 		if err != nil {
 			_ = ctx.AbortWithError(http.StatusInternalServerError, err)
+			return
 		}
 
 		requiredRole, err := parseRole(ctx)
 		if err != nil {
 			_ = ctx.AbortWithError(http.StatusBadRequest, err)
+			return
 		}
 
 		sessionRole, err := svc.GetSessionRole(token)
 		if err != nil {
 			_ = ctx.AbortWithError(http.StatusBadRequest, err)
+			return
 		}
 		if requiredRole != sessionRole {
 			_ = ctx.AbortWithError(http.StatusBadRequest, ErrInvalidRole(sessionRole, requiredRole))
+			return
 		}
 
 		ctx.Next()

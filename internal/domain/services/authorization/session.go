@@ -2,7 +2,6 @@ package authorization
 
 import (
 	"context"
-	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 )
@@ -37,7 +36,7 @@ func (s *session) GetConn() storage.ConnDB {
 func (s *session) Open(sm storage.StorageManager, request *entities.AuthRequest, ctx context.Context) (uint64, error) {
 	conn, role, err := sm.OpenConn(request, ctx)
 	if err != nil {
-		return 0, fmt.Errorf("cannot open session: %w", err)
+		return 0, err
 	}
 
 	s.authData = request
@@ -51,7 +50,7 @@ func (s *session) Open(sm storage.StorageManager, request *entities.AuthRequest,
 func (s *session) Close(sm storage.StorageManager) error {
 	err := sm.CloseConn(s.connDB)
 	if err != nil {
-		return fmt.Errorf("cannot close session: %w", err)
+		return err
 	}
 
 	return nil

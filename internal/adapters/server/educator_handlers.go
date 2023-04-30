@@ -1,7 +1,7 @@
 package server
 
 import (
-	"errors"
+	"github.com/Inspirate789/Thermy-backend/internal/adapters/server/errors"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -11,7 +11,8 @@ import (
 func (s *Server) postModels(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 	layer := ctx.Query("layer")
@@ -19,7 +20,8 @@ func (s *Server) postModels(ctx *gin.Context) {
 	var modelNames interfaces.ModelNamesDTO
 	err = ctx.BindJSON(&modelNames)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse ModelNamesDTO from received JSON"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseJSONWrap("ModelNamesDTO"))
 		return
 	}
 
@@ -41,7 +43,8 @@ func (s *Server) postModels(ctx *gin.Context) {
 func (s *Server) postElements(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 	layer := ctx.Query("layer")
@@ -49,7 +52,8 @@ func (s *Server) postElements(ctx *gin.Context) {
 	var modelElementNames interfaces.ModelElementNamesDTO
 	err = ctx.BindJSON(&modelElementNames)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse ModelElementNamesDTO from received JSON"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseJSONWrap("ModelElementNamesDTO"))
 		return
 	}
 
@@ -71,7 +75,8 @@ func (s *Server) postElements(ctx *gin.Context) {
 func (s *Server) postLayer(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 	layer := ctx.Query("layer")

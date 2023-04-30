@@ -1,7 +1,7 @@
 package server
 
 import (
-	"errors"
+	"github.com/Inspirate789/Thermy-backend/internal/adapters/server/errors"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -11,7 +11,8 @@ import (
 func (s *Server) postUnits(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL")) // TODO: log true error message, return readable error message (use wrap?)
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 	layer := ctx.Query("layer")
@@ -19,7 +20,8 @@ func (s *Server) postUnits(ctx *gin.Context) {
 	var unitsDTO interfaces.SaveUnitsDTO
 	err = ctx.BindJSON(&unitsDTO)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse SaveUnitsDTO from received JSON")) // TODO: add custom errors
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseJSONWrap("SaveUnitsDTO"))
 		return
 	}
 
@@ -41,7 +43,8 @@ func (s *Server) postUnits(ctx *gin.Context) {
 func (s *Server) patchUnits(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL")) // TODO: log true error message, return readable error message (use wrap?)
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 	layer := ctx.Query("layer")
@@ -49,7 +52,8 @@ func (s *Server) patchUnits(ctx *gin.Context) {
 	var unitsDTO interfaces.UpdateUnitsDTO
 	err = ctx.BindJSON(&unitsDTO)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse UpdateUnitsDTO from received JSON")) // TODO: add custom errors
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseJSONWrap("UpdateUnitsDTO"))
 		return
 	}
 
@@ -71,7 +75,8 @@ func (s *Server) patchUnits(ctx *gin.Context) {
 func (s *Server) getAllUnits(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL")) // TODO: log true error message, return readable error message (use wrap)
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 	layer := ctx.Query("layer")
@@ -94,7 +99,8 @@ func (s *Server) getAllUnits(ctx *gin.Context) {
 func (s *Server) getUnitsByModels(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL")) // TODO: log true error message, return readable error message (use wrap)
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 	layer := ctx.Query("layer")
@@ -102,7 +108,8 @@ func (s *Server) getUnitsByModels(ctx *gin.Context) {
 	var modelsID interfaces.ModelsIdDTO
 	err = ctx.BindJSON(&modelsID)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse ModelsIdDTO from received JSON"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseJSONWrap("ModelsIdDTO"))
 		return
 	}
 
@@ -124,7 +131,8 @@ func (s *Server) getUnitsByModels(ctx *gin.Context) {
 func (s *Server) getUnitsByProperties(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL")) // TODO: log true error message, return readable error message (use wrap)
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 	layer := ctx.Query("layer")
@@ -132,7 +140,8 @@ func (s *Server) getUnitsByProperties(ctx *gin.Context) {
 	var propertiesID interfaces.PropertiesIdDTO
 	err = ctx.BindJSON(&propertiesID)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse PropertiesIdDTO from received JSON"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseJSONWrap("PropertiesIdDTO"))
 		return
 	}
 
@@ -154,7 +163,8 @@ func (s *Server) getUnitsByProperties(ctx *gin.Context) {
 func (s *Server) getModels(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL")) // TODO: log true error message, return readable error message (use wrap)
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 	layer := ctx.Query("layer")
@@ -177,7 +187,8 @@ func (s *Server) getModels(ctx *gin.Context) {
 func (s *Server) getModelElements(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL")) // TODO: log true error message, return readable error message (use wrap)
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 	layer := ctx.Query("layer")
@@ -200,7 +211,8 @@ func (s *Server) getModelElements(ctx *gin.Context) {
 func (s *Server) getProperties(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL")) // TODO: log true error message, return readable error message (use wrap)
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 
@@ -222,7 +234,8 @@ func (s *Server) getProperties(ctx *gin.Context) {
 func (s *Server) getPropertiesByUnit(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 		return
 	}
 	layer := ctx.Query("layer")
@@ -230,7 +243,8 @@ func (s *Server) getPropertiesByUnit(ctx *gin.Context) {
 	var unitDTO interfaces.SearchUnitDTO
 	err = ctx.BindJSON(&unitDTO)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse SearchUnitDTO from received JSON"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseJSONWrap("SearchUnitDTO"))
 		return
 	}
 
@@ -252,14 +266,15 @@ func (s *Server) getPropertiesByUnit(ctx *gin.Context) {
 func (s *Server) postProperties(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL")) // TODO: log true error message, return readable error message (use wrap)
-		return
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 	}
 
 	var propertyNames interfaces.PropertyNamesDTO
 	err = ctx.BindJSON(&propertyNames)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse PropertyNamesDTO from received JSON"))
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseJSONWrap("PropertyNamesDTO"))
 		return
 	}
 
@@ -281,8 +296,8 @@ func (s *Server) postProperties(ctx *gin.Context) {
 func (s *Server) getAllLayers(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL")) // TODO: log true error message, return readable error message (use wrap)
-		return
+		s.logger.Error(err)
+		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseURLWrap("token"))
 	}
 
 	conn, err := s.authService.GetSessionConn(token)

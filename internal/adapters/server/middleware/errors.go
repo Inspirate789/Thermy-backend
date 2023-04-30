@@ -15,7 +15,3 @@ func ErrUserNotExist(token string) MiddlewareError {
 func ErrInvalidRole(expected, got string) MiddlewareError {
 	return MiddlewareError(fmt.Sprintf("invalid role: expected %s, got %s", expected, got))
 }
-
-//const (
-//	ErrInvalidRole = MiddlewareError("invalid token")
-//)
