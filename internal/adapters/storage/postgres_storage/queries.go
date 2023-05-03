@@ -6,9 +6,9 @@ var (
 	selectLayerNames = `select substring(schema_name, 1, position('_layer' in schema_name) - 1) 
 						from information_schema.schemata where schema_name like '%_layer';`
 	// Users
-	insertUser         = `select * from public.insert_user(:username, :password, :role);`
-	selectUserPassword = `select password from public.users where name = $1 limit 1;`
-	selectRole         = `select users.role from public.users where users.name = (select session_user);`
+	insertUser = `select * from public.insert_user(:username, :password, :role);`
+	// selectUserPassword = `select password from public.users where name = $1 limit 1;`
+	selectRole = `select users.role from public.users where users.name = (select session_user);`
 	// Models
 	selectAllModels = `select * from public.select_all_models(:layer_name);`
 	insertModels    = `select * from public.insert_models(:layer_name, :models_array);`

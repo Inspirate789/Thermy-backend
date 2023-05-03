@@ -34,6 +34,7 @@ create table if not exists public.properties(
 -- Роли БД
 create role student;
 
+grant usage on schema public to student;
 grant select on public.users to student;
 grant select, insert, update on public.contexts to student;
 grant select, insert, update, delete on public.properties to student;
