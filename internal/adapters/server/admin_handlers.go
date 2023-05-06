@@ -9,6 +9,18 @@ import (
 	"strconv"
 )
 
+// postUser godoc
+//
+//	@Summary		Add new user.
+//	@Description	add new user
+//	@Tags			admin
+//	@Param			token	query	string				true	"User authentication token"
+//	@Param			user	body	interfaces.UserDTO	true	"User information"
+//	@Accept			json
+//	@Success		200
+//	@Failure		400	{object}	string
+//	@Failure		500	{object}	string
+//	@Router			/admin/users [post]
 func (s *Server) postUser(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -33,48 +45,35 @@ func (s *Server) postUser(ctx *gin.Context) {
 
 	err = s.storageService.AddUser(conn, user)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, err)
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
 	ctx.Status(http.StatusOK)
 }
 
-//func (s *Server) getUserPassword(ctx *gin.Context) {
-//	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
-//	if err != nil {
-//		_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("cannot parse token from URL"))
-//		return
-//	}
-//	username := ctx.Query("username")
+// getStat godoc
 //
-//	conn, err := s.authService.GetSessionConn(token)
-//	if err != nil {
-//		_ = ctx.AbortWithError(http.StatusBadRequest, err)
-//		return
-//	}
-//
-//	password, err := s.storageService.GetUserPassword(conn, username)
-//	if err != nil {
-//		_ = ctx.AbortWithError(http.StatusBadRequest, err)
-//		return
-//	}
-//
-//	ctx.JSON(http.StatusOK, gin.H{"password": password, "error": "ok"})
-//}
-
+//	@Summary		Show the status of server.
+//	@Description	return the statistic of the server process
+//	@Tags			admin
+//	@Param			token	query	string	true	"User authentication token"
+//	@Produce		json
+//	@Success		200	{object}	monitoring.ProcStat
+//	@Failure		500	{object}	string
+//	@Router			/admin/stat [get]
 func (s *Server) getStat(ctx *gin.Context) {
 	observer, err := monitoring.NewProcStatObserver()
 	if err != nil {
 		s.logger.Error(err)
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrAccessSystemInfo)
+		_ = ctx.AbortWithError(http.StatusInternalServerError, errors.ErrAccessSystemInfo)
 		return
 	}
 
 	stat, err := observer.GetInfo()
 	if err != nil {
 		s.logger.Error(err)
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrAccessSystemInfo)
+		_ = ctx.AbortWithError(http.StatusInternalServerError, errors.ErrAccessSystemInfo)
 		return
 	}
 

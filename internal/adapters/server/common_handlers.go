@@ -8,6 +8,20 @@ import (
 	"strconv"
 )
 
+type loginResponse struct {
+	Token string `json:"token"`
+}
+
+// login godoc
+//
+//	@Summary		Log in to the server.
+//	@Description	log in to the server
+//	@Tags			common
+//	@Param			request	body	entities.AuthRequest	true	"Authentication request"
+//	@Produce		json
+//	@Success		200	{object}	loginResponse
+//	@Failure		400	{object}	string
+//	@Router			/login [post]
 func (s *Server) login(ctx *gin.Context) {
 	var request entities.AuthRequest
 	err := ctx.BindJSON(&request)
@@ -23,11 +37,18 @@ func (s *Server) login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"token": strconv.FormatUint(token, 10),
-	})
+	ctx.JSON(http.StatusOK, loginResponse{Token: strconv.FormatUint(token, 10)})
 }
 
+// logout godoc
+//
+//	@Summary		Log out from the server.
+//	@Description	log out from the server
+//	@Tags			common
+//	@Param			token	query	string	true	"User authentication token"
+//	@Success		200
+//	@Failure		400	{object}	string
+//	@Router			/logout [post]
 func (s *Server) logout(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {

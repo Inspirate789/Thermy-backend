@@ -465,8 +465,8 @@ BEGIN
             layer_name, layer_name, layer_name, layer_name, layer_name, layer_name,
             layer_name, layer_name, layer_name, layer_name, layer_name, layer_name,
             layer_name,
-            id_string, layer_name, layer_name,
-            id_string, layer_name, layer_name
+            id_string, layer, layer_name,
+            id_string, layer, layer_name
         );
 END
 $func$ LANGUAGE plpgsql;

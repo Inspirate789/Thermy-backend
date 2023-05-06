@@ -8,6 +8,7 @@ import (
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/authorization"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	influx "github.com/Inspirate789/Thermy-backend/pkg/influx_writer"
+	_ "github.com/Inspirate789/Thermy-backend/swagger"
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
@@ -87,6 +88,19 @@ func NewLogger(w io.Writer) *log.Logger {
 	return logger
 }
 
+//	@title			Thermy API
+//	@version		1.0
+//	@description	This is a Thermy backend API.
+
+//	@contact.name	API Support
+//	@contact.email	andreysapozhkov535@gmail.com
+
+//	@license.name	MIT
+//	@license.url	https://mit-license.org/
+
+//	@host		localhost:8080
+//	@BasePath	/api/v1
+//	@Schemes	http
 func main() {
 	w := influx.NewInfluxWriter()
 	err := w.Open()

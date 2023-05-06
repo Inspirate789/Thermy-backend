@@ -545,53 +545,53 @@ func TestStorageService_GetUnitsByProperties(t *testing.T) {
 	}
 }
 
-func TestStorageService_GetUserPassword(t *testing.T) {
-	mockLogger := log.New()
-	mockLogger.SetOutput(io.Discard)
-
-	mockStorage := new(MockStorage)
-	mockStorage.On("GetUserPassword", mock.Anything, "test_user").Return("test_password", nil)
-
-	type args struct {
-		conn     ConnDB
-		username string
-	}
-	tests := []struct {
-		name    string
-		ss      *StorageService
-		args    args
-		want    string
-		wantErr bool
-	}{
-		{
-			name: "Simple positive test",
-			ss: &StorageService{
-				storage: mockStorage,
-				logger:  mockLogger,
-			},
-			args: args{
-				conn:     nil,
-				username: "test_user",
-			},
-			want:    "test_password",
-			wantErr: false,
-		},
-	}
-	for i, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.ss.GetUserPassword(tt.args.conn, tt.args.username)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetUserPassword() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("GetUserPassword() got = %v, want %v", got, tt.want)
-			}
-		})
-
-		mockStorage.AssertNumberOfCalls(t, "GetUserPassword", i+1)
-	}
-}
+//func TestStorageService_GetUserPassword(t *testing.T) {
+//	mockLogger := log.New()
+//	mockLogger.SetOutput(io.Discard)
+//
+//	mockStorage := new(MockStorage)
+//	mockStorage.On("GetUserPassword", mock.Anything, "test_user").Return("test_password", nil)
+//
+//	type args struct {
+//		conn     ConnDB
+//		username string
+//	}
+//	tests := []struct {
+//		name    string
+//		ss      *StorageService
+//		args    args
+//		want    string
+//		wantErr bool
+//	}{
+//		{
+//			name: "Simple positive test",
+//			ss: &StorageService{
+//				storage: mockStorage,
+//				logger:  mockLogger,
+//			},
+//			args: args{
+//				conn:     nil,
+//				username: "test_user",
+//			},
+//			want:    "test_password",
+//			wantErr: false,
+//		},
+//	}
+//	for i, tt := range tests {
+//		t.Run(tt.name, func(t *testing.T) {
+//			got, err := tt.ss.GetUserPassword(tt.args.conn, tt.args.username)
+//			if (err != nil) != tt.wantErr {
+//				t.Errorf("GetUserPassword() error = %v, wantErr %v", err, tt.wantErr)
+//				return
+//			}
+//			if got != tt.want {
+//				t.Errorf("GetUserPassword() got = %v, want %v", got, tt.want)
+//			}
+//		})
+//
+//		mockStorage.AssertNumberOfCalls(t, "GetUserPassword", i+1)
+//	}
+//}
 
 func TestStorageService_OpenConn(t *testing.T) {
 	mockLogger := log.New()

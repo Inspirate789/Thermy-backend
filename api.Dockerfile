@@ -13,6 +13,7 @@ RUN go mod download
 COPY ./cmd/backend/main.go ./
 COPY ./internal ./internal
 COPY ./pkg ./pkg
+COPY ./swagger ./swagger
 
 # Build the binary
 RUN go build -o /backend
@@ -22,6 +23,7 @@ FROM scratch
 
 # Copy our static executable
 COPY --from=build /backend /backend
+COPY --from=build /app/swagger ./swagger
 COPY backend.env /
 
 EXPOSE ${BACKEND_PORT}

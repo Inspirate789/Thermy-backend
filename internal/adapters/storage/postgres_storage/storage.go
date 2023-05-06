@@ -57,7 +57,7 @@ func getPostgresInfo(request *entities.AuthRequest) (string, error) {
 		return "", errors.New("POSTGRES_SSL_MODE must be set")
 	}
 
-	postgresInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+	postgresInfo := fmt.Sprintf("host=%s port=%s user='%s' password='%s' dbname=%s sslmode=%s",
 		host,
 		port,
 		request.Username,
@@ -76,7 +76,7 @@ func (ps *PostgresStorage) OpenConn(request *entities.AuthRequest, ctx context.C
 
 	sqlDB, err := sql.Open("postgres", postgresInfo)
 	if err != nil {
-		return nil, "", err
+		return nil, "", fmt.Errorf("cannot open connection (%s): %w", postgresInfo, err)
 	}
 
 	driverName, exists := os.LookupEnv("POSTGRES_DRIVER_NAME")
@@ -87,7 +87,7 @@ func (ps *PostgresStorage) OpenConn(request *entities.AuthRequest, ctx context.C
 
 	role, err := getConnRole(sqlxDB, ctx)
 	if err != nil {
-		return nil, "", err
+		return nil, "", fmt.Errorf("cannot open connection (%s): %w", postgresInfo, err)
 	}
 
 	return sqlxDB, role, nil

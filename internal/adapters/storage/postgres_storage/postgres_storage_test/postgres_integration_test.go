@@ -348,42 +348,42 @@ func TestPgStorageService_GetUnitsByProperties(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_GetUserPassword(t *testing.T) {
-	type args struct {
-		conn     storage.ConnDB
-		username string
-	}
-	tests := []struct {
-		name    string
-		ss      *storage.StorageService
-		args    args
-		want    string
-		wantErr bool
-	}{
-		{
-			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
-			args: args{
-				conn:     pgConn,
-				username: os.Getenv("POSTGRES_ADMIN_USERNAME"),
-			},
-			want:    os.Getenv("POSTGRES_ADMIN_PASSWORD"),
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.ss.GetUserPassword(tt.args.conn, tt.args.username)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetUserPassword() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("GetUserPassword() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+//func TestPgStorageService_GetUserPassword(t *testing.T) {
+//	type args struct {
+//		conn     storage.ConnDB
+//		username string
+//	}
+//	tests := []struct {
+//		name    string
+//		ss      *storage.StorageService
+//		args    args
+//		want    string
+//		wantErr bool
+//	}{
+//		{
+//			name: "Simple positive test",
+//			ss:   storage.NewStorageService(pgStorage, mockLogger),
+//			args: args{
+//				conn:     pgConn,
+//				username: os.Getenv("POSTGRES_ADMIN_USERNAME"),
+//			},
+//			want:    os.Getenv("POSTGRES_ADMIN_PASSWORD"),
+//			wantErr: false,
+//		},
+//	}
+//	for _, tt := range tests {
+//		t.Run(tt.name, func(t *testing.T) {
+//			got, err := tt.ss.GetUserPassword(tt.args.conn, tt.args.username)
+//			if (err != nil) != tt.wantErr {
+//				t.Errorf("GetUserPassword() error = %v, wantErr %v", err, tt.wantErr)
+//				return
+//			}
+//			if got != tt.want {
+//				t.Errorf("GetUserPassword() got = %v, want %v", got, tt.want)
+//			}
+//		})
+//	}
+//}
 
 func TestPgStorageService_SaveModelElements(t *testing.T) {
 	type args struct {

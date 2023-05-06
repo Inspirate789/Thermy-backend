@@ -8,6 +8,21 @@ import (
 	"strconv"
 )
 
+// postModels godoc
+//
+//	@Summary		Add new structural models.
+//	@Description	add new structural models
+//	@Tags			educator
+//	@Param			token		query	string						true	"User authentication token"
+//	@Param			layer		query	string						true	"Text markup layer"
+//	@Param			modelNames	body	interfaces.ModelNamesDTO	true	"Structural model names"
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	interfaces.ModelsIdDTO
+//	@Failure		400	{object}	string
+//	@Failure		500	{object}	string
+//	@Router			/admin/models [post]
+//	@Router			/educator/models [post]
 func (s *Server) postModels(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -33,13 +48,28 @@ func (s *Server) postModels(ctx *gin.Context) {
 
 	modelsID, err := s.storageService.SaveModels(conn, layer, modelNames)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, err)
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, modelsID)
 }
 
+// postElements godoc
+//
+//	@Summary		Add new elements of structural models.
+//	@Description	add new elements of structural models
+//	@Tags			educator
+//	@Param			token				query	string							true	"User authentication token"
+//	@Param			layer				query	string							true	"Text markup layer"
+//	@Param			modelElementNames	body	interfaces.ModelElementNamesDTO	true	"Structural model element names"
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	interfaces.ModelElementsIdDTO
+//	@Failure		400	{object}	string
+//	@Failure		500	{object}	string
+//	@Router			/admin/elements [post]
+//	@Router			/educator/elements [post]
 func (s *Server) postElements(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -65,13 +95,25 @@ func (s *Server) postElements(ctx *gin.Context) {
 
 	modelElementsID, err := s.storageService.SaveModelElements(conn, layer, modelElementNames)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, err)
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, modelElementsID)
 }
 
+// postLayer godoc
+//
+//	@Summary		Add new text markup layer.
+//	@Description	add new text markup layer
+//	@Tags			educator
+//	@Param			token	query	string	true	"User authentication token"
+//	@Param			layer	query	string	true	"Text markup layer"
+//	@Success		200
+//	@Failure		400	{object}	string
+//	@Failure		500	{object}	string
+//	@Router			/admin/layers [post]
+//	@Router			/educator/layers [post]
 func (s *Server) postLayer(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -89,7 +131,7 @@ func (s *Server) postLayer(ctx *gin.Context) {
 
 	err = s.storageService.SaveLayer(conn, layer)
 	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, err)
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 

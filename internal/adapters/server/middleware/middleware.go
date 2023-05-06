@@ -14,7 +14,8 @@ func ErrorResponseWriter(logger *log.Logger) gin.HandlerFunc {
 
 		if len(ctx.Errors) > 0 {
 			// Put the last error message (possible fatal) to response body
-			ctx.JSON(-1, gin.H{"error": ctx.Errors[len(ctx.Errors)-1].Err.Error()}) // -1 not overwrite HTTP status
+			// ctx.JSON(-1, gin.H{"error": ctx.Errors[len(ctx.Errors)-1].Err.Error()}) // -1 not overwrite HTTP status
+			ctx.JSON(-1, ctx.Errors[len(ctx.Errors)-1].Err.Error()) // -1 not overwrite HTTP status
 		}
 	}
 }

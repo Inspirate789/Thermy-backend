@@ -7,6 +7,8 @@ import (
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 	"os"
 	"regexp"
@@ -22,16 +24,16 @@ type Server struct {
 func (s *Server) addStudentRoutes(rg *gin.RouterGroup) {
 	rg.POST("/units", s.postUnits)
 	rg.PATCH("/units", s.patchUnits)
-	rg.GET("/units/all", s.getAllUnits)
-	rg.GET("/units/models", s.getUnitsByModels)
-	rg.GET("/units/properties", s.getUnitsByProperties)
+	rg.PUT("/units/all", s.getAllUnits)
+	rg.PUT("/units/models", s.getUnitsByModels)
+	rg.PUT("/units/properties", s.getUnitsByProperties)
 
 	rg.GET("/models/all", s.getModels)
 
 	rg.GET("/elements/all", s.getModelElements)
 
-	rg.GET("/properties/all", s.getProperties)
-	rg.GET("/properties/unit", s.getPropertiesByUnit)
+	rg.PUT("/properties/all", s.getProperties)
+	rg.PUT("/properties/unit", s.getPropertiesByUnit)
 	rg.POST("/properties", s.postProperties)
 
 	rg.GET("/layers/all", s.getAllLayers)
@@ -63,7 +65,7 @@ func parseRole(ctx *gin.Context) (string, error) {
 }
 
 func (s *Server) setupHandlers(router *gin.RouterGroup) {
-	router.GET("/login", s.login)
+	router.POST("/login", s.login)
 	router.POST("/logout", s.logout)
 
 	studentRG := router.Group("/student")
@@ -91,6 +93,9 @@ func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.S
 	// router.SetTrustedProxies([]string{"192.168.52.38"}) // TODO?
 	router.UseRawPath = true
 	router.UnescapePathValues = false
+
+	url := ginSwagger.URL(fmt.Sprintf("http://localhost:%d/swagger/doc.json", port))
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
 	router.Use(gin.LoggerWithWriter(logger.Out))
 	router.Use(middleware.ErrorResponseWriter(logger))

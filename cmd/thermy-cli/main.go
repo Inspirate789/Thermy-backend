@@ -286,7 +286,7 @@ func main() {
 								Required:    false,
 							},
 						},
-						Action: commonHandler(http.MethodGet, "/properties", &role, &filter, defaultQueryParams, filenamePtr),
+						Action: commonHandler(http.MethodPut, "/properties", &role, &filter, defaultQueryParams, filenamePtr),
 					},
 					{
 						Name:   "add",
@@ -345,7 +345,7 @@ func main() {
 								Required:    true,
 							},
 						},
-						Action: commonHandler(http.MethodGet, "/units", &role, &filter, defaultQueryParams, filenamePtr),
+						Action: commonHandler(http.MethodPut, "/units", &role, &filter, defaultQueryParams, filenamePtr),
 					},
 					{
 						Name:   "add",

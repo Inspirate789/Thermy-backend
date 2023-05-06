@@ -16,7 +16,7 @@ import (
 
 func login(path string, username, password *string) func(cCtx *cli.Context) error {
 	return func(cCtx *cli.Context) error {
-		req, err := createRequest(http.MethodGet, path, url.Values{}, &entities.AuthRequest{
+		req, err := createRequest(http.MethodPost, path, url.Values{}, &entities.AuthRequest{
 			Username: *username,
 			Password: *password,
 		})

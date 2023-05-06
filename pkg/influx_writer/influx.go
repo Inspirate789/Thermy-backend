@@ -59,7 +59,7 @@ func (il *InfluxWriter) Open() error {
 	client := influxdb2.NewClient(dbURL, dbToken)
 
 	health, err := client.Health(context.Background()) // validate client connection health
-	if (err != nil) && health.Status == domain.HealthCheckStatusPass {
+	if (err != nil) && health != nil && health.Status == domain.HealthCheckStatusPass {
 		client.Close()
 		return errors.New("connectToInfluxDB() error: database not healthy")
 	}
