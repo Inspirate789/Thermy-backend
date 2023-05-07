@@ -28,8 +28,8 @@ var (
 	insertContextUnits     = `call public.insert_context_units(:layer_name, :lang, :context_id, :units_id);`
 	insertContext          = `insert into public.contexts(id, registration_date, text) overriding user value -- or overriding system value
 							  values (null, now()::timestamp, $1)
-							  on conflict do nothing 
-							  returning id;`
+							  on conflict(text) do update set text=public.contexts.text
+							  returning public.contexts.id;`
 	// Units
 	selectAllLinkedUnits               = `select * from public.select_all_linked_units(:layer_name);`
 	selectLinkedUnitsByModelsId        = `select * from public.select_linked_units_by_models_id(:layer_name, :models_id_array);`

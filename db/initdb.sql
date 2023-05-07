@@ -610,6 +610,7 @@ BEGIN
     RETURN QUERY
     insert into public.properties(id, property) overriding user value -- or overriding system value
     values (null, unnest(property_texts))
+    on conflict do nothing
     returning public.properties.id;
 END
 $func$ LANGUAGE plpgsql;
@@ -627,6 +628,7 @@ BEGIN
         EXECUTE format(
             E'insert into %I.models(id, name) overriding user value -- or overriding system value
             values (null, unnest(array[%s]))
+            on conflict do nothing
             returning %I.models.id;',
             layer_name,
             format(
@@ -657,7 +659,7 @@ BEGIN
                 E'select elems.id as model_id, %I.elements.id as elem_id
                 from (select id, unnest(string_to_array(%I.models.name, \'+\')) as parts
                       from %I.models
-                      where %I.models.id = any(array[%s])) as elems
+                      where %I.models.id = any(array[%s]::integer[])) as elems
                     inner join %I.elements on elems.parts = %I.elements.name',
                 layer_name, layer_name, layer_name, layer_name,
                 format('%s', array_to_string(models_id, ',')),
@@ -689,6 +691,7 @@ BEGIN
     EXECUTE format(
             E'insert into %I.elements(id, name) overriding user value -- or overriding system value
             values (null, unnest(array[%s]))
+            on conflict do nothing
             returning %I.elements.id;',
             layer_name,
             format(
@@ -713,7 +716,7 @@ BEGIN
         EXECUTE format(
             'insert into %I.units_%I(id, model_id, registration_date, text) overriding user value -- or overriding system value
             values(null, unnest(array[%s]), now()::timestamp, unnest(array[%s]))
-            on conflict do nothing
+            on conflict(text) do update set text = %I.units_%I.text
             returning %I.units_%I.id;',
             layer_name, lang,
             format('%s', array_to_string(models_id, ',')),
@@ -721,6 +724,7 @@ BEGIN
                     E'\'%s\'',
                     array_to_string(unit_texts, E'\',\'')
             ),
+            layer_name, lang,
             layer_name, lang
         );
 END
@@ -747,7 +751,7 @@ BEGIN
     limit 1;
     EXECUTE format(
             E'insert into %I.users_and_units_%I(user_id, unit_id) overriding user value -- or overriding system value
-            values (%s, unnest(array[%s]))
+            values (%s, unnest(array[%s]::integer[]))
             on conflict do nothing;',
             layer_name, lang, user_id,
             format('%s', array_to_string(units_id, ','))
