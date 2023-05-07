@@ -78,6 +78,10 @@ func (ps *PostgresStorage) OpenConn(request *entities.AuthRequest, ctx context.C
 	if err != nil {
 		return nil, "", fmt.Errorf("cannot open connection (%s): %w", postgresInfo, err)
 	}
+	err = sqlDB.Ping()
+	if err != nil {
+		return nil, "", err
+	}
 
 	driverName, exists := os.LookupEnv("POSTGRES_DRIVER_NAME")
 	if !exists {
