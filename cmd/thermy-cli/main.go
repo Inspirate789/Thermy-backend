@@ -32,8 +32,8 @@ func main() {
 
 	app := &cli.App{
 		Name:    "thermy-cli",
-		Usage:   "Technological UI for thermy backend",
-		Version: "v0.1.0",
+		Usage:   "Console UI for thermy backend",
+		Version: "v0.2.0",
 		Commands: []*cli.Command{
 			{
 				Name:  "login",
