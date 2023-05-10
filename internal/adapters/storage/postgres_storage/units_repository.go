@@ -14,7 +14,7 @@ import (
 
 type UnitsPgRepository struct{}
 
-func (r *UnitsPgRepository) makeOutputUnitDTO(conn storage.ConnDB, layer string, lang string, unit entities.Unit) (interfaces.OutputUnitDTO, error) {
+func (r *UnitsPgRepository) makeOutputUnitDTO(conn storage.ConnDB, layer, lang string, unit entities.Unit) (interfaces.OutputUnitDTO, error) {
 	args := map[string]any{
 		"layer_name": layer,
 		"lang":       lang,
@@ -234,6 +234,9 @@ func (r *UnitsPgRepository) insertContext(tx sqlx.ExtContext, ctxText string) (i
 }
 
 func (r *UnitsPgRepository) insertUnits(tx sqlx.ExtContext, layer, lang string, modelsID []int, unitTexts []string) ([]int, error) {
+	if len(modelsID) != len(unitTexts) {
+		return nil, errors.New("incorrect unit DTO parsing")
+	}
 	args := map[string]any{
 		"layer_name": layer,
 		"lang":       lang,
@@ -356,7 +359,7 @@ func (r *UnitsPgRepository) SaveUnits(conn storage.ConnDB, layer string, data in
 	})
 }
 
-func (r *UnitsPgRepository) RenameUnit(conn storage.ConnDB, layer, lang string, oldName string, newName string) error {
+func (r *UnitsPgRepository) RenameUnit(conn storage.ConnDB, layer, lang, oldName, newName string) error {
 	args := map[string]any{
 		"layer_name": layer,
 		"lang":       lang,
