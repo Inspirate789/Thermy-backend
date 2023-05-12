@@ -9,14 +9,16 @@ import (
 )
 
 type StorageService struct {
-	storage Storage
-	logger  *log.Logger
+	storage         Storage
+	logger          *log.Logger
+	repeatOnFailure int
 }
 
-func NewStorageService(storage Storage, logger *log.Logger) *StorageService {
+func NewStorageService(storage Storage, logger *log.Logger, repeatOnFailure int) *StorageService {
 	return &StorageService{
-		storage: storage,
-		logger:  logger,
+		storage:         storage,
+		logger:          logger,
+		repeatOnFailure: repeatOnFailure,
 	}
 }
 
@@ -223,7 +225,12 @@ func (ss *StorageService) SaveUnits(conn ConnDB, layer string, unitsDTO interfac
 		return err
 	}
 
-	err = ss.storage.SaveUnits(conn, layer, unitsDTO)
+	for i := 0; i < ss.repeatOnFailure; i++ {
+		err = ss.storage.SaveUnits(conn, layer, unitsDTO)
+		if err == nil || errors.IdentifyStorageError(err) != errors.ErrConnectDatabase {
+			break
+		}
+	}
 	if err != nil {
 		ss.logger.Error(err)
 		return errors.IdentifyStorageError(err)

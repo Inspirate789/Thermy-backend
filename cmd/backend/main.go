@@ -111,7 +111,7 @@ func main() {
 	logger := NewLogger(w)
 
 	authService := authorization.NewAuthService(logger)
-	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(), logger)
+	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(), logger, 5)
 	//storageService := storage.NewStorageService(redis_storage.NewRedisStorage( // TODO: configure main storage?
 	//	os.Getenv("REDIS_HOST"),
 	//	os.Getenv("REDIS_PORT"),
