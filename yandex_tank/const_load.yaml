@@ -1,0 +1,29 @@
+phantom:
+    address: 127.0.0.1:8080
+    load_profile:
+        load_type: rps
+        schedule: const(35, 1m)
+    ammofile: /var/loadtest/ammo.txt
+    instances: 10000
+autostop:
+    autostop:
+        - http(5xx,10%,5s)
+overload:
+    enabled: true
+    token_file: /var/loadtest/token.txt
+    job_name: load_test
+    job_dsc: no cached test /api/v1/admin/units/all const 25 rps 1min
+# influx:
+#     enabled: true
+#     address: localhost
+#     port: 8086
+#     database: thermy
+#     username: root
+#     password: c13b5eedb7c9c58d02a0
+#     tank_tag: 'test'
+#     prefix_measurement: 'load_'
+#     labeled: true
+console:
+    enabled: true
+telegraf:
+    enabled: false

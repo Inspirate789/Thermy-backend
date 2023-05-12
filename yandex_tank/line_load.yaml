@@ -2,7 +2,7 @@ phantom:
     address: 127.0.0.1:8080
     load_profile:
         load_type: rps
-        schedule: line(1, 50, 1m) # const(25, 1m)
+        schedule: line(1, 70, 1m)
     ammofile: /var/loadtest/ammo.txt
     instances: 10000
 autostop:
