@@ -1,27 +1,29 @@
-package postgres_storage_test
+package redis_storage_test
 
 import (
 	"context"
-	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage"
+	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/redis_storage"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
-	"github.com/Inspirate789/go-randomdata"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"io"
 	"os"
 	"testing"
 )
 
 var (
-	mockLogger    *log.Logger
-	pgConn        storage.ConnDB
-	pgStorage     = postgres_storage.NewPostgresStorage()
+	mockLogger   *log.Logger
+	redisConn    storage.ConnDB
+	redisStorage = redis_storage.NewRedisStorage(
+		os.Getenv("REDIS_HOST"),
+		os.Getenv("REDIS_PORT"),
+		os.Getenv("REDIS_PASSWORD"),
+	)
 	testLayerName = randomdata.SillyName()
 )
 
-func TestPgStorageService_AddUser(t *testing.T) {
+func TestRedisStorageService_AddUser(t *testing.T) {
 	type args struct {
 		conn storage.ConnDB
 		user interfaces.UserDTO
@@ -34,9 +36,9 @@ func TestPgStorageService_AddUser(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn: pgConn,
+				conn: redisConn,
 				user: interfaces.UserDTO{
 					Name:     randomdata.SillyName(),
 					Password: randomdata.IpV6Address(),
@@ -56,7 +58,7 @@ func TestPgStorageService_AddUser(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_GetAllUnits(t *testing.T) {
+func TestRedisStorageService_GetAllUnits(t *testing.T) {
 	type args struct {
 		conn  storage.ConnDB
 		layer string
@@ -70,14 +72,14 @@ func TestPgStorageService_GetAllUnits(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn:  pgConn,
+				conn:  redisConn,
 				layer: testLayerName,
 			},
 			want: interfaces.OutputUnitsDTO{
 				Units:    make([]map[string]interfaces.OutputUnitDTO, 0),
-				Contexts: nil,
+				Contexts: make([]interfaces.ContextDTO, 0),
 			},
 			wantErr: false,
 		},
@@ -94,7 +96,7 @@ func TestPgStorageService_GetAllUnits(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_GetLayers(t *testing.T) {
+func TestRedisStorageService_GetLayers(t *testing.T) {
 	type args struct {
 		conn storage.ConnDB
 	}
@@ -107,8 +109,8 @@ func TestPgStorageService_GetLayers(t *testing.T) {
 	}{
 		{
 			name:    "Simple positive test",
-			ss:      storage.NewStorageService(pgStorage, mockLogger),
-			args:    args{conn: pgConn},
+			ss:      storage.NewStorageService(redisStorage, mockLogger),
+			args:    args{conn: redisConn},
 			wantErr: false,
 		},
 	}
@@ -127,7 +129,7 @@ func TestPgStorageService_GetLayers(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_GetModelElements(t *testing.T) {
+func TestRedisStorageService_GetModelElements(t *testing.T) {
 	type args struct {
 		conn  storage.ConnDB
 		layer string
@@ -141,9 +143,9 @@ func TestPgStorageService_GetModelElements(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn:  pgConn,
+				conn:  redisConn,
 				layer: testLayerName,
 			},
 			want:    interfaces.OutputModelElementsDTO{Elements: []interfaces.OutputModelElementDTO{}},
@@ -162,7 +164,7 @@ func TestPgStorageService_GetModelElements(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_GetModels(t *testing.T) {
+func TestRedisStorageService_GetModels(t *testing.T) {
 	type args struct {
 		conn  storage.ConnDB
 		layer string
@@ -176,9 +178,9 @@ func TestPgStorageService_GetModels(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn:  pgConn,
+				conn:  redisConn,
 				layer: testLayerName,
 			},
 			want:    interfaces.OutputModelsDTO{Models: []interfaces.OutputModelDTO{}},
@@ -197,7 +199,7 @@ func TestPgStorageService_GetModels(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_GetProperties(t *testing.T) {
+func TestRedisStorageService_GetProperties(t *testing.T) {
 	type args struct {
 		conn storage.ConnDB
 	}
@@ -209,8 +211,8 @@ func TestPgStorageService_GetProperties(t *testing.T) {
 	}{
 		{
 			name:    "Simple positive test",
-			ss:      storage.NewStorageService(pgStorage, mockLogger),
-			args:    args{conn: pgConn},
+			ss:      storage.NewStorageService(redisStorage, mockLogger),
+			args:    args{conn: redisConn},
 			wantErr: false,
 		},
 	}
@@ -226,7 +228,7 @@ func TestPgStorageService_GetProperties(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_GetPropertiesByUnit(t *testing.T) {
+func TestRedisStorageService_GetPropertiesByUnit(t *testing.T) {
 	type args struct {
 		conn  storage.ConnDB
 		layer string
@@ -240,17 +242,15 @@ func TestPgStorageService_GetPropertiesByUnit(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			name: "Simple negative test",
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn:  pgConn,
+				conn:  redisConn,
 				layer: testLayerName,
-				unit:  interfaces.SearchUnitDTO{Lang: "ru"},
+				unit:  interfaces.SearchUnitDTO{Lang: "ru", Text: "non-existing unit"},
 			},
-			want: interfaces.OutputPropertiesDTO{
-				Properties: []interfaces.OutputPropertyDTO{},
-			},
-			wantErr: false,
+			want:    interfaces.OutputPropertiesDTO{},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -265,7 +265,7 @@ func TestPgStorageService_GetPropertiesByUnit(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_GetUnitsByModels(t *testing.T) {
+func TestRedisStorageService_GetUnitsByModels(t *testing.T) {
 	type args struct {
 		conn      storage.ConnDB
 		layer     string
@@ -280,9 +280,9 @@ func TestPgStorageService_GetUnitsByModels(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn:  pgConn,
+				conn:  redisConn,
 				layer: testLayerName,
 				modelsDTO: interfaces.ModelsIdDTO{
 					Models: []int{},
@@ -307,7 +307,7 @@ func TestPgStorageService_GetUnitsByModels(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_GetUnitsByProperties(t *testing.T) {
+func TestRedisStorageService_GetUnitsByProperties(t *testing.T) {
 	type args struct {
 		conn          storage.ConnDB
 		layer         string
@@ -322,9 +322,9 @@ func TestPgStorageService_GetUnitsByProperties(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn:          pgConn,
+				conn:          redisConn,
 				layer:         testLayerName,
 				propertiesDTO: interfaces.PropertiesIdDTO{Properties: []int{}},
 			},
@@ -347,7 +347,7 @@ func TestPgStorageService_GetUnitsByProperties(t *testing.T) {
 	}
 }
 
-//func TestPgStorageService_GetUserPassword(t *testing.T) {
+//func TestRedisStorageService_GetUserPassword(t *testing.T) {
 //	type args struct {
 //		conn     storage.ConnDB
 //		username string
@@ -361,9 +361,9 @@ func TestPgStorageService_GetUnitsByProperties(t *testing.T) {
 //	}{
 //		{
 //			name: "Simple positive test",
-//			ss:   storage.NewStorageService(pgStorage, mockLogger),
+//			ss:   storage.NewStorageService(redisStorage, mockLogger),
 //			args: args{
-//				conn:     pgConn,
+//				conn:     redisConn,
 //				username: os.Getenv("POSTGRES_ADMIN_USERNAME"),
 //			},
 //			want:    os.Getenv("POSTGRES_ADMIN_PASSWORD"),
@@ -384,7 +384,7 @@ func TestPgStorageService_GetUnitsByProperties(t *testing.T) {
 //	}
 //}
 
-func TestPgStorageService_SaveModelElements(t *testing.T) {
+func TestRedisStorageService_SaveModelElements(t *testing.T) {
 	type args struct {
 		conn             storage.ConnDB
 		layer            string
@@ -399,9 +399,9 @@ func TestPgStorageService_SaveModelElements(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn:             pgConn,
+				conn:             redisConn,
 				layer:            testLayerName,
 				modelElementsDTO: interfaces.ModelElementNamesDTO{ModelElements: []string{}},
 			},
@@ -423,7 +423,7 @@ func TestPgStorageService_SaveModelElements(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_SaveModels(t *testing.T) {
+func TestRedisStorageService_SaveModels(t *testing.T) {
 	type args struct {
 		conn      storage.ConnDB
 		layer     string
@@ -438,9 +438,9 @@ func TestPgStorageService_SaveModels(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn:      pgConn,
+				conn:      redisConn,
 				layer:     testLayerName,
 				modelsDTO: interfaces.ModelNamesDTO{Models: []string{}},
 			},
@@ -462,7 +462,7 @@ func TestPgStorageService_SaveModels(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_SaveProperties(t *testing.T) {
+func TestRedisStorageService_SaveProperties(t *testing.T) {
 	type args struct {
 		conn          storage.ConnDB
 		propertiesDTO interfaces.PropertyNamesDTO
@@ -476,12 +476,12 @@ func TestPgStorageService_SaveProperties(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn:          pgConn,
+				conn:          redisConn,
 				propertiesDTO: interfaces.PropertyNamesDTO{Properties: []string{}},
 			},
-			want:    interfaces.PropertiesIdDTO{Properties: nil},
+			want:    interfaces.PropertiesIdDTO{Properties: make([]int, 0)},
 			wantErr: false,
 		},
 	}
@@ -497,7 +497,7 @@ func TestPgStorageService_SaveProperties(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_SaveUnits(t *testing.T) {
+func TestRedisStorageService_SaveUnits(t *testing.T) {
 	type args struct {
 		conn     storage.ConnDB
 		layer    string
@@ -511,9 +511,9 @@ func TestPgStorageService_SaveUnits(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn:  pgConn,
+				conn:  redisConn,
 				layer: testLayerName,
 				unitsDTO: interfaces.SaveUnitsDTO{
 					Contexts: make(map[string]string),
@@ -532,7 +532,7 @@ func TestPgStorageService_SaveUnits(t *testing.T) {
 	}
 }
 
-func TestPgStorageService_UpdateUnits(t *testing.T) {
+func TestRedisStorageService_UpdateUnits(t *testing.T) {
 	type args struct {
 		conn     storage.ConnDB
 		layer    string
@@ -546,9 +546,9 @@ func TestPgStorageService_UpdateUnits(t *testing.T) {
 	}{
 		{
 			name: "Simple positive test",
-			ss:   storage.NewStorageService(pgStorage, mockLogger),
+			ss:   storage.NewStorageService(redisStorage, mockLogger),
 			args: args{
-				conn:  pgConn,
+				conn:  redisConn,
 				layer: testLayerName,
 				unitsDTO: interfaces.UpdateUnitsDTO{
 					Units: []interfaces.UpdateUnitDTO{},
@@ -567,8 +567,15 @@ func TestPgStorageService_UpdateUnits(t *testing.T) {
 }
 
 func setup() {
-	var err error
-	pgConn, _, err = pgStorage.OpenConn(&entities.AuthRequest{
+	err := redisStorage.AddUser(nil, interfaces.UserDTO{
+		Name:     os.Getenv("POSTGRES_ADMIN_USERNAME"),
+		Password: os.Getenv("POSTGRES_ADMIN_PASSWORD"),
+		Role:     "admin",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	redisConn, _, err = redisStorage.OpenConn(&entities.AuthRequest{
 		Username: os.Getenv("POSTGRES_ADMIN_USERNAME"),
 		Password: os.Getenv("POSTGRES_ADMIN_PASSWORD"),
 	}, context.Background())
@@ -577,16 +584,16 @@ func setup() {
 	}
 
 	mockLogger = log.New()
-	mockLogger.SetOutput(io.Discard)
+	mockLogger.SetOutput(os.Stdout)
 
-	err = storage.NewStorageService(pgStorage, mockLogger).SaveLayer(pgConn, testLayerName)
+	err = storage.NewStorageService(redisStorage, mockLogger).SaveLayer(redisConn, testLayerName)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 func shutdown() {
-	_ = pgStorage.CloseConn(pgConn)
+	_ = redisStorage.CloseConn(redisConn)
 }
 
 func TestMain(m *testing.M) {

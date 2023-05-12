@@ -52,7 +52,7 @@ func (r *ModelsRedisRepository) GetAllModels(conn storage.ConnDB, layer string) 
 	return models, nil
 }
 
-func (r *ModelsRedisRepository) SaveModels(conn storage.ConnDB, layer string, models []string) ([]int, error) {
+func (r *ModelsRedisRepository) SaveModels(conn storage.ConnDB, layer string, models []string) ([]int, error) { // TODO: fix full duplicates (exclude id)
 	idArray := make([]int, 0)
 	var err error
 	for _, elem := range models {

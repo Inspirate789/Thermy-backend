@@ -67,10 +67,12 @@ func compositePropertyLinkKey(keyType, layer, lang string, id int64) string {
 	return compositeKey(keyType, propertyLinkPrefix, layer, lang, idStr)
 }
 
-func (r *UnitsRedisRepository) getUnitPropertiesID(layer, lang string, unitID int) ([]int, error) {
+func (r *UnitsRedisRepository) getUnitPropertiesID(layer, lang string, unitID int) ([]int, error) { // TODO: fix
 	key := compositePropertyLinkKey(r.keyType, layer, lang, int64(unitID))
 	data, err := r.client.Get(context.Background(), key).Result()
-	if err != nil {
+	if err == redis.Nil {
+		return nil, nil
+	} else if err != nil {
 		return nil, err
 	}
 

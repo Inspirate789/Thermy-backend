@@ -98,9 +98,9 @@ func NewLogger(w io.Writer) *log.Logger {
 //	@license.name	MIT
 //	@license.url	https://mit-license.org/
 
-//	@host		localhost:8080
-//	@BasePath	/api/v1
-//	@Schemes	http
+// @host		localhost:8080
+// @BasePath	/api/v1
+// @Schemes	http
 func main() {
 	w := influx.NewInfluxWriter()
 	err := w.Open()
@@ -112,6 +112,11 @@ func main() {
 
 	authService := authorization.NewAuthService(logger)
 	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(), logger)
+	//storageService := storage.NewStorageService(redis_storage.NewRedisStorage( // TODO: configure main storage?
+	//	os.Getenv("REDIS_HOST"),
+	//	os.Getenv("REDIS_PORT"),
+	//	os.Getenv("REDIS_PASSWORD"),
+	//), logger)
 
 	port, err := strconv.Atoi(os.Getenv("BACKEND_PORT"))
 	if err != nil {

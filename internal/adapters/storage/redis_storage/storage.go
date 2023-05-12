@@ -22,12 +22,12 @@ type RedisStorage struct {
 
 const (
 	UnknownRole = "unknown" // TODO: remove?
-	userPrefix  = "users"
+	userPrefix  = "usr"
 )
 
 func NewRedisStorage(host, port, password string) *RedisStorage {
 	return &RedisStorage{
-		client: redis.NewClient(&redis.Options{
+		client: redis.NewClient(&redis.Options{ // TODO: needs to be closed?
 			Addr:     fmt.Sprintf("%s:%s", host, port),
 			Password: password,
 			DB:       0,
@@ -37,7 +37,7 @@ func NewRedisStorage(host, port, password string) *RedisStorage {
 		ModelElementsRedisRepository: NewModelElementsRedisRepository(host, port, password, "mer"),
 		PropertiesRedisRepository:    NewPropertiesRedisRepository(host, port, password, "pr"),
 		UnitsRedisRepository:         NewUnitsRedisRepository(host, port, password, "unr"),
-		UsersRedisRepository:         NewUsersRedisRepository(host, port, password, "usr"),
+		UsersRedisRepository:         NewUsersRedisRepository(host, port, password, userPrefix),
 	}
 }
 

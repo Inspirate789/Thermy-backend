@@ -7,3 +7,7 @@ swagger: $(SWAGGER_SRC)
 	swag init --parseDependency --parseInternal --parseDepth 1 -g cmd/backend/main.go -o swagger/
 cli: $(CLI_SRC)
 	go install ./cmd/thermy-cli
+test:
+	godotenv -f ./.env go test ./...
+setup_redis:
+	godotenv -f ./.env go run ./db/redis

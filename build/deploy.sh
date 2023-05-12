@@ -63,7 +63,7 @@ echo -e "POSTGRES_DRIVER_NAME=${postgres_driver_name}" >> .env
 
 
 # Init Redis database:
-redis_host="redis"
+redis_host=$cur_ip
 redis_port=6379
 redis_password=$(echo $RANDOM | md5sum | head -c 20)
 
@@ -130,7 +130,7 @@ docker exec -ti $influx_container_name influx bucket create -n $backend_bucket_n
 
 # Setup PostgreSQL database:
 psql postgresql://$postgres_user:$postgres_password@$postgres_host:$postgres_port/$postgres_dbname \
-  -f db/initdb.sql \
+  -f db/postgres/initdb.sql \
   -v dbname=${postgres_dbname}
 
 admin_name="initial_admin"
@@ -139,7 +139,7 @@ admin_password=$(echo $RANDOM | md5sum | head -c 20)
 echo -e "POSTGRES_ADMIN_USERNAME=${admin_name}" >> .env
 echo -e "POSTGRES_ADMIN_PASSWORD=${admin_password}" >> .env
 psql postgresql://$postgres_user:$postgres_password@$postgres_host:$postgres_port/$postgres_dbname \
-  -f db/create_admin.sql \
+  -f db/postgres/create_admin.sql \
   -v username="${admin_name}" \
   -v quoted_username="'${admin_name}'" \
   -v quoted_password="'${admin_password}'"
