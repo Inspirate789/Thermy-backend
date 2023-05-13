@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/buger/jsonparser"
@@ -78,12 +77,8 @@ func stat(path string, token *string) func(cCtx *cli.Context) error {
 	}
 }
 
-func commonHandler(method, path string, role, option *string, queryParams map[string]*string, filenamePtr *string) func(cCtx *cli.Context) error {
+func commonHandler(method, path string, option *string, queryParams map[string]*string, filenamePtr *string) func(cCtx *cli.Context) error {
 	return func(cCtx *cli.Context) error {
-		if role == nil {
-			return errors.New("role not found")
-		}
-		path = "/" + (*role) + path
 		if option != nil {
 			path += "/" + *option
 		}
@@ -104,6 +99,13 @@ func commonHandler(method, path string, role, option *string, queryParams map[st
 		if err != nil {
 			return err
 		}
+
+		//reqDump, err := httputil.DumpRequestOut(req, true)
+		//if err != nil {
+		//	return err
+		//}
+		//
+		//fmt.Printf("REQUEST:\n%s", string(reqDump))
 
 		resBody, err := doRequest(req)
 		if err != nil {

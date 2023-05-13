@@ -20,7 +20,7 @@ import (
 //	@Success		200
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/users [post]
+//	@Router			/users [post]
 func (s *Server) postUser(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {

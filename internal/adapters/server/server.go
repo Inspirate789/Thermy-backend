@@ -21,7 +21,7 @@ type Server struct {
 	logger         *log.Logger
 }
 
-func (s *Server) addStudentRoutes(rg *gin.RouterGroup) {
+func (s *Server) addRoutes(rg *gin.RouterGroup) {
 	rg.POST("/units", s.postUnits)
 	rg.PATCH("/units", s.patchUnits)
 	rg.PUT("/units/all", s.getAllUnits)
@@ -29,28 +29,19 @@ func (s *Server) addStudentRoutes(rg *gin.RouterGroup) {
 	rg.PUT("/units/properties", s.getUnitsByProperties)
 
 	rg.GET("/models/all", s.getModels)
+	rg.POST("/models", s.postModels)
 
 	rg.GET("/elements/all", s.getModelElements)
+	rg.POST("/elements", s.postElements)
 
 	rg.PUT("/properties/all", s.getProperties)
 	rg.PUT("/properties/unit", s.getPropertiesByUnit)
 	rg.POST("/properties", s.postProperties)
 
 	rg.GET("/layers/all", s.getAllLayers)
-}
-
-func (s *Server) addEducatorRoutes(rg *gin.RouterGroup) {
-	rg.POST("/models", s.postModels)
-
-	rg.POST("/elements", s.postElements)
-
 	rg.POST("/layers", s.postLayer)
-}
 
-func (s *Server) addAdminRoutes(rg *gin.RouterGroup) {
 	rg.POST("/users", s.postUser)
-	//rg.GET("/user/get/password", s.getUserPassword)
-	rg.GET("/stat", s.getStat)
 }
 
 func parseRole(ctx *gin.Context) (string, error) {
@@ -64,27 +55,15 @@ func parseRole(ctx *gin.Context) (string, error) {
 	return exp.Split(ctx.FullPath(), -1)[tokenIndex], nil // "/.../role/..." --> "role"
 }
 
-func (s *Server) setupHandlers(router *gin.RouterGroup) {
+func (s *Server) setupHandlers(router *gin.RouterGroup, authMgr authorization.AuthManager) {
 	router.POST("/login", s.login)
 	router.POST("/logout", s.logout)
 
-	studentRG := router.Group("/student")
-	studentRG.Use(middleware.SessionCheck(s.authService))
-	studentRG.Use(middleware.RoleCheck(s.authService, parseRole))
-	s.addStudentRoutes(studentRG)
+	authRG := router.Group("", middleware.SessionCheck(s.authService))
+	s.addRoutes(authRG)
 
-	educatorRG := router.Group("/educator")
-	educatorRG.Use(middleware.SessionCheck(s.authService))
-	educatorRG.Use(middleware.RoleCheck(s.authService, parseRole))
-	s.addStudentRoutes(educatorRG)
-	s.addEducatorRoutes(educatorRG)
-
-	adminRG := router.Group("/admin")
-	adminRG.Use(middleware.SessionCheck(s.authService))
-	adminRG.Use(middleware.RoleCheck(s.authService, parseRole))
-	s.addStudentRoutes(adminRG)
-	s.addEducatorRoutes(adminRG)
-	s.addAdminRoutes(adminRG)
+	adminRg := authRG.Group("/admin", middleware.RoleCheck(authMgr, parseRole))
+	adminRg.GET("/stat", s.getStat)
 }
 
 func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.StorageManager, logger *log.Logger) *Server {
@@ -112,7 +91,7 @@ func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.S
 	}
 
 	apiRG := router.Group(os.Getenv("BACKEND_API_PREFIX"))
-	s.setupHandlers(apiRG)
+	s.setupHandlers(apiRG, authMgr)
 
 	return &s
 }

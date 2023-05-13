@@ -198,7 +198,8 @@ DECLARE layer_name text;
 BEGIN
     select (layer || '_layer') into layer_name;
     EXECUTE format(
-            'grant select, insert, update on %I.units_ru to student;
+            'grant usage, create on schema %I to student;
+            grant select, insert, update on %I.units_ru to student;
             grant select, insert, update on %I.units_en to student;
             grant select, insert, update on %I.units_ru_and_en to student;
             grant select, insert, update, delete on %I.properties_and_units_ru to student;
@@ -212,7 +213,7 @@ BEGIN
             grant select on %I.models_and_elems to student;',
             layer_name, layer_name, layer_name, layer_name, layer_name,
             layer_name, layer_name, layer_name, layer_name, layer_name,
-            layer_name, layer_name
+            layer_name, layer_name, layer_name
         );
 END
 $func$ LANGUAGE plpgsql;
@@ -239,7 +240,7 @@ DECLARE layer_name text;
 BEGIN
     select (layer || '_layer') into layer_name;
     EXECUTE format(
-            'grant usage, create on schema %I to admin;
+            'grant create on schema %I to admin;
             grant select, insert, update, delete on all tables in schema %I to admin;',
             layer_name, layer_name
         );

@@ -414,309 +414,6 @@ info:
   title: Thermy API
   version: "1.0"
 paths:
-  /admin/elements:
-    post:
-      consumes:
-      - application/json
-      description: add new elements of structural models
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Structural model element names
-        in: body
-        name: modelElementNames
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelElementNamesDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelElementsIdDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Add new elements of structural models.
-      tags:
-      - educator
-  /admin/elements/all:
-    get:
-      description: return all elements of structural models in the given text markup
-        layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all elements of structural models in the given text markup layer.
-      tags:
-      - student
-  /admin/layers:
-    post:
-      description: add new text markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Add new text markup layer.
-      tags:
-      - educator
-  /admin/layers/all:
-    get:
-      description: return all text markup layers
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.LayersDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all text markup layers.
-      tags:
-      - student
-  /admin/models:
-    post:
-      consumes:
-      - application/json
-      description: add new structural models
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Structural model names
-        in: body
-        name: modelNames
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelNamesDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelsIdDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Add new structural models.
-      tags:
-      - educator
-  /admin/models/all:
-    get:
-      description: return all structural models in the given text markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all structural models in the given text markup layer.
-      tags:
-      - student
-  /admin/properties:
-    post:
-      consumes:
-      - application/json
-      description: add new unit properties
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Unit property names
-        in: body
-        name: propertyNames
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertyNamesDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertiesIdDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Add new unit properties.
-      tags:
-      - student
-  /admin/properties/all:
-    put:
-      description: return all unit properties
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all unit properties.
-      tags:
-      - student
-  /admin/properties/unit:
-    put:
-      consumes:
-      - application/json
-      description: return all properties for the given unit in the given text markup
-        layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Unit data according to which the search will be performed
-        in: body
-        name: propertiesID
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.SearchUnitDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputPropertiesDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all properties for the given unit in the given text markup layer.
-      tags:
-      - student
   /admin/stat:
     get:
       description: return the statistic of the server process
@@ -740,224 +437,7 @@ paths:
       summary: Show the status of server.
       tags:
       - admin
-  /admin/units:
-    patch:
-      consumes:
-      - application/json
-      description: update existing units in the given text markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Information about updated units
-        in: body
-        name: unitsDTO
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.UpdateUnitsDTO'
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Update existing units in the given text markup layer.
-      tags:
-      - student
-    post:
-      consumes:
-      - application/json
-      description: add new units in the given text markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Information about stored units
-        in: body
-        name: unitsDTO
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.SaveUnitsDTO'
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Add new units in the given text markup layer.
-      tags:
-      - student
-  /admin/units/all:
-    put:
-      description: return all units in the given text markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all units in the given text markup layer.
-      tags:
-      - student
-  /admin/units/models:
-    put:
-      consumes:
-      - application/json
-      description: return all units with given structural models in the given text
-        markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Models ID according to which the search will be performed
-        in: body
-        name: propertiesID
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelsIdDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all units with given structural models in the given text markup
-        layer.
-      tags:
-      - student
-  /admin/units/properties:
-    put:
-      consumes:
-      - application/json
-      description: return all units with given properties in the given text markup
-        layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Properties ID according to which the search will be performed
-        in: body
-        name: propertiesID
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertiesIdDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all units with given properties in the given text markup layer.
-      tags:
-      - student
-  /admin/users:
-    post:
-      consumes:
-      - application/json
-      description: add new user
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: User information
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.UserDTO'
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Add new user.
-      tags:
-      - admin
-  /educator/elements:
+  /elements:
     post:
       consumes:
       - application/json
@@ -997,7 +477,7 @@ paths:
       summary: Add new elements of structural models.
       tags:
       - educator
-  /educator/elements/all:
+  /elements/all:
     get:
       description: return all elements of structural models in the given text markup
         layer
@@ -1030,7 +510,7 @@ paths:
       summary: Show all elements of structural models in the given text markup layer.
       tags:
       - student
-  /educator/layers:
+  /layers:
     post:
       description: add new text markup layer
       parameters:
@@ -1058,7 +538,7 @@ paths:
       summary: Add new text markup layer.
       tags:
       - educator
-  /educator/layers/all:
+  /layers/all:
     get:
       description: return all text markup layers
       parameters:
@@ -1083,367 +563,6 @@ paths:
           schema:
             type: string
       summary: Show all text markup layers.
-      tags:
-      - student
-  /educator/models:
-    post:
-      consumes:
-      - application/json
-      description: add new structural models
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Structural model names
-        in: body
-        name: modelNames
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelNamesDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelsIdDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Add new structural models.
-      tags:
-      - educator
-  /educator/models/all:
-    get:
-      description: return all structural models in the given text markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all structural models in the given text markup layer.
-      tags:
-      - student
-  /educator/properties:
-    post:
-      consumes:
-      - application/json
-      description: add new unit properties
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Unit property names
-        in: body
-        name: propertyNames
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertyNamesDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertiesIdDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Add new unit properties.
-      tags:
-      - student
-  /educator/properties/all:
-    put:
-      description: return all unit properties
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all unit properties.
-      tags:
-      - student
-  /educator/properties/unit:
-    put:
-      consumes:
-      - application/json
-      description: return all properties for the given unit in the given text markup
-        layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Unit data according to which the search will be performed
-        in: body
-        name: propertiesID
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.SearchUnitDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputPropertiesDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all properties for the given unit in the given text markup layer.
-      tags:
-      - student
-  /educator/units:
-    patch:
-      consumes:
-      - application/json
-      description: update existing units in the given text markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Information about updated units
-        in: body
-        name: unitsDTO
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.UpdateUnitsDTO'
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Update existing units in the given text markup layer.
-      tags:
-      - student
-    post:
-      consumes:
-      - application/json
-      description: add new units in the given text markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Information about stored units
-        in: body
-        name: unitsDTO
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.SaveUnitsDTO'
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Add new units in the given text markup layer.
-      tags:
-      - student
-  /educator/units/all:
-    put:
-      description: return all units in the given text markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all units in the given text markup layer.
-      tags:
-      - student
-  /educator/units/models:
-    put:
-      consumes:
-      - application/json
-      description: return all units with given structural models in the given text
-        markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Models ID according to which the search will be performed
-        in: body
-        name: propertiesID
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelsIdDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all units with given structural models in the given text markup
-        layer.
-      tags:
-      - student
-  /educator/units/properties:
-    put:
-      consumes:
-      - application/json
-      description: return all units with given properties in the given text markup
-        layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      - description: Properties ID according to which the search will be performed
-        in: body
-        name: propertiesID
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertiesIdDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all units with given properties in the given text markup layer.
       tags:
       - student
   /login:
@@ -1489,10 +608,11 @@ paths:
       summary: Log out from the server.
       tags:
       - common
-  /student/elements/all:
-    get:
-      description: return all elements of structural models in the given text markup
-        layer
+  /models:
+    post:
+      consumes:
+      - application/json
+      description: add new structural models
       parameters:
       - description: User authentication token
         in: query
@@ -1504,40 +624,19 @@ paths:
         name: layer
         required: true
         type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all elements of structural models in the given text markup layer.
-      tags:
-      - student
-  /student/layers/all:
-    get:
-      description: return all text markup layers
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
+      - description: Structural model names
+        in: body
+        name: modelNames
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelNamesDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.LayersDTO'
+            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelsIdDTO'
         "400":
           description: Bad Request
           schema:
@@ -1546,10 +645,10 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      summary: Show all text markup layers.
+      summary: Add new structural models.
       tags:
-      - student
-  /student/models/all:
+      - educator
+  /models/all:
     get:
       description: return all structural models in the given text markup layer
       parameters:
@@ -1581,7 +680,7 @@ paths:
       summary: Show all structural models in the given text markup layer.
       tags:
       - student
-  /student/properties:
+  /properties:
     post:
       consumes:
       - application/json
@@ -1616,7 +715,7 @@ paths:
       summary: Add new unit properties.
       tags:
       - student
-  /student/properties/all:
+  /properties/all:
     put:
       description: return all unit properties
       parameters:
@@ -1643,7 +742,7 @@ paths:
       summary: Show all unit properties.
       tags:
       - student
-  /student/properties/unit:
+  /properties/unit:
     put:
       consumes:
       - application/json
@@ -1684,7 +783,7 @@ paths:
       summary: Show all properties for the given unit in the given text markup layer.
       tags:
       - student
-  /student/units:
+  /units:
     patch:
       consumes:
       - application/json
@@ -1755,7 +854,7 @@ paths:
       summary: Add new units in the given text markup layer.
       tags:
       - student
-  /student/units/all:
+  /units/all:
     put:
       description: return all units in the given text markup layer
       parameters:
@@ -1787,7 +886,7 @@ paths:
       summary: Show all units in the given text markup layer.
       tags:
       - student
-  /student/units/models:
+  /units/models:
     put:
       consumes:
       - application/json
@@ -1829,7 +928,7 @@ paths:
         layer.
       tags:
       - student
-  /student/units/properties:
+  /units/properties:
     put:
       consumes:
       - application/json
@@ -1870,6 +969,37 @@ paths:
       summary: Show all units with given properties in the given text markup layer.
       tags:
       - student
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: add new user
+      parameters:
+      - description: User authentication token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: User information
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.UserDTO'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Add new user.
+      tags:
+      - admin
 schemes:
 - http
 swagger: "2.0"

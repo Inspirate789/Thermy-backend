@@ -1,5 +1,7 @@
 package postgres_storage
 
+// TODO: add a 'SET ROLE' before each query to make the code more reliable and testable
+
 var (
 	// Layers
 	createLayer      = `call public.create_layer(:layer_name);`

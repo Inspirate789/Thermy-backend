@@ -21,8 +21,7 @@ import (
 //	@Success		200	{object}	interfaces.ModelsIdDTO
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/models [post]
-//	@Router			/educator/models [post]
+//	@Router			/models [post]
 func (s *Server) postModels(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -68,8 +67,7 @@ func (s *Server) postModels(ctx *gin.Context) {
 //	@Success		200	{object}	interfaces.ModelElementsIdDTO
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/elements [post]
-//	@Router			/educator/elements [post]
+//	@Router			/elements [post]
 func (s *Server) postElements(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -112,8 +110,7 @@ func (s *Server) postElements(ctx *gin.Context) {
 //	@Success		200
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/layers [post]
-//	@Router			/educator/layers [post]
+//	@Router			/layers [post]
 func (s *Server) postLayer(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {

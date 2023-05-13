@@ -23,459 +23,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/elements": {
-            "post": {
-                "description": "add new elements of structural models",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "educator"
-                ],
-                "summary": "Add new elements of structural models.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Structural model element names",
-                        "name": "modelElementNames",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelElementNamesDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelElementsIdDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/elements/all": {
-            "get": {
-                "description": "return all elements of structural models in the given text markup layer",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all elements of structural models in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/layers": {
-            "post": {
-                "description": "add new text markup layer",
-                "tags": [
-                    "educator"
-                ],
-                "summary": "Add new text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/layers/all": {
-            "get": {
-                "description": "return all text markup layers",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all text markup layers.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.LayersDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/models": {
-            "post": {
-                "description": "add new structural models",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "educator"
-                ],
-                "summary": "Add new structural models.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Structural model names",
-                        "name": "modelNames",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelNamesDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelsIdDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/models/all": {
-            "get": {
-                "description": "return all structural models in the given text markup layer",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all structural models in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/properties": {
-            "post": {
-                "description": "add new unit properties",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Add new unit properties.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Unit property names",
-                        "name": "propertyNames",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertyNamesDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertiesIdDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/properties/all": {
-            "put": {
-                "description": "return all unit properties",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all unit properties.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/properties/unit": {
-            "put": {
-                "description": "return all properties for the given unit in the given text markup layer",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all properties for the given unit in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Unit data according to which the search will be performed",
-                        "name": "propertiesID",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.SearchUnitDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputPropertiesDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/admin/stat": {
             "get": {
                 "description": "return the statistic of the server process",
@@ -511,328 +58,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/units": {
-            "post": {
-                "description": "add new units in the given text markup layer",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Add new units in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Information about stored units",
-                        "name": "unitsDTO",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.SaveUnitsDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "description": "update existing units in the given text markup layer",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Update existing units in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Information about updated units",
-                        "name": "unitsDTO",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.UpdateUnitsDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/units/all": {
-            "put": {
-                "description": "return all units in the given text markup layer",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all units in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/units/models": {
-            "put": {
-                "description": "return all units with given structural models in the given text markup layer",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all units with given structural models in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Models ID according to which the search will be performed",
-                        "name": "propertiesID",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelsIdDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/units/properties": {
-            "put": {
-                "description": "return all units with given properties in the given text markup layer",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all units with given properties in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Properties ID according to which the search will be performed",
-                        "name": "propertiesID",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertiesIdDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/users": {
-            "post": {
-                "description": "add new user",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "admin"
-                ],
-                "summary": "Add new user.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "User information",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.UserDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/educator/elements": {
+        "/elements": {
             "post": {
                 "description": "add new elements of structural models",
                 "consumes": [
@@ -892,7 +118,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/educator/elements/all": {
+        "/elements/all": {
             "get": {
                 "description": "return all elements of structural models in the given text markup layer",
                 "produces": [
@@ -940,7 +166,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/educator/layers": {
+        "/layers": {
             "post": {
                 "description": "add new text markup layer",
                 "tags": [
@@ -982,7 +208,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/educator/layers/all": {
+        "/layers/all": {
             "get": {
                 "description": "return all text markup layers",
                 "produces": [
@@ -1006,542 +232,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.LayersDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/educator/models": {
-            "post": {
-                "description": "add new structural models",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "educator"
-                ],
-                "summary": "Add new structural models.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Structural model names",
-                        "name": "modelNames",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelNamesDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelsIdDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/educator/models/all": {
-            "get": {
-                "description": "return all structural models in the given text markup layer",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all structural models in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/educator/properties": {
-            "post": {
-                "description": "add new unit properties",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Add new unit properties.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Unit property names",
-                        "name": "propertyNames",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertyNamesDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertiesIdDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/educator/properties/all": {
-            "put": {
-                "description": "return all unit properties",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all unit properties.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/educator/properties/unit": {
-            "put": {
-                "description": "return all properties for the given unit in the given text markup layer",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all properties for the given unit in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Unit data according to which the search will be performed",
-                        "name": "propertiesID",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.SearchUnitDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputPropertiesDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/educator/units": {
-            "post": {
-                "description": "add new units in the given text markup layer",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Add new units in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Information about stored units",
-                        "name": "unitsDTO",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.SaveUnitsDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "description": "update existing units in the given text markup layer",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Update existing units in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Information about updated units",
-                        "name": "unitsDTO",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.UpdateUnitsDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/educator/units/all": {
-            "put": {
-                "description": "return all units in the given text markup layer",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all units in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/educator/units/models": {
-            "put": {
-                "description": "return all units with given structural models in the given text markup layer",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all units with given structural models in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Models ID according to which the search will be performed",
-                        "name": "propertiesID",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelsIdDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/educator/units/properties": {
-            "put": {
-                "description": "return all units with given properties in the given text markup layer",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all units with given properties in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "Properties ID according to which the search will be performed",
-                        "name": "propertiesID",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.PropertiesIdDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO"
                         }
                     },
                     "400": {
@@ -1625,16 +315,19 @@ const docTemplate = `{
                 }
             }
         },
-        "/student/elements/all": {
-            "get": {
-                "description": "return all elements of structural models in the given text markup layer",
+        "/models": {
+            "post": {
+                "description": "add new structural models",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "student"
+                    "educator"
                 ],
-                "summary": "Show all elements of structural models in the given text markup layer.",
+                "summary": "Add new structural models.",
                 "parameters": [
                     {
                         "type": "string",
@@ -1649,54 +342,22 @@ const docTemplate = `{
                         "name": "layer",
                         "in": "query",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO"
-                        }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/student/layers/all": {
-            "get": {
-                "description": "return all text markup layers",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all text markup layers.",
-                "parameters": [
                     {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
+                        "description": "Structural model names",
+                        "name": "modelNames",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelNamesDTO"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.LayersDTO"
+                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ModelsIdDTO"
                         }
                     },
                     "400": {
@@ -1714,7 +375,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/student/models/all": {
+        "/models/all": {
             "get": {
                 "description": "return all structural models in the given text markup layer",
                 "produces": [
@@ -1762,7 +423,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/student/properties": {
+        "/properties": {
             "post": {
                 "description": "add new unit properties",
                 "consumes": [
@@ -1815,7 +476,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/student/properties/all": {
+        "/properties/all": {
             "put": {
                 "description": "return all unit properties",
                 "produces": [
@@ -1856,7 +517,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/student/properties/unit": {
+        "/properties/unit": {
             "put": {
                 "description": "return all properties for the given unit in the given text markup layer",
                 "consumes": [
@@ -1916,7 +577,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/student/units": {
+        "/units": {
             "post": {
                 "description": "add new units in the given text markup layer",
                 "consumes": [
@@ -2022,7 +683,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/student/units/all": {
+        "/units/all": {
             "put": {
                 "description": "return all units in the given text markup layer",
                 "produces": [
@@ -2070,7 +731,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/student/units/models": {
+        "/units/models": {
             "put": {
                 "description": "return all units with given structural models in the given text markup layer",
                 "consumes": [
@@ -2130,7 +791,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/student/units/properties": {
+        "/units/properties": {
             "put": {
                 "description": "return all units with given properties in the given text markup layer",
                 "consumes": [
@@ -2174,6 +835,53 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "post": {
+                "description": "add new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Add new user.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User authentication token",
+                        "name": "token",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "User information",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.UserDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",

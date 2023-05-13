@@ -18,7 +18,7 @@ var unitFilters = []string{"all", "models", "properties"}
 var propertyFilters = []string{"all", "unit"}
 
 func main() {
-	var username, password, token, layer, filter, role string
+	var username, password, token, layer, filter string
 	filenamePtr := new(string)
 
 	defaultQueryParams := map[string]*string{
@@ -100,20 +100,12 @@ func main() {
 						Action:      checkStringFlag("token"),
 						Required:    true,
 					},
-					&cli.StringFlag{
-						Name:        "role",
-						Aliases:     []string{"r"},
-						Usage:       fmt.Sprintf("specify a user `ROLE` (one of %v)", roles),
-						Destination: &role,
-						Action:      checkRoleFlag(roles),
-						Required:    true,
-					},
 				},
 				Subcommands: []*cli.Command{
 					{
 						Name:   "list",
 						Usage:  "show all text markup layers",
-						Action: commonHandler(http.MethodGet, "/layers/all", &role, nil, tokenQueryParam, nil),
+						Action: commonHandler(http.MethodGet, "/layers/all", nil, tokenQueryParam, nil),
 					},
 					{
 						Name:  "add",
@@ -128,7 +120,7 @@ func main() {
 								Required:    true,
 							},
 						},
-						Action: commonHandler(http.MethodPost, "/layers", &role, nil, defaultQueryParams, nil),
+						Action: commonHandler(http.MethodPost, "/layers", nil, defaultQueryParams, nil),
 					},
 				},
 			},
@@ -152,20 +144,12 @@ func main() {
 						Action:      checkStringFlag("layer"),
 						Required:    true,
 					},
-					&cli.StringFlag{
-						Name:        "role",
-						Aliases:     []string{"r"},
-						Usage:       fmt.Sprintf("specify a user `ROLE` (one of %v)", roles),
-						Destination: &role,
-						Action:      checkRoleFlag(roles),
-						Required:    true,
-					},
 				},
 				Subcommands: []*cli.Command{
 					{
 						Name:   "list",
 						Usage:  "show a list of models",
-						Action: commonHandler(http.MethodGet, "/models/all", &role, nil, defaultQueryParams, nil),
+						Action: commonHandler(http.MethodGet, "/models/all", nil, defaultQueryParams, nil),
 					},
 					{
 						Name:  "add",
@@ -180,7 +164,7 @@ func main() {
 								Required:    true,
 							},
 						},
-						Action: commonHandler(http.MethodPost, "/models", &role, nil, defaultQueryParams, filenamePtr),
+						Action: commonHandler(http.MethodPost, "/models", nil, defaultQueryParams, filenamePtr),
 					},
 				},
 			},
@@ -204,20 +188,12 @@ func main() {
 						Action:      checkStringFlag("layer"),
 						Required:    true,
 					},
-					&cli.StringFlag{
-						Name:        "role",
-						Aliases:     []string{"r"},
-						Usage:       fmt.Sprintf("specify a user `ROLE` (one of %v)", roles),
-						Destination: &role,
-						Action:      checkRoleFlag(roles),
-						Required:    true,
-					},
 				},
 				Subcommands: []*cli.Command{
 					{
 						Name:   "list",
 						Usage:  "show a list of model elements",
-						Action: commonHandler(http.MethodGet, "/elements/all", &role, nil, defaultQueryParams, nil),
+						Action: commonHandler(http.MethodGet, "/elements/all", nil, defaultQueryParams, nil),
 					},
 					{
 						Name:  "add",
@@ -232,7 +208,7 @@ func main() {
 								Required:    true,
 							},
 						},
-						Action: commonHandler(http.MethodPost, "/elements", &role, nil, defaultQueryParams, filenamePtr),
+						Action: commonHandler(http.MethodPost, "/elements", nil, defaultQueryParams, filenamePtr),
 					},
 				},
 			},
@@ -246,14 +222,6 @@ func main() {
 						Usage:       "specify an authentication `TOKEN` that is issued at login",
 						Destination: &token,
 						Action:      checkStringFlag("token"),
-						Required:    true,
-					},
-					&cli.StringFlag{
-						Name:        "role",
-						Aliases:     []string{"r"},
-						Usage:       fmt.Sprintf("specify a user `ROLE` (one of %v)", roles),
-						Destination: &role,
-						Action:      checkRoleFlag(roles),
 						Required:    true,
 					},
 					&cli.StringFlag{
@@ -286,12 +254,12 @@ func main() {
 								Required:    false,
 							},
 						},
-						Action: commonHandler(http.MethodPut, "/properties", &role, &filter, defaultQueryParams, filenamePtr),
+						Action: commonHandler(http.MethodPut, "/properties", &filter, defaultQueryParams, filenamePtr),
 					},
 					{
 						Name:   "add",
 						Usage:  "add properties",
-						Action: commonHandler(http.MethodPost, "/properties", &role, nil, tokenQueryParam, filenamePtr),
+						Action: commonHandler(http.MethodPost, "/properties", nil, tokenQueryParam, filenamePtr),
 					},
 				},
 			},
@@ -316,14 +284,6 @@ func main() {
 						Required:    true,
 					},
 					&cli.StringFlag{
-						Name:        "role",
-						Aliases:     []string{"r"},
-						Usage:       fmt.Sprintf("specify a user `ROLE` (one of %v)", roles),
-						Destination: &role,
-						Action:      checkRoleFlag(roles),
-						Required:    true,
-					},
-					&cli.StringFlag{
 						Name:        "file",
 						Aliases:     []string{"f"},
 						Usage:       "Load request body from input `FILE`",
@@ -345,17 +305,17 @@ func main() {
 								Required:    true,
 							},
 						},
-						Action: commonHandler(http.MethodPut, "/units", &role, &filter, defaultQueryParams, filenamePtr),
+						Action: commonHandler(http.MethodPut, "/units", &filter, defaultQueryParams, filenamePtr),
 					},
 					{
 						Name:   "add",
 						Usage:  "add units",
-						Action: commonHandler(http.MethodPost, "/units", &role, nil, defaultQueryParams, filenamePtr),
+						Action: commonHandler(http.MethodPost, "/units", nil, defaultQueryParams, filenamePtr),
 					},
 					{
 						Name:   "edit",
 						Usage:  "edit units",
-						Action: commonHandler(http.MethodPatch, "/units", &role, nil, defaultQueryParams, filenamePtr),
+						Action: commonHandler(http.MethodPatch, "/units", nil, defaultQueryParams, filenamePtr),
 					},
 				},
 			},
@@ -369,14 +329,6 @@ func main() {
 						Usage:       "specify an authentication `TOKEN` that is issued at login",
 						Destination: &token,
 						Action:      checkStringFlag("token"),
-						Required:    true,
-					},
-					&cli.StringFlag{
-						Name:        "role",
-						Aliases:     []string{"r"},
-						Usage:       fmt.Sprintf("specify a user `ROLE` (one of %v)", roles),
-						Destination: &role,
-						Action:      checkRoleFlag(roles),
 						Required:    true,
 					},
 				},
@@ -394,7 +346,7 @@ func main() {
 								Required:    true,
 							},
 						},
-						Action: commonHandler(http.MethodPost, "/users", &role, nil, tokenQueryParam, filenamePtr),
+						Action: commonHandler(http.MethodPost, "/users", nil, tokenQueryParam, filenamePtr),
 					},
 				},
 			},

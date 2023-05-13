@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func ErrorResponseWriter(logger *log.Logger) gin.HandlerFunc {
+func ErrorResponseWriter(_ *log.Logger) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.Next()
 
@@ -57,7 +57,7 @@ func RoleCheck(svc authorization.AuthManager, parseRole func(*gin.Context) (stri
 			return
 		}
 		if requiredRole != sessionRole {
-			_ = ctx.AbortWithError(http.StatusBadRequest, ErrInvalidRole(sessionRole, requiredRole))
+			_ = ctx.AbortWithError(http.StatusBadRequest, ErrInvalidRole(requiredRole, sessionRole))
 			return
 		}
 

@@ -116,7 +116,7 @@ func main() {
 	//	os.Getenv("REDIS_HOST"),
 	//	os.Getenv("REDIS_PORT"),
 	//	os.Getenv("REDIS_PASSWORD"),
-	//), logger)
+	//), logger, 5)
 
 	port, err := strconv.Atoi(os.Getenv("BACKEND_PORT"))
 	if err != nil {

@@ -20,9 +20,7 @@ import (
 //	@Success		200
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/units [post]
-//	@Router			/educator/units [post]
-//	@Router			/student/units [post]
+//	@Router			/units [post]
 func (s *Server) postUnits(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -67,9 +65,7 @@ func (s *Server) postUnits(ctx *gin.Context) {
 //	@Success		200
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/units [patch]
-//	@Router			/educator/units [patch]
-//	@Router			/student/units [patch]
+//	@Router			/units [patch]
 func (s *Server) patchUnits(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -113,9 +109,7 @@ func (s *Server) patchUnits(ctx *gin.Context) {
 //	@Success		200	{object}	interfaces.OutputUnitsDTO
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/units/all [put]
-//	@Router			/educator/units/all [put]
-//	@Router			/student/units/all [put]
+//	@Router			/units/all [put]
 func (s *Server) getAllUnits(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -153,9 +147,7 @@ func (s *Server) getAllUnits(ctx *gin.Context) {
 //	@Success		200	{object}	interfaces.OutputUnitsDTO
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/units/models [put]
-//	@Router			/educator/units/models [put]
-//	@Router			/student/units/models [put]
+//	@Router			/units/models [put]
 func (s *Server) getUnitsByModels(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -201,9 +193,7 @@ func (s *Server) getUnitsByModels(ctx *gin.Context) {
 //	@Success		200	{object}	interfaces.OutputUnitsDTO
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/units/properties [put]
-//	@Router			/educator/units/properties [put]
-//	@Router			/student/units/properties [put]
+//	@Router			/units/properties [put]
 func (s *Server) getUnitsByProperties(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -247,9 +237,7 @@ func (s *Server) getUnitsByProperties(ctx *gin.Context) {
 //	@Success		200	{object}	interfaces.OutputModelsDTO
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/models/all [get]
-//	@Router			/educator/models/all [get]
-//	@Router			/student/models/all [get]
+//	@Router			/models/all [get]
 func (s *Server) getModels(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -285,9 +273,7 @@ func (s *Server) getModels(ctx *gin.Context) {
 //	@Success		200	{object}	interfaces.OutputModelsDTO
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/elements/all [get]
-//	@Router			/educator/elements/all [get]
-//	@Router			/student/elements/all [get]
+//	@Router			/elements/all [get]
 func (s *Server) getModelElements(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -322,9 +308,7 @@ func (s *Server) getModelElements(ctx *gin.Context) {
 //	@Success		200	{object}	interfaces.OutputModelsDTO
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/properties/all [put]
-//	@Router			/educator/properties/all [put]
-//	@Router			/student/properties/all [put]
+//	@Router			/properties/all [put]
 func (s *Server) getProperties(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -361,9 +345,7 @@ func (s *Server) getProperties(ctx *gin.Context) {
 //	@Success		200	{object}	interfaces.OutputPropertiesDTO
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/properties/unit [put]
-//	@Router			/educator/properties/unit [put]
-//	@Router			/student/properties/unit [put]
+//	@Router			/properties/unit [put]
 func (s *Server) getPropertiesByUnit(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -408,9 +390,7 @@ func (s *Server) getPropertiesByUnit(ctx *gin.Context) {
 //	@Success		200	{object}	interfaces.PropertiesIdDTO
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/properties [post]
-//	@Router			/educator/properties [post]
-//	@Router			/student/properties [post]
+//	@Router			/properties [post]
 func (s *Server) postProperties(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
@@ -451,9 +431,7 @@ func (s *Server) postProperties(ctx *gin.Context) {
 //	@Success		200	{object}	interfaces.LayersDTO
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/layers/all [get]
-//	@Router			/educator/layers/all [get]
-//	@Router			/student/layers/all [get]
+//	@Router			/layers/all [get]
 func (s *Server) getAllLayers(ctx *gin.Context) {
 	token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
 	if err != nil {
