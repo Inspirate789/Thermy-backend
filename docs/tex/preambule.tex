@@ -53,9 +53,27 @@
 \usepackage{caption}
 \captionsetup[figure]{name={Рисунок},labelsep=endash}
 \captionsetup[table]{singlelinecheck=false, labelsep=endash}
+	
+\usepackage{lscape}
+
 
 \usepackage{graphicx}
 \usepackage{slashbox} % Диагональное разделение первой ячейки в таблицах
+
+\usepackage{epstopdf}
+
+\newcommand{\executeiffilenewer}[3]{%
+	\ifnum\pdfstrcmp{\pdffilemoddate{#1}}%
+	{\pdffilemoddate{#2}}>0%
+	{\immediate\write18{#3}}\fi%
+}
+
+\newcommand{\includesvg}[1]{%
+	\executeiffilenewer{#1.svg}{#1.pdf}%
+	{inkscape -z -D --file=#1.svg %
+		--export-pdf=#1.pdf --export-latex}%
+	\input{#1.pdf_tex}%
+}
 
 % Цвета для гиперссылок и листингов
 \usepackage{color}

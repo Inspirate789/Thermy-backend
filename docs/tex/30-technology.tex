@@ -73,7 +73,7 @@
 
 В конструкторской части была разработана хранимая процедура, осуществляющая добавление нового слоя разметки текстов. PL/pgSQL \cite{plpgsql} --- процедурного расширения языка SQL, используемого в СУБД PostgreSQL. Код функции представлен в приложении Г.
 
-\subsubsection{Интерфейс приложения [TODO]}
+\subsubsection{Интерфейс приложения}
 
 % Описать API бекенда.
 
@@ -81,9 +81,53 @@
 
 % (отсылка к 1.2?)
 
-Описание REST API, соответствующего требованиям к проектируемому приложению, представлено в таблице ???????.
+Описание REST API, соответствующего требованиям к проектируемому приложению, представлено в таблице \ref{tbl:rest-api}.
 
-**Описание REST API реализуемого приложения**
+\begin{landscape}
+	\begin{longtable}{|p{0.29\textwidth}|p{0.18\textwidth}|p{0.955\textwidth}|}
+		\caption[Описание REST API реализуемого приложения]{Описание REST API реализуемого приложения}
+		\label{tbl:rest-api}\\
+		\hline
+		Путь & HTTP-метод & Описание \\
+		\endfirsthead
+		
+		\multicolumn{3}{l}
+		{{\tablename\ \thetable{} -- продолжение}} \\\hline 
+		Путь & Метод & Описание \\
+		\endhead
+		
+		\multicolumn{3}{|r|}{{Продолжение на следующей странице}} \\ \hline
+		\endfoot
+		
+		\hline \multicolumn{3}{|r|}{{Конец таблицы}} \\ \hline
+		\endlastfoot
+		\hline
+		/api/v1/login         		& POST 		& Вход в систему \\\hline
+		/api/v1/logout            	& POST 		& Выход из системы \\\hline
+		
+		/api/v1/layers/all    		& GET 		& Получение всех слоёв разметки текстов \\\hline
+		/api/v1/layers              & POST		& Добавление слоя разметки текстов\\\hline
+		
+		/api/v1/elements/all    	& GET 		& Получение всех элементов структурных моделей заданного слоя разметки текстов \\\hline
+		/api/v1/elements           	& POST		& Добавление элементов структурных моделей заданного слоя разметки текстов\\\hline
+		
+		/api/v1/models/all    		& GET 		& Получение всех структурных моделей заданного слоя разметки текстов \\\hline
+		/api/v1/models              & POST		& Добавление структурных моделей заданного слоя разметки текстов\\\hline
+		
+		/api/v1/properties/all    	& PUT 		& Получение всех характеристик единиц языка \\\hline
+		/api/v1/properties/unit    	& PUT 		& Получение характеристик заданной единицы языка \\\hline
+		/api/v1/properties         	& POST		& Добавление характеристик единиц языка\\\hline
+		
+		/api/v1/units/all    		& PUT 		& Получение всех единиц языка на заданном слое разметки текстов \\\hline
+		/api/v1/units/models    	& PUT 		& Получение единиц языка на заданном слое разметки текстов, соответствующих заданным структурным моделям \\\hline
+		/api/v1/units/properties    & PUT 		& Получение единиц языка на заданном слое разметки текстов, соответствующих заданным характеристикам \\\hline
+		/api/v1/units              	& POST, PATCH& Добавление и редактирование единиц языка на заданном слое разметки текстов\\\hline
+		
+		/api/v1/users            	& POST 		& Регистрация пользователя в системе \\\hline
+		
+		/api/v1/admin/stat        	& GET 		& Получение информации о состоянии веб-сервера \\
+	\end{longtable}
+\end{landscape}
 
 \subsection{Сборка и развёртывание приложения}
 
@@ -91,9 +135,30 @@
 
 Для сборки частей системы использовались Docker контейнеры, конфигурации которых представлены в приложении Д. Для их развертывания использовался Docker Compose. Листинг конфигурации в формате YAML представлен приложении Е.
 
-\subsection{Примеры работы ПО [TODO]}
+\subsection{Примеры работы ПО}
 
-Картинки.
+Для разработанного REST API была написана документация с помощью фреймворка \cite{Swagger}, который позволяет не только интерактивно просматривать спецификацию, но и отправлять запросы к приложению с помощью Swagger UI \cite{Swagger_UI}. На рисунках \ref{fig:swagger_main}-\ref{fig:swagger_form_response} представлены примеры работы с Swagger UI.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth ]{img/Swagger/main.png}
+	\caption{Главная страница Swagger UI}
+	\label{fig:swagger_main}
+\end{figure} 
+	
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth ]{img/Swagger/form_request.png}
+	\caption{Пример заполнения формы для сохранения терминов с помощью Swagger UI}
+	\label{fig:swagger_form_request}
+	
+	\centering
+	\includegraphics[width=\textwidth ]{img/Swagger/form_response.png}
+	\caption{Пример ответа на запрос сохранения терминов с помощью Swagger UI}
+	\label{fig:swagger_form_response}
+\end{figure} 
+
+\clearpage
 
 
 

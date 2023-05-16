@@ -1,17 +1,14 @@
 create role student;
-
+grant usage on schema public to student;
+grant select on public.users to student;
 grant select, insert, update on public.contexts to student;
-
 grant select, insert, update, delete on public.properties to student;
-
 grant select on information_schema.schemata to student;
 grant select on information_schema.tables to student;
 
 create role educator inherit;
 grant student to educator;
-
 grant delete on public.contexts to educator;
-
 grant create on database :dbname to educator;
 grant usage, create on schema public to educator;
 grant references on all tables in schema public to educator;
