@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+    influxdb:
+        container_name: ${INFLUXDB_CONTAINER_NAME}
+        image: influxdb:2.6.1-alpine
+        environment:
+            DOCKER_INFLUXDB_INIT_MODE: setup
+            DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_USERNAME}
+            DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_PASSWORD}
+            DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_ORG}
+            DOCKER_INFLUXDB_INIT_BUCKET: default
+            DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_TOKEN}
+        restart: always
+        ports:
+            - ${INFLUXDB_PORT}:${INFLUXDB_PORT}
+    postgres:
+        container_name: ${POSTGRES_CONTAINER_NAME}
+        image: postgres:15.2-alpine3.17
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_DB: ${POSTGRES_DBNAME}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            PGDATA: /data/postgres
+        restart: always
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+        volumes:
+            - postgres:/var/lib/postgresql/data
+        ports:
+            - ${POSTGRES_PORT}:${POSTGRES_PORT}
+        networks:
+            - persistent_bridge_network
+        depends_on:
+            - influxdb
+    pgadmin:
+        container_name: pgadmin4
+        image: dpage/pgadmin4
+        restart: always
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: root
+        ports:
+            - "5050:80"
+        depends_on:
+            postgres:
+                condition: service_healthy
+    redis:
+        container_name: redis
+        image: redis:7.0.8-alpine3.17
+        environment:
+            REDIS_HOST: ${REDIS_HOST}
+            REDIS_PORT: ${REDIS_PORT}
+            REDIS_PASSWORD: ${REDIS_PASSWORD}
+        restart: always
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+        ports:
+            - ${REDIS_PORT}:${REDIS_PORT}
+        command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+        volumes:
+            - redis:/data
+        depends_on:
+            postgres:
+                condition: service_healthy
+    backend:
+        container_name: backend
+        build:
+            context: ./
+            dockerfile: api.Dockerfile
+        image: golang-backend
+        restart: always
+        ports:
+            - ${BACKEND_PORT}:${BACKEND_PORT}
+        depends_on:
+            influxdb:
+                condition: service_started
+            redis:
+                condition: service_healthy
+            postgres:
+                condition: service_healthy
+volumes:
+    redis:
+        driver: local
+    postgres:
+        driver: local
+networks:
+    persistent_bridge_network:
+        driver: bridge
