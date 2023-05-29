@@ -8,7 +8,7 @@ explanatory_note.pdf: tex/build.sh tex/*.tex tex/*.bib tex/*.sty tex/*.bst tex/*
 
 build:
 	cd tex && sh ./build.sh && cd ..
-	pdftk A=pdf/Title_Sapozhkov.pdf B=pdf/SW_Sapozhkov.pdf C=tex/main.pdf cat A B C output pdf/explanatory_note.pdf
+	pdftk A=pdf/Title_and_SW_Sapozhkov.pdf B=tex/main.pdf cat A B output pdf/explanatory_note.pdf
 	rm -f tex/main.pdf
 
 clean_trash:
