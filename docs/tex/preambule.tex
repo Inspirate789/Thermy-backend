@@ -1,0 +1,279 @@
+%----------------------- Преамбула -----------------------
+\documentclass[ut8x, 14pt, oneside, a4paper]{article}
+
+\usepackage{extsizes} % Для добавления в параметры класса документа 14pt
+
+% Для работы с несколькими языками и шрифтом Times New Roman по-умолчанию
+\usepackage[english,russian]{babel}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+
+% ГОСТовские настройки для полей и абзацев
+\usepackage[left=30mm,right=10mm,top=20mm,bottom=20mm]{geometry}
+\usepackage{misccorr}
+\usepackage{indentfirst}
+\usepackage{enumitem}
+\setlength{\parindent}{1.25cm}
+%\setlength{\parskip}{1em} % поменять
+%\linespread{1.3}
+\renewcommand{\baselinestretch}{1.5}
+\setlist{nolistsep} % Отсутствие отступов между элементами \enumerate и \itemize
+
+% Дополнительное окружения для подписей
+\usepackage{array}
+\newenvironment{signstabular}[1][1]{
+	\renewcommand*{\arraystretch}{#1}
+	\tabular
+}{
+	\endtabular
+}
+
+% Переопределение стандартных \section, \subsection, \subsubsection по ГОСТу;
+% Переопределение их отступов до и после для 1.5 интервала во всем документе
+\usepackage{titlesec}
+
+\titleformat{\section}[block]
+{\bfseries\normalsize\filcenter}{\thesection}{1em}{}
+
+\titleformat{\subsection}[hang]
+{\bfseries\normalsize}{\thesubsection}{1em}{}
+\titlespacing\subsection{\parindent}{\parskip}{\parskip}
+
+\titleformat{\subsubsection}[hang]
+{\bfseries\normalsize}{\thesubsubsection}{1em}{}
+\titlespacing\subsubsection{\parindent}{\parskip}{\parskip}
+
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+\titlespacing\paragraph{\parindent}{\parskip}{\parskip}
+
+% Работа с изображениями и таблицами; переопределение названий по ГОСТу
+\usepackage{caption}
+\captionsetup[figure]{name={Рисунок},labelsep=endash}
+\captionsetup[table]{singlelinecheck=false, labelsep=endash}
+	
+\usepackage{lscape}
+
+
+\usepackage{graphicx}
+\usepackage{slashbox} % Диагональное разделение первой ячейки в таблицах
+
+\usepackage{epstopdf}
+
+\newcommand{\executeiffilenewer}[3]{%
+	\ifnum\pdfstrcmp{\pdffilemoddate{#1}}%
+	{\pdffilemoddate{#2}}>0%
+	{\immediate\write18{#3}}\fi%
+}
+
+\newcommand{\includesvg}[1]{%
+	\executeiffilenewer{#1.svg}{#1.pdf}%
+	{inkscape -z -D --file=#1.svg %
+		--export-pdf=#1.pdf --export-latex}%
+	\input{#1.pdf_tex}%
+}
+
+% Цвета для гиперссылок и листингов
+\usepackage{color}
+
+% Гиперссылки \toc с кликабельностью
+\usepackage{hyperref}
+\usepackage[toc,page]{appendix}
+
+\hypersetup{
+	linktoc=all,
+	linkcolor=black,
+	urlcolor=black,
+	colorlinks=true,
+}
+
+% Листинги
+\setsansfont{Arial}
+\setmonofont{Courier New}
+
+\usepackage{xcolor} % Цвета для гиперссылок и листингов
+\definecolor{comment}{rgb}{0,0.5,0}
+\definecolor{plain}{rgb}{0.2,0.2,0.2}
+\definecolor{string}{rgb}{0.91,0.45,0.32}
+%\hypersetup{citecolor=blue}
+\hypersetup{citecolor=black}
+
+\usepackage{listings}
+\lstset{
+	language={SQL},
+	backgroundcolor=\color{white},
+	basicstyle=\fontsize{12}{14}\ttfamily, % \footnotesize
+	keywordstyle=\color{blue},
+	stringstyle=\color{red},
+	commentstyle=\color{gray},
+	numbers=left,
+	numberstyle=\footnotesize,
+	stepnumber=1,
+	numbersep=5pt,
+	frame=single,
+	tabsize=4,
+	captionpos=t,
+	breaklines=true
+}
+
+\captionsetup[lstlisting]{format=hang, justification=justified}
+
+\usepackage{listingsutf8}
+
+\lstdefinelanguage{docker}{
+	keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
+	keywordstyle=\color{blue}\bfseries,
+	identifierstyle=\color{black},
+	sensitive=false,
+	comment=[l]{\#},
+	commentstyle=\color{purple}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	morestring=[b]',
+	morestring=[b]"
+}
+
+\lstdefinelanguage{docker-compose}{
+	keywords={image, environment, ports, container_name, ports, volumes, links},
+	keywordstyle=\color{blue}\bfseries,
+	identifierstyle=\color{black},
+	sensitive=false,
+	comment=[l]{\#},
+	commentstyle=\color{purple}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	morestring=[b]',
+	morestring=[b]"
+}
+
+\lstdefinelanguage{docker-compose-3}{
+	keywords={version, volumes, services, networks},
+	keywordstyle=\color{blue}\bfseries,
+	keywords=[2]{image, environment, ports, container_name, ports, links, build, restart, healthcheck, depends_on, command, volumes, networks},
+	keywordstyle=[2]\color{olive}\bfseries,
+	identifierstyle=\color{black},
+	sensitive=false,
+	comment=[l]{\#},
+	commentstyle=\color{purple}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	morestring=[b]',
+	morestring=[b]"
+}
+
+
+
+\newcommand\YAMLcolonstyle{\color{red}\mdseries}
+\newcommand\YAMLkeystyle{\color{black}\bfseries}
+\newcommand\YAMLvaluestyle{\color{blue}\mdseries}
+
+\makeatletter
+
+% here is a macro expanding to the name of the language
+% (handy if you decide to change it further down the road)
+\newcommand\language@yaml{yaml}
+
+\expandafter\expandafter\expandafter\lstdefinelanguage
+\expandafter{\language@yaml}
+{
+	keywords={true,false,null,y,n},
+	keywordstyle=\color{darkgray}\bfseries,
+	basicstyle=\YAMLkeystyle,                                 % assuming a key comes first
+	sensitive=false,
+	comment=[l]{\#},
+	morecomment=[s]{/*}{*/},
+	commentstyle=\color{purple}\ttfamily,
+	stringstyle=\YAMLvaluestyle\ttfamily,
+	moredelim=[l][\color{orange}]{\&},
+	moredelim=[l][\color{magenta}]{*},
+	moredelim=**[il][\YAMLcolonstyle{:}\YAMLvaluestyle]{:},   % switch to value style at :
+	morestring=[b]',
+	morestring=[b]",
+	literate =    {---}{{\ProcessThreeDashes}}3
+	{>}{{\textcolor{red}\textgreater}}1     
+	{|}{{\textcolor{red}\textbar}}1 
+	{\ -\ }{{\mdseries\ -\ }}3,
+}
+
+% switch to key style at EOL
+\lst@AddToHook{EveryLine}{\ifx\lst@language\language@yaml\YAMLkeystyle\fi}
+\makeatother
+
+\newcommand\ProcessThreeDashes{\llap{\color{cyan}\mdseries-{-}-}}
+
+%\lstset{
+%	basicstyle=\footnotesize\ttfamily,
+%	language=SQL, % Или другой ваш язык -- см. документацию пакета
+%	commentstyle=\color{comment},
+%	numbers=left,
+%	numberstyle=\tiny\color{plain},
+%	numbersep=5pt,
+%	tabsize=4,
+%	extendedchars=\true,
+%	breaklines=true,
+%	keywordstyle=\color{blue},
+%	frame=b,
+%	stringstyle=\ttfamily\color{string}\ttfamily,
+%	showspaces=false,
+%	showtabs=false,
+%	xleftmargin=17pt,
+%	framexleftmargin=17pt,
+%	framexrightmargin=5pt,
+%	framexbottommargin=4pt,
+%	showstringspaces=false,
+%	inputencoding=utf8x,
+%	keepspaces=true
+%}
+%
+%\DeclareCaptionLabelSeparator{line}{\ --\ }
+%\DeclareCaptionFont{white}{\color{white}}
+%\DeclareCaptionFormat{listing}{\colorbox[cmyk]{0.43,0.35,0.35,0.01}{\parbox{\textwidth}{\hspace{15pt}#1#2#3}}}
+%\captionsetup[lstlisting]{
+%	format=listing,
+%	labelfont=white,
+%	textfont=white,
+%	singlelinecheck=false,
+%	margin=0pt,
+%	font={bf,footnotesize},
+%	labelsep=line
+%}
+
+\usepackage{ulem} % Нормальное нижнее подчеркивание
+\usepackage{hhline} % Двойная горизонтальная линия в таблицах
+\usepackage[figure,table]{totalcount} % Подсчет изображений, таблиц
+\usepackage{rotating} % Поворот изображения вместе с названием
+\usepackage{lastpage} % Для подсчета числа страниц
+
+\usepackage{threeparttable}
+\usepackage{csvsimple}
+\usepackage{longtable,ltcaption,booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{ragged2e}
+
+\makeatletter
+\renewcommand\@biblabel[1]{#1.}
+\makeatother
+
+\usepackage{color}
+\usepackage[cache=false, newfloat]{minted}
+\newenvironment{code}{\captionsetup{type=listing}}{}
+\SetupFloatingEnvironment{listing}{name=Листинг}
+
+\usepackage{amsmath}
+\usepackage{slashbox}
+
+\usepackage{multirow} %for multirow
+\usepackage{rotating} %for sideways, rotating "samples" at 90°"
+\usepackage{bigstrut} %for bigstrut
+
+
+
+% Для ссылок в списке использованных источников и возможности их переноса
+\usepackage{url}
+\def\UrlBreaks{\do\A\do\B\do\C\do\D\do\E\do\F\do\G\do\H\do\I\do\J
+	\do\K\do\L\do\M\do\N\do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V
+	\do\W\do\X\do\Y\do\Z\do\[\do\\\do\]\do\^\do\_\do\`\do\a\do\b
+	\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j\do\k\do\l\do\m\do\n
+	\do\o\do\p\do\q\do\r\do\s\do\t\do\u\do\v\do\w\do\x\do\y\do\z
+	\do\.\do\@\do\\\do\/\do\!\do\_\do\|\do\;\do\>\do\]\do\)\do\,
+	\do\?\do\'\do+\do\=\do\#}

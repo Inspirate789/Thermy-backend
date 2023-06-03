@@ -1,0 +1,19 @@
+phantom:
+    address: 127.0.0.1:8080
+    load_profile:
+        load_type: instances
+        schedule: const(1, 1m)
+    ammofile: /var/loadtest/ammo.txt
+    instances: 1
+    loop: 10000
+autostop:
+    autostop:
+        - http(5xx,10%,5s)
+overload:
+    enabled: true
+    token_file: /var/loadtest/token.txt
+    job_name: load_test
+console:
+    enabled: true
+telegraf:
+    enabled: false

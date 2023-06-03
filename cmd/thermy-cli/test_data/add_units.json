@@ -1,0 +1,18 @@
+{
+    "contexts":
+    {
+        "ru": "контекст1, содержащий термин1 и термин2",
+        "en": "context1 with term1 and term2"
+    },
+    "units":
+    [
+        {
+            "ru": {"text": "термин1", "model_id": 1, "properties_id": [1, 2, 3]},
+            "en": {"text": "term1", "model_id": 1, "properties_id": [3]}
+        },
+        {
+            "ru": {"text": "термин2", "model_id": 3},
+            "en": {"text": "term2", "model_id": 3, "properties_id": [3]}
+        }
+    ]
+}
