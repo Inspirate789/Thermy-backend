@@ -13,7 +13,8 @@ import (
 //	@Summary		Add new user.
 //	@Description	add new user
 //	@Tags			Users
-//	@Param			token	header	string				true	"User authentication token"
+//	@Security ApiKeyAuth
+//	@Param Authorization header string true "Authorization"
 //	@Param			user	body	interfaces.UserDTO	true	"User information"
 //	@Accept			json
 //	@Success		200
@@ -44,7 +45,8 @@ func (s *Server) postUser(ctx *gin.Context) {
 //	@Summary		Show the status of server.
 //	@Description	return the statistic of the server process
 //	@Tags			Info
-//	@Param			token	header	string	true	"User authentication token"
+//	@Security ApiKeyAuth
+//	@Param Authorization header string true "Authorization"
 //	@Produce		json
 //	@Success		200	{object}	monitoring.ProcStat
 //	@Failure		401	{object}	string

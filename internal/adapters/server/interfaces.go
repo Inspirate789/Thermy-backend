@@ -1,6 +1,9 @@
 package server
 
-import "github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
+import (
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
+)
 
 type StorageService interface {
 	UnitsService
@@ -17,6 +20,7 @@ type UnitsService interface {
 	GetUnitsByProperties(layer string, propertiesDTO interfaces.PropertiesIdDTO) (interfaces.OutputUnitsDTO, error)
 	SaveUnits(layer string, unitsDTO interfaces.SaveUnitsDTO) error
 	UpdateUnits(layer string, unitsDTO interfaces.UpdateUnitsDTO) error
+	DeleteUnits(layer string, unitDTO interfaces.SearchUnitDTO) error
 }
 
 type ModelsService interface {
@@ -42,4 +46,5 @@ type LayersService interface {
 
 type UsersService interface {
 	AddUser(user interfaces.UserDTO) error
+	GetUser(entities.AuthRequest) (entities.User, error)
 }

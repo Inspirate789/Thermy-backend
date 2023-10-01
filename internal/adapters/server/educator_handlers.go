@@ -12,7 +12,8 @@ import (
 //	@Summary		Add new structural models.
 //	@Description	add new structural models
 //	@Tags			Models
-//	@Param			token		header	string						true	"User authentication token"
+//	@Security ApiKeyAuth
+//	@Param Authorization header string true "Authorization"
 //	@Param			layer		query	string						true	"Text markup layer"
 //	@Param			modelNames	body	interfaces.ModelNamesDTO	true	"Structural model names"
 //	@Accept			json
@@ -47,7 +48,8 @@ func (s *Server) postModels(ctx *gin.Context) {
 //	@Summary		Add new elements of structural models.
 //	@Description	add new elements of structural models
 //	@Tags			Elements
-//	@Param			token				header	string							true	"User authentication token"
+//	@Security ApiKeyAuth
+//	@Param Authorization header string true "Authorization"
 //	@Param			layer				query	string							true	"Text markup layer"
 //	@Param			modelElementNames	body	interfaces.ModelElementNamesDTO	true	"Structural model element names"
 //	@Accept			json
@@ -82,7 +84,8 @@ func (s *Server) postElements(ctx *gin.Context) {
 //	@Summary		Add new text markup layer.
 //	@Description	add new text markup layer
 //	@Tags			Layers
-//	@Param			token	header	string	true	"User authentication token"
+//	@Security ApiKeyAuth
+//	@Param Authorization header string true "Authorization"
 //	@Param			layer	query	string	true	"Text markup layer"
 //	@Success		200
 //	@Failure		401	{object}	string

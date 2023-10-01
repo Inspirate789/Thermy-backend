@@ -115,9 +115,9 @@ BEGIN
             -- drop table if exists %I.units_ru_and_en;
             create table if not exists %I.units_ru_and_en(
                 unit_ru_id int,
-                foreign key (unit_ru_id) references %I.units_ru(id),
+                foreign key (unit_ru_id) references %I.units_ru(id) on delete cascade,
                 unit_en_id int,
-                foreign key (unit_en_id) references %I.units_en(id),
+                foreign key (unit_en_id) references %I.units_en(id) on delete cascade,
                 unique(unit_ru_id, unit_en_id)
             );
 
@@ -127,7 +127,7 @@ BEGIN
                 property_id int,
                 foreign key (property_id) references public.properties(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_ru(id),
+                foreign key (unit_id) references %I.units_ru(id) on delete cascade,
                 unique(property_id, unit_id)
             );
 
@@ -137,7 +137,7 @@ BEGIN
                 property_id int,
                 foreign key (property_id) references public.properties(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_en(id),
+                foreign key (unit_id) references %I.units_en(id) on delete cascade,
                 unique(property_id, unit_id)
             );
 
@@ -147,7 +147,7 @@ BEGIN
                 context_id int,
                 foreign key (context_id) references public.contexts(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_ru(id),
+                foreign key (unit_id) references %I.units_ru(id) on delete cascade,
                 unique(context_id, unit_id)
             );
 
@@ -157,7 +157,7 @@ BEGIN
                 context_id int,
                 foreign key (context_id) references public.contexts(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_en(id),
+                foreign key (unit_id) references %I.units_en(id) on delete cascade,
                 unique(context_id, unit_id)
             );
 
@@ -167,7 +167,7 @@ BEGIN
                 user_id int,
                 foreign key (user_id) references public.users(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_ru(id),
+                foreign key (unit_id) references %I.units_ru(id) on delete cascade,
                 unique(user_id, unit_id)
             );
 
@@ -177,7 +177,7 @@ BEGIN
                 user_id int,
                 foreign key (user_id) references public.users(id),
                 unit_id int,
-                foreign key (unit_id) references %I.units_en(id),
+                foreign key (unit_id) references %I.units_en(id) on delete cascade,
                 unique(user_id, unit_id)
             );',
             layer_name, layer_name, layer_name, layer_name, layer_name,
@@ -853,6 +853,20 @@ BEGIN
             values (%s, unnest(array[%s]))
             on conflict do nothing;',
             layer_name, lang, context_id, format('%s', array_to_string(units_id, ','))
+        );
+END
+$func$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE public.delete_units(layer text, lang text, unit_name text)
+AS
+$func$
+DECLARE layer_name text;
+BEGIN
+    select (layer || '_layer') into layer_name;
+    EXECUTE format(
+            E'delete from %I.units_%I
+            where text = %s;',
+            layer_name, lang, unit_name
         );
 END
 $func$ LANGUAGE plpgsql;

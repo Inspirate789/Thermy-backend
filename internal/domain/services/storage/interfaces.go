@@ -16,6 +16,7 @@ type Storage interface {
 
 type UsersRepository interface {
 	AddUser(user interfaces.UserDTO) error
+	GetUser(entities.AuthRequest) (entities.User, error)
 }
 
 type ModelsRepository interface {
@@ -38,9 +39,10 @@ type UnitsRepository interface {
 	GetAllUnits(layer string) (interfaces.OutputUnitsDTO, error)
 	GetUnitsByModels(layer string, modelsID []int) (interfaces.OutputUnitsDTO, error)
 	GetUnitsByProperties(layer string, propertiesID []int) (interfaces.OutputUnitsDTO, error)
-	SaveUnits(layer string, data interfaces.SaveUnitsDTO) error // stored procedure (SQL)
+	SaveUnits(layer string, data interfaces.SaveUnitsDTO) error
 	RenameUnit(layer, lang, oldName, newName string) error
 	SetUnitProperties(layer, lang, unitName string, propertiesID []int) error
+	DeleteUnits(layer, lang, unitName string) error
 }
 
 type LayersRepository interface {

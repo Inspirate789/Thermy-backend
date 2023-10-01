@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/server/middleware"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
@@ -16,14 +17,6 @@ type Server struct {
 	srv            *http.Server
 	storageService StorageService
 	logger         *log.Logger
-}
-
-func (s *Server) addRoutes(rg *gin.RouterGroup) {
-}
-
-func (s *Server) addCommonRoutes(rg *gin.RouterGroup) {
-	rg.POST("/login", s.login)
-	rg.DELETE("/logout", s.logout)
 }
 
 func (s *Server) addStudentRoutes(rg *gin.RouterGroup) {
@@ -58,21 +51,59 @@ func (s *Server) addAdminRoutes(rg *gin.RouterGroup) {
 	rg.GET("/stat", s.getStat)
 }
 
-func (s *Server) setupHandlers(router *gin.RouterGroup) {
-	router.POST("/login", s.login)
-	router.DELETE("/logout", s.logout)
-
-	studentRg := router.Group("", middleware.RoleCheck(entities.StudentRole))
-	s.addStudentRoutes(studentRg)
-
-	educatorRg := router.Group("", middleware.RoleCheck(entities.EducatorRole))
-	s.addEducatorRoutes(educatorRg)
-
-	adminRg := router.Group("", middleware.RoleCheck(entities.AdminRole))
-	s.addAdminRoutes(adminRg)
+func (s *Server) setupJWTMiddleware(requiredRoles []string, getUser middleware.UserCheckFunc) (*jwt.GinJWTMiddleware, error) {
+	authMiddleware, err := middleware.MakeGinJWTMiddleware(requiredRoles, getUser)
+	if err != nil {
+		return nil, err
+	}
+	err = authMiddleware.MiddlewareInit()
+	if err != nil {
+		return nil, err
+	}
+	return authMiddleware, nil
 }
 
-func NewServer(port int, storageMgr StorageService, logger *log.Logger) *Server {
+func (s *Server) setupHandlers(router *gin.RouterGroup) error {
+	authMiddleware, err := s.setupJWTMiddleware([]string{
+		entities.StudentRole,
+		entities.EducatorRole,
+		entities.AdminRole,
+	}, s.storageService.GetUser)
+	if err != nil {
+		return err
+	}
+	educatorMiddleware, err := s.setupJWTMiddleware([]string{
+		entities.EducatorRole,
+		entities.AdminRole,
+	}, s.storageService.GetUser)
+	if err != nil {
+		return err
+	}
+	adminMiddleware, err := s.setupJWTMiddleware([]string{
+		entities.AdminRole,
+	}, s.storageService.GetUser)
+	if err != nil {
+		return err
+	}
+
+	router.POST("/login", s.login(authMiddleware.LoginHandler))
+	authRg := router.Group("", authMiddleware.MiddlewareFunc())
+	authRg.GET("/refresh", s.refresh(authMiddleware.RefreshHandler))
+	authRg.DELETE("/logout", s.logout(authMiddleware.LogoutHandler))
+
+	studentRg := authRg.Group("")
+	s.addStudentRoutes(studentRg)
+
+	educatorRg := authRg.Group("", educatorMiddleware.MiddlewareFunc())
+	s.addEducatorRoutes(educatorRg)
+
+	adminRg := authRg.Group("", adminMiddleware.MiddlewareFunc())
+	s.addAdminRoutes(adminRg)
+
+	return nil
+}
+
+func NewServer(port int, storageMgr StorageService, logger *log.Logger) (*Server, error) {
 	gin.SetMode(os.Getenv("GIN_MODE"))
 	router := gin.Default()
 	router.UseRawPath = true
@@ -95,9 +126,8 @@ func NewServer(port int, storageMgr StorageService, logger *log.Logger) *Server 
 	}
 
 	apiRG := router.Group(os.Getenv("BACKEND_API_PREFIX"))
-	s.setupHandlers(apiRG)
 
-	return &s
+	return &s, s.setupHandlers(apiRG)
 }
 
 func (s *Server) Start() error {

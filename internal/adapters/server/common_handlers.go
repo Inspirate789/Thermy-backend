@@ -1,16 +1,8 @@
 package server
 
 import (
-	"github.com/Inspirate789/Thermy-backend/internal/adapters/server/errors"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"strconv"
 )
-
-type loginResponse struct {
-	Token string `json:"token"`
-}
 
 // login godoc
 //
@@ -19,26 +11,28 @@ type loginResponse struct {
 //	@Tags			Auth
 //	@Param			request	body	entities.AuthRequest	true	"Authentication request"
 //	@Produce		json
-//	@Success		200	{object}	loginResponse
+//	@Success		200	{object}	middleware.LoginResponse
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
 //	@Router			/login [post]
-func (s *Server) login(ctx *gin.Context) { // TODO
-	var request entities.AuthRequest
-	err := ctx.BindJSON(&request)
-	if err != nil {
-		s.logger.Error(err)
-		_ = ctx.AbortWithError(http.StatusBadRequest, errors.ErrCannotParseJSONWrap("AuthRequest"))
-		return
-	}
+func (s *Server) login(f gin.HandlerFunc) gin.HandlerFunc {
+	return f
+}
 
-	token, err := s.authService.AddSession(s.storageService, &request, ctx)
-	if err != nil {
-		_ = ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, loginResponse{Token: strconv.FormatUint(token, 10)})
+// refresh godoc
+//
+//	@Summary		Refresh user authentication token.
+//	@Description	refresh user authentication token
+//	@Tags			Auth
+//	@Security ApiKeyAuth
+//	@Param Authorization header string true "Authorization"
+//	@Success		200	{object}	middleware.LoginResponse
+//	@Failure		400	{object}	string
+//	@Failure		401	{object}	string
+//	@Failure		500	{object}	string
+//	@Router			/refresh [get]
+func (s *Server) refresh(f gin.HandlerFunc) gin.HandlerFunc {
+	return f
 }
 
 // logout godoc
@@ -46,12 +40,12 @@ func (s *Server) login(ctx *gin.Context) { // TODO
 //	@Summary		Log out from the server.
 //	@Description	log out from the server
 //	@Tags			Auth
-//	@Param			token	header	string	true	"User authentication token"
+//	@Security ApiKeyAuth
+//	@Param Authorization header string true "Authorization"
 //	@Success		200
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string
 //	@Router			/logout [delete]
-func (s *Server) logout(ctx *gin.Context) { // TODO
-
-	ctx.Status(http.StatusOK)
+func (s *Server) logout(f gin.HandlerFunc) gin.HandlerFunc {
+	return f
 }

@@ -401,3 +401,13 @@ func (r *UnitsPgRepository) SetUnitProperties(layer, lang, unitName string, prop
 		return err
 	})
 }
+
+func (r *UnitsPgRepository) DeleteUnits(layer, lang, unitName string) error {
+	args := map[string]any{
+		"layer_name": layer,
+		"lang":       lang,
+		"unit_name":  unitName,
+	}
+	_, err := sqlx_utils.NamedExec(context.Background(), r.conn, deleteUnits, args)
+	return err
+}

@@ -7,6 +7,7 @@ var (
 						from information_schema.schemata where schema_name like '%_layer';`
 	// Users
 	insertUser = `select * from public.insert_user(:username, :password, :role);`
+	selectUser = `select * from public.users where name = :username and password = :password limit 1;`
 	// selectUserPassword = `select password from public.users where name = $1 limit 1;`
 	// Models
 	selectAllModels = `select * from public.select_all_models(:layer_name);`
@@ -39,4 +40,5 @@ var (
 	insertUnits                        = `select * from public.insert_units(:layer_name, :lang, :models_id, :unit_texts);`
 	linkUnits                          = `call public.link_units(:layer_name, :unit_ru, :unit_en);`
 	updateUnitNames                    = `call public.update_unit_names(:layer_name, :lang, :old_name, :new_name);`
+	deleteUnits                        = `call public.delete_units(:layer_name, :lang, :unit_name);`
 )

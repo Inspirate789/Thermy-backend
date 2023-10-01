@@ -8,7 +8,9 @@ import (
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	_ "github.com/Inspirate789/Thermy-backend/swagger"
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
+	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"net/http"
@@ -86,16 +88,14 @@ func NewLogger(w io.Writer) *log.Logger {
 	return logger
 }
 
-//	@title			Thermy API
-//	@version		1.0
-//	@description	This is a Thermy backend API.
-
-//	@contact.name	API Support
-//	@contact.email	andreysapozhkov535@gmail.com
-
-//	@license.name	MIT
-//	@license.url	https://mit-license.org/
-
+// @title			Thermy API
+// @version		1.0
+// @description	This is a Thermy backend API.
+// @contact.name	API Support
+// @contact.email	andreysapozhkov535@gmail.com
+// @license.name	MIT
+// @license.url	https://mit-license.org/
+// @securityDefinitions.apikey ApiKeyAuth
 // @host		localhost:8080
 // @BasePath	/api/v1
 // @Schemes	http
@@ -107,18 +107,33 @@ func main() {
 	//}
 	//defer w.Close()
 	logger := NewLogger(os.Stdout)
-	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(), logger, 5)
+
+	db, err := sqlx.Connect(os.Getenv("DB_DRIVER_NAME"), os.Getenv("DB_CONNECTION_STRING"))
+	if err != nil {
+		panic(err)
+	}
+	defer func(db *sqlx.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
+	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(db), logger, 5)
 
 	port, err := strconv.Atoi(os.Getenv("BACKEND_PORT"))
 	if err != nil {
-		logger.Fatal(err)
+		panic(err)
 	}
 
-	srv := server.NewServer(port, storageService, logger)
+	srv, err := server.NewServer(port, storageService, logger)
+	if err != nil {
+		panic(err)
+	}
 
 	go func() {
 		err = srv.Start()
-		if err != nil && err != http.ErrServerClosed {
+		if err != nil && !errors.Is(http.ErrServerClosed, err) {
 			logger.Error(fmt.Sprintf("listen: %s\n", err))
 		}
 	}()
