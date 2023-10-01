@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services/authorization"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"net/http"
@@ -20,34 +19,11 @@ func ErrorResponseWriter(_ *log.Logger) gin.HandlerFunc {
 	}
 }
 
-func SessionCheck(svc authorization.AuthManager) gin.HandlerFunc {
+func RoleCheck(requiredRole string) gin.HandlerFunc { // TODO
 	return func(ctx *gin.Context) {
-		token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
+		token, err := strconv.ParseUint(ctx.GetHeader("token"), 10, 64)
 		if err != nil {
 			_ = ctx.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-
-		if !svc.SessionExist(token) {
-			_ = ctx.AbortWithError(http.StatusBadRequest, ErrUserNotExist(ctx.Query("token")))
-			return
-		}
-
-		ctx.Next()
-	}
-}
-
-func RoleCheck(svc authorization.AuthManager, parseRole func(*gin.Context) (string, error)) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		token, err := strconv.ParseUint(ctx.Query("token"), 10, 64)
-		if err != nil {
-			_ = ctx.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-
-		requiredRole, err := parseRole(ctx)
-		if err != nil {
-			_ = ctx.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 

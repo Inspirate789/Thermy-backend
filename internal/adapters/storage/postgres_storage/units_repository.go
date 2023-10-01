@@ -5,27 +5,28 @@ import (
 	"errors"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
 	"github.com/Inspirate789/Thermy-backend/pkg/sqlx_utils"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"sync"
 )
 
-type UnitsPgRepository struct{}
+type UnitsPgRepository struct {
+	conn *sqlx.DB
+}
 
-func (r *UnitsPgRepository) makeOutputUnitDTO(conn storage.ConnDB, layer, lang string, unit entities.Unit) (interfaces.OutputUnitDTO, error) {
+func (r *UnitsPgRepository) makeOutputUnitDTO(layer, lang string, unit entities.Unit) (interfaces.OutputUnitDTO, error) {
 	args := map[string]any{
 		"layer_name": layer,
 		"lang":       lang,
 		"unit_id":    unit.ID,
 	}
-	propertiesID, err := namedSelectSliceFromScript[[]int](conn, selectPropertiesIdByUnitId, args)
+	var propertiesID, contextsID []int
+	err := sqlx_utils.NamedSelect(context.Background(), r.conn, &propertiesID, selectPropertiesIdByUnitId, args)
 	if err != nil {
 		return interfaces.OutputUnitDTO{}, err
 	}
-
-	contextsID, err := namedSelectSliceFromScript[[]int](conn, selectContextsIdByUnit, args)
+	err = sqlx_utils.NamedSelect(context.Background(), r.conn, &contextsID, selectContextsIdByUnit, args)
 	if err != nil {
 		return interfaces.OutputUnitDTO{}, err
 	}
@@ -41,12 +42,12 @@ func (r *UnitsPgRepository) makeOutputUnitDTO(conn storage.ConnDB, layer, lang s
 	return unitDTO, nil
 }
 
-func (r *UnitsPgRepository) combineUnlinkedUnits(conn storage.ConnDB, layer string, unlinkedUnits entities.UnitsMap, combinedUnits interfaces.UnitDtoMaps) (interfaces.UnitDtoMaps, []int, error) {
+func (r *UnitsPgRepository) combineUnlinkedUnits(layer string, unlinkedUnits entities.UnitsMap, combinedUnits interfaces.UnitDtoMaps) (interfaces.UnitDtoMaps, []int, error) {
 	uniqueContextsID := make(map[int]bool)
 
 	for lang := range unlinkedUnits {
 		for _, unit := range unlinkedUnits[lang] {
-			unitDTO, err := r.makeOutputUnitDTO(conn, layer, lang, unit)
+			unitDTO, err := r.makeOutputUnitDTO(layer, lang, unit)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -69,14 +70,14 @@ func (r *UnitsPgRepository) combineUnlinkedUnits(conn storage.ConnDB, layer stri
 	return combinedUnits, contextsID, nil
 }
 
-func (r *UnitsPgRepository) combineLinkedUnits(conn storage.ConnDB, layer string, linkedUnits joinedUnitMaps, combinedUnits interfaces.UnitDtoMaps) (interfaces.UnitDtoMaps, []int, error) {
+func (r *UnitsPgRepository) combineLinkedUnits(layer string, linkedUnits joinedUnitMaps, combinedUnits interfaces.UnitDtoMaps) (interfaces.UnitDtoMaps, []int, error) {
 	uniqueContextsID := make(map[int]bool)
 
 	for _, unitMap := range linkedUnits {
 		unitMapDTO := make(map[string]interfaces.OutputUnitDTO)
 		for lang := range unitMap {
 			unit := unitMap[lang]
-			unitDTO, err := r.makeOutputUnitDTO(conn, layer, lang, unit)
+			unitDTO, err := r.makeOutputUnitDTO(layer, lang, unit)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -98,7 +99,7 @@ func (r *UnitsPgRepository) combineLinkedUnits(conn storage.ConnDB, layer string
 	return combinedUnits, contextsID, nil
 }
 
-func (r *UnitsPgRepository) combineUnits(conn storage.ConnDB, layer string, linkedUnits joinedUnitMaps, unlinkedUnits entities.UnitsMap) (interfaces.UnitDtoMaps, []int, error) {
+func (r *UnitsPgRepository) combineUnits(layer string, linkedUnits joinedUnitMaps, unlinkedUnits entities.UnitsMap) (interfaces.UnitDtoMaps, []int, error) {
 	unlinkedUnitsLen := 0
 	for lang := range unlinkedUnits {
 		unlinkedUnitsLen += len(unlinkedUnits[lang])
@@ -106,12 +107,12 @@ func (r *UnitsPgRepository) combineUnits(conn storage.ConnDB, layer string, link
 
 	combinedUnits := make(interfaces.UnitDtoMaps, 0, unlinkedUnitsLen+len(linkedUnits))
 
-	combinedUnits, contextsID1, err := r.combineUnlinkedUnits(conn, layer, unlinkedUnits, combinedUnits)
+	combinedUnits, contextsID1, err := r.combineUnlinkedUnits(layer, unlinkedUnits, combinedUnits)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	combinedUnits, contextsID2, err := r.combineLinkedUnits(conn, layer, linkedUnits, combinedUnits)
+	combinedUnits, contextsID2, err := r.combineLinkedUnits(layer, linkedUnits, combinedUnits)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -125,7 +126,7 @@ type unitQueries struct {
 	optionalArgs       map[string]any
 }
 
-func (r *UnitsPgRepository) getUnitsByQueries(conn storage.ConnDB, layer string, langs []string, qData unitQueries) (joinedUnitMaps, entities.UnitsMap, error) {
+func (r *UnitsPgRepository) getUnitsByQueries(layer string, langs []string, qData unitQueries) (joinedUnitMaps, entities.UnitsMap, error) {
 	args1 := map[string]any{
 		"layer_name": layer,
 		"lang":       "",
@@ -141,14 +142,16 @@ func (r *UnitsPgRepository) getUnitsByQueries(conn storage.ConnDB, layer string,
 	unlinkedUnitsMap := make(entities.UnitsMap)
 	for _, lang := range langs {
 		args1["lang"] = lang
-		unlinkedUnits, err := namedSelectSliceFromScript[[]entities.Unit](conn, qData.unlinkedUnitsQuery, args1)
+		var unlinkedUnits []entities.Unit
+		err := sqlx_utils.NamedSelect(context.Background(), r.conn, &unlinkedUnits, qData.unlinkedUnitsQuery, args1)
 		if err != nil {
 			return nil, nil, err
 		}
 		unlinkedUnitsMap[lang] = unlinkedUnits
 	}
 
-	linkedUnits, err := namedSelectSliceFromScript[joinedUnits](conn, qData.linkedUnitsQuery, args2)
+	var linkedUnits joinedUnits
+	err := sqlx_utils.NamedSelect(context.Background(), r.conn, &linkedUnits, qData.linkedUnitsQuery, args2)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -156,8 +159,8 @@ func (r *UnitsPgRepository) getUnitsByQueries(conn storage.ConnDB, layer string,
 	return linkedUnits.toMaps(), unlinkedUnitsMap, nil
 }
 
-func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (interfaces.OutputUnitsDTO, error) {
-	linkedUnits, unlinkedUnits, err := r.getUnitsByQueries(conn, layer, []string{"ru", "en"}, unitQueries{
+func (r *UnitsPgRepository) GetAllUnits(layer string) (interfaces.OutputUnitsDTO, error) {
+	linkedUnits, unlinkedUnits, err := r.getUnitsByQueries(layer, []string{"ru", "en"}, unitQueries{
 		unlinkedUnitsQuery: selectUnlinkedUnits,
 		linkedUnitsQuery:   selectAllLinkedUnits,
 		optionalArgs:       nil,
@@ -166,12 +169,13 @@ func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (inte
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	combinedUnits, contextsID, err := r.combineUnits(conn, layer, linkedUnits, unlinkedUnits)
+	combinedUnits, contextsID, err := r.combineUnits(layer, linkedUnits, unlinkedUnits)
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	contexts, err := selectSliceFromScript[[]interfaces.ContextDTO](conn, selectContextsById, pq.Array(contextsID))
+	var contexts []interfaces.ContextDTO
+	err = sqlx_utils.NamedSelect(context.Background(), r.conn, &contexts, selectContextsById, pq.Array(contextsID))
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
@@ -179,8 +183,8 @@ func (r *UnitsPgRepository) GetAllUnits(conn storage.ConnDB, layer string) (inte
 	return interfaces.OutputUnitsDTO{Units: combinedUnits, Contexts: contexts}, nil
 }
 
-func (r *UnitsPgRepository) GetUnitsByModels(conn storage.ConnDB, layer string, modelsID []int) (interfaces.OutputUnitsDTO, error) {
-	linkedUnits, unlinkedUnits, err := r.getUnitsByQueries(conn, layer, []string{"ru", "en"}, unitQueries{
+func (r *UnitsPgRepository) GetUnitsByModels(layer string, modelsID []int) (interfaces.OutputUnitsDTO, error) {
+	linkedUnits, unlinkedUnits, err := r.getUnitsByQueries(layer, []string{"ru", "en"}, unitQueries{
 		unlinkedUnitsQuery: selectUnlinkedUnitsAndModelsId,
 		linkedUnitsQuery:   selectLinkedUnitsByModelsId,
 		optionalArgs: map[string]any{
@@ -191,12 +195,13 @@ func (r *UnitsPgRepository) GetUnitsByModels(conn storage.ConnDB, layer string, 
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	combinedUnits, contextsID, err := r.combineUnits(conn, layer, linkedUnits, unlinkedUnits)
+	combinedUnits, contextsID, err := r.combineUnits(layer, linkedUnits, unlinkedUnits)
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	contexts, err := selectSliceFromScript[[]interfaces.ContextDTO](conn, selectContextsById, pq.Array(contextsID))
+	var contexts []interfaces.ContextDTO
+	err = sqlx_utils.NamedSelect(context.Background(), r.conn, &contexts, selectContextsById, pq.Array(contextsID))
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
@@ -204,8 +209,8 @@ func (r *UnitsPgRepository) GetUnitsByModels(conn storage.ConnDB, layer string, 
 	return interfaces.OutputUnitsDTO{Units: combinedUnits, Contexts: contexts}, nil
 }
 
-func (r *UnitsPgRepository) GetUnitsByProperties(conn storage.ConnDB, layer string, propertiesID []int) (interfaces.OutputUnitsDTO, error) {
-	linkedUnits, unlinkedUnits, err := r.getUnitsByQueries(conn, layer, []string{"ru", "en"}, unitQueries{
+func (r *UnitsPgRepository) GetUnitsByProperties(layer string, propertiesID []int) (interfaces.OutputUnitsDTO, error) {
+	linkedUnits, unlinkedUnits, err := r.getUnitsByQueries(layer, []string{"ru", "en"}, unitQueries{
 		unlinkedUnitsQuery: selectUnlinkedUnitsAndPropertiesId,
 		linkedUnitsQuery:   selectLinkedUnitsByPropertiesId,
 		optionalArgs: map[string]any{
@@ -216,12 +221,13 @@ func (r *UnitsPgRepository) GetUnitsByProperties(conn storage.ConnDB, layer stri
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	combinedUnits, contextsID, err := r.combineUnits(conn, layer, linkedUnits, unlinkedUnits)
+	combinedUnits, contextsID, err := r.combineUnits(layer, linkedUnits, unlinkedUnits)
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	contexts, err := selectSliceFromScript[[]interfaces.ContextDTO](conn, selectContextsById, pq.Array(contextsID))
+	var contexts []interfaces.ContextDTO
+	err = sqlx_utils.NamedSelect(context.Background(), r.conn, &contexts, selectContextsById, pq.Array(contextsID))
 	if err != nil {
 		return interfaces.OutputUnitsDTO{}, err
 	}
@@ -230,7 +236,12 @@ func (r *UnitsPgRepository) GetUnitsByProperties(conn storage.ConnDB, layer stri
 }
 
 func (r *UnitsPgRepository) insertContext(tx sqlx.ExtContext, ctxText string) (int, error) {
-	return selectValueFromScript[int](tx, insertContext, ctxText)
+	var id int
+	err := sqlx_utils.Get(context.Background(), tx, &id, insertContext)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
 }
 
 func (r *UnitsPgRepository) insertUnits(tx sqlx.ExtContext, layer, lang string, modelsID []int, unitTexts []string) ([]int, error) {
@@ -243,7 +254,12 @@ func (r *UnitsPgRepository) insertUnits(tx sqlx.ExtContext, layer, lang string, 
 		"models_id":  pq.Array(modelsID),
 		"unit_texts": pq.Array(unitTexts),
 	}
-	return namedSelectSliceFromScript[[]int](tx, insertUnits, args)
+	var id []int
+	err := sqlx_utils.NamedSelect(context.Background(), tx, &id, insertUnits, args)
+	if err != nil {
+		return nil, err
+	}
+	return id, nil
 }
 
 func (r *UnitsPgRepository) insertUnitProperties(tx sqlx.ExtContext, layer, lang string, unitID int, propertiesID []int) error {
@@ -253,7 +269,8 @@ func (r *UnitsPgRepository) insertUnitProperties(tx sqlx.ExtContext, layer, lang
 		"unit_id":       unitID,
 		"properties_id": pq.Array(propertiesID),
 	}
-	return executeNamedScript(tx, insertUnitProperties, args)
+	_, err := sqlx_utils.NamedExec(context.Background(), tx, insertUnitProperties, args)
+	return err
 }
 
 func (r *UnitsPgRepository) insertContextUnits(tx sqlx.ExtContext, layer, lang string, contextID int, unitsID []int) error {
@@ -263,7 +280,8 @@ func (r *UnitsPgRepository) insertContextUnits(tx sqlx.ExtContext, layer, lang s
 		"context_id": contextID,
 		"units_id":   pq.Array(unitsID),
 	}
-	return executeNamedScript(tx, insertContextUnits, args)
+	_, err := sqlx_utils.NamedExec(context.Background(), tx, insertContextUnits, args)
+	return err
 }
 
 func (r *UnitsPgRepository) linkUnits(tx sqlx.ExtContext, layer, unitRu, unitEn string) error {
@@ -272,7 +290,8 @@ func (r *UnitsPgRepository) linkUnits(tx sqlx.ExtContext, layer, unitRu, unitEn 
 		"unit_ru":    unitRu,
 		"unit_en":    unitEn,
 	}
-	return executeNamedScript(tx, linkUnits, args)
+	_, err := sqlx_utils.NamedExec(context.Background(), tx, linkUnits, args)
+	return err
 }
 
 func (r *UnitsPgRepository) saveUnitsTX(ctx context.Context, tx sqlx.ExtContext, layer string, data interfaces.SaveUnitsDTO) error {
@@ -347,26 +366,22 @@ func (r *UnitsPgRepository) saveUnitsTX(ctx context.Context, tx sqlx.ExtContext,
 	return globalErr
 }
 
-func (r *UnitsPgRepository) SaveUnits(conn storage.ConnDB, layer string, data interfaces.SaveUnitsDTO) error {
-	sqlxDB, ok := conn.(sqlx_utils.TxRunner)
-	if !ok {
-		return errors.New("cannot get TxRunner from argument")
-	}
-
-	return sqlx_utils.RunTx(context.Background(), sqlxDB, func(tx *sqlx.Tx) error {
+func (r *UnitsPgRepository) SaveUnits(layer string, data interfaces.SaveUnitsDTO) error {
+	return sqlx_utils.RunTx(context.Background(), r.conn, func(tx *sqlx.Tx) error {
 		err := r.saveUnitsTX(context.Background(), tx, layer, data)
 		return err
 	})
 }
 
-func (r *UnitsPgRepository) RenameUnit(conn storage.ConnDB, layer, lang, oldName, newName string) error {
+func (r *UnitsPgRepository) RenameUnit(layer, lang, oldName, newName string) error {
 	args := map[string]any{
 		"layer_name": layer,
 		"lang":       lang,
 		"old_name":   oldName,
 		"new_name":   newName,
 	}
-	return executeNamedScript(conn, updateUnitNames, args)
+	_, err := sqlx_utils.NamedExec(context.Background(), r.conn, updateUnitNames, args)
+	return err
 }
 
 func (r *UnitsPgRepository) setUnitPropertiesTX(ctx context.Context, tx sqlx.ExtContext, layer, lang, unitName string, propertiesID []int) error {
@@ -376,16 +391,12 @@ func (r *UnitsPgRepository) setUnitPropertiesTX(ctx context.Context, tx sqlx.Ext
 		"unit_name":     unitName,
 		"properties_id": pq.Array(propertiesID),
 	}
-	return executeNamedScript(tx, updateUnitProperties, args)
+	_, err := sqlx_utils.NamedExec(context.Background(), r.conn, updateUnitProperties, args)
+	return err
 }
 
-func (r *UnitsPgRepository) SetUnitProperties(conn storage.ConnDB, layer, lang, unitName string, propertiesID []int) error {
-	sqlxDB, ok := conn.(sqlx_utils.TxRunner)
-	if !ok {
-		return errors.New("cannot get TxRunner from argument")
-	}
-
-	return sqlx_utils.RunTx(context.Background(), sqlxDB, func(tx *sqlx.Tx) error {
+func (r *UnitsPgRepository) SetUnitProperties(layer, lang, unitName string, propertiesID []int) error {
+	return sqlx_utils.RunTx(context.Background(), r.conn, func(tx *sqlx.Tx) error {
 		err := r.setUnitPropertiesTX(context.Background(), tx, layer, lang, unitName, propertiesID)
 		return err
 	})

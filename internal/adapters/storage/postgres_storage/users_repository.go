@@ -1,22 +1,22 @@
 package postgres_storage
 
 import (
+	"context"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
+	"github.com/Inspirate789/Thermy-backend/pkg/sqlx_utils"
+	"github.com/jmoiron/sqlx"
 )
 
-type UsersPgRepository struct{}
+type UsersPgRepository struct {
+	conn *sqlx.DB
+}
 
-func (r *UsersPgRepository) AddUser(conn storage.ConnDB, user interfaces.UserDTO) error {
+func (r *UsersPgRepository) AddUser(user interfaces.UserDTO) error {
 	args := map[string]any{
 		"username": user.Name,
 		"password": user.Password,
 		"role":     user.Role,
 	}
-
-	return executeNamedScript(conn, insertUser, args)
+	_, err := sqlx_utils.NamedExec(context.Background(), r.conn, insertUser, args)
+	return err
 }
-
-//func (r *UsersPgRepository) GetUserPassword(conn storage.ConnDB, username string) (string, error) {
-//	return selectValueFromScript[string](conn, selectUserPassword, username)
-//}

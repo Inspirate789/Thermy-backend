@@ -30,7 +30,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin"
+                    "Info"
                 ],
                 "summary": "Show the status of server.",
                 "parameters": [
@@ -38,7 +38,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -47,6 +47,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_pkg_monitoring.ProcStat"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     "500": {
@@ -59,6 +65,58 @@ const docTemplate = `{
             }
         },
         "/elements": {
+            "get": {
+                "description": "return all elements of structural models in the given text markup layer",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Elements"
+                ],
+                "summary": "Show all elements of structural models in the given text markup layer.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User authentication token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Text markup layer",
+                        "name": "layer",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "add new elements of structural models",
                 "consumes": [
@@ -68,7 +126,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "educator"
+                    "Elements"
                 ],
                 "summary": "Add new elements of structural models.",
                 "parameters": [
@@ -76,7 +134,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -109,50 +167,8 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/elements/all": {
-            "get": {
-                "description": "return all elements of structural models in the given text markup layer",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all elements of structural models in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "type": "string"
                         }
@@ -167,10 +183,55 @@ const docTemplate = `{
             }
         },
         "/layers": {
+            "get": {
+                "description": "return all text markup layers",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Layers"
+                ],
+                "summary": "Show all text markup layers.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User authentication token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.LayersDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "add new text markup layer",
                 "tags": [
-                    "educator"
+                    "Layers"
                 ],
                 "summary": "Add new text markup layer.",
                 "parameters": [
@@ -178,7 +239,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -193,49 +254,8 @@ const docTemplate = `{
                     "200": {
                         "description": "OK"
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/layers/all": {
-            "get": {
-                "description": "return all text markup layers",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all text markup layers.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.LayersDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "type": "string"
                         }
@@ -256,7 +276,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "common"
+                    "Auth"
                 ],
                 "summary": "Log in to the server.",
                 "parameters": [
@@ -282,15 +302,21 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
         },
         "/logout": {
-            "post": {
+            "delete": {
                 "description": "log out from the server",
                 "tags": [
-                    "common"
+                    "Auth"
                 ],
                 "summary": "Log out from the server.",
                 "parameters": [
@@ -298,7 +324,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -311,11 +337,69 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
         },
         "/models": {
+            "get": {
+                "description": "return all structural models in the given text markup layer",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Models"
+                ],
+                "summary": "Show all structural models in the given text markup layer.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User authentication token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Text markup layer",
+                        "name": "layer",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "add new structural models",
                 "consumes": [
@@ -325,7 +409,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "educator"
+                    "Models"
                 ],
                 "summary": "Add new structural models.",
                 "parameters": [
@@ -333,7 +417,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -366,6 +450,12 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -375,29 +465,22 @@ const docTemplate = `{
                 }
             }
         },
-        "/models/all": {
+        "/properties": {
             "get": {
-                "description": "return all structural models in the given text markup layer",
+                "description": "return all unit properties",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "student"
+                    "Properties"
                 ],
-                "summary": "Show all structural models in the given text markup layer.",
+                "summary": "Show all unit properties.",
                 "parameters": [
                     {
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -414,6 +497,12 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -421,9 +510,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/properties": {
+            },
             "post": {
                 "description": "add new unit properties",
                 "consumes": [
@@ -433,7 +520,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "student"
+                    "Properties"
                 ],
                 "summary": "Add new unit properties.",
                 "parameters": [
@@ -441,7 +528,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -467,43 +554,8 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/properties/all": {
-            "put": {
-                "description": "return all unit properties",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all unit properties.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "type": "string"
                         }
@@ -527,7 +579,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "student"
+                    "Properties"
                 ],
                 "summary": "Show all properties for the given unit in the given text markup layer.",
                 "parameters": [
@@ -535,7 +587,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -568,6 +620,12 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -578,13 +636,65 @@ const docTemplate = `{
             }
         },
         "/units": {
+            "get": {
+                "description": "return all units in the given text markup layer",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Units"
+                ],
+                "summary": "Show all units in the given text markup layer.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User authentication token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Text markup layer",
+                        "name": "layer",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "add new units in the given text markup layer",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "student"
+                    "Units"
                 ],
                 "summary": "Add new units in the given text markup layer.",
                 "parameters": [
@@ -592,7 +702,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -622,6 +732,76 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete existing units in the given text markup layer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Units"
+                ],
+                "summary": "Delete existing units in the given text markup layer.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User authentication token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Text markup layer",
+                        "name": "layer",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Information about updated units",
+                        "name": "unitsDTO",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.SearchUnitDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -636,7 +816,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "student"
+                    "Units"
                 ],
                 "summary": "Update existing units in the given text markup layer.",
                 "parameters": [
@@ -644,7 +824,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -674,50 +854,8 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/units/all": {
-            "put": {
-                "description": "return all units in the given text markup layer",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "student"
-                ],
-                "summary": "Show all units in the given text markup layer.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Text markup layer",
-                        "name": "layer",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "type": "string"
                         }
@@ -741,7 +879,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "student"
+                    "Units"
                 ],
                 "summary": "Show all units with given structural models in the given text markup layer.",
                 "parameters": [
@@ -749,7 +887,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -782,6 +920,12 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -801,7 +945,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "student"
+                    "Units"
                 ],
                 "summary": "Show all units with given properties in the given text markup layer.",
                 "parameters": [
@@ -809,7 +953,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -842,6 +986,12 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -858,7 +1008,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "admin"
+                    "Users"
                 ],
                 "summary": "Add new user.",
                 "parameters": [
@@ -866,7 +1016,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "User authentication token",
                         "name": "token",
-                        "in": "query",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -885,6 +1035,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "type": "string"
                         }

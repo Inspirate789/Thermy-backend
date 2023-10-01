@@ -1,30 +1,49 @@
 package postgres_storage
 
 import (
+	"context"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
+	"github.com/Inspirate789/Thermy-backend/pkg/sqlx_utils"
+	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 )
 
-type PropertiesPgRepository struct{}
-
-func (r *PropertiesPgRepository) GetAllProperties(conn storage.ConnDB) ([]entities.Property, error) {
-	return namedSelectSliceFromScript[[]entities.Property](conn, selectAllProperties, make(map[string]any))
+type PropertiesPgRepository struct {
+	conn *sqlx.DB
 }
 
-func (r *PropertiesPgRepository) GetPropertiesByUnit(conn storage.ConnDB, layer string, unit interfaces.SearchUnitDTO) ([]entities.Property, error) {
+func (r *PropertiesPgRepository) GetAllProperties() ([]entities.Property, error) {
+	var properties []entities.Property
+	err := sqlx_utils.NamedSelect(context.Background(), r.conn, &properties, selectAllProperties, nil)
+	if err != nil {
+		return nil, err
+	}
+	return properties, nil
+}
+
+func (r *PropertiesPgRepository) GetPropertiesByUnit(layer string, unit interfaces.SearchUnitDTO) ([]entities.Property, error) {
 	args := map[string]any{
 		"layer_name": layer,
 		"lang":       unit.Lang,
 		"unit_text":  unit.Text,
 	}
-	return namedSelectSliceFromScript[[]entities.Property](conn, selectPropertiesByUnit, args)
+	var properties []entities.Property
+	err := sqlx_utils.NamedSelect(context.Background(), r.conn, &properties, selectPropertiesByUnit, args)
+	if err != nil {
+		return nil, err
+	}
+	return properties, nil
 }
 
-func (r *PropertiesPgRepository) SaveProperties(conn storage.ConnDB, properties []string) ([]int, error) {
+func (r *PropertiesPgRepository) SaveProperties(properties []string) ([]int, error) {
 	args := map[string]any{
 		"properties_array": pq.Array(properties),
 	}
-	return namedSelectSliceFromScript[[]int](conn, insertProperties, args)
+	var id []int
+	err := sqlx_utils.NamedSelect(context.Background(), r.conn, &id, insertProperties, args)
+	if err != nil {
+		return nil, err
+	}
+	return id, nil
 }

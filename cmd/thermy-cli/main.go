@@ -105,7 +105,7 @@ func main() {
 					{
 						Name:   "list",
 						Usage:  "show all text markup layers",
-						Action: commonHandler(http.MethodGet, "/layers/all", nil, tokenQueryParam, nil),
+						Action: commonHandler(http.MethodGet, "/layers", nil, tokenQueryParam, nil),
 					},
 					{
 						Name:  "add",
@@ -149,7 +149,7 @@ func main() {
 					{
 						Name:   "list",
 						Usage:  "show a list of models",
-						Action: commonHandler(http.MethodGet, "/models/all", nil, defaultQueryParams, nil),
+						Action: commonHandler(http.MethodGet, "/models", nil, defaultQueryParams, nil),
 					},
 					{
 						Name:  "add",
@@ -193,7 +193,7 @@ func main() {
 					{
 						Name:   "list",
 						Usage:  "show a list of model elements",
-						Action: commonHandler(http.MethodGet, "/elements/all", nil, defaultQueryParams, nil),
+						Action: commonHandler(http.MethodGet, "/elements", nil, defaultQueryParams, nil),
 					},
 					{
 						Name:  "add",

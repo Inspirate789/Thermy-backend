@@ -1,7 +1,5 @@
 package postgres_storage
 
-// TODO: add a 'SET ROLE' before each query to make the code more reliable and testable
-
 var (
 	// Layers
 	createLayer      = `call public.create_layer(:layer_name);`
@@ -10,7 +8,6 @@ var (
 	// Users
 	insertUser = `select * from public.insert_user(:username, :password, :role);`
 	// selectUserPassword = `select password from public.users where name = $1 limit 1;`
-	selectRole = `select users.role from public.users where users.name = (select session_user);`
 	// Models
 	selectAllModels = `select * from public.select_all_models(:layer_name);`
 	insertModels    = `select * from public.insert_models(:layer_name, :models_array);`

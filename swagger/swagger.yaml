@@ -419,7 +419,7 @@ paths:
       description: return the statistic of the server process
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -430,21 +430,61 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_pkg_monitoring.ProcStat'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
       summary: Show the status of server.
       tags:
-      - admin
+      - Info
   /elements:
+    get:
+      description: return all elements of structural models in the given text markup
+        layer
+      parameters:
+      - description: User authentication token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Text markup layer
+        in: query
+        name: layer
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Show all elements of structural models in the given text markup layer.
+      tags:
+      - Elements
     post:
       consumes:
       - application/json
       description: add new elements of structural models
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -470,80 +510,23 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
       summary: Add new elements of structural models.
       tags:
-      - educator
-  /elements/all:
-    get:
-      description: return all elements of structural models in the given text markup
-        layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all elements of structural models in the given text markup layer.
-      tags:
-      - student
+      - Elements
   /layers:
-    post:
-      description: add new text markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Add new text markup layer.
-      tags:
-      - educator
-  /layers/all:
     get:
       description: return all text markup layers
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -558,13 +541,44 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
       summary: Show all text markup layers.
       tags:
-      - student
+      - Layers
+    post:
+      description: add new text markup layer
+      parameters:
+      - description: User authentication token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Text markup layer
+        in: query
+        name: layer
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Add new text markup layer.
+      tags:
+      - Layers
   /login:
     post:
       description: log in to the server
@@ -586,15 +600,19 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
       summary: Log in to the server.
       tags:
-      - common
+      - Auth
   /logout:
-    post:
+    delete:
       description: log out from the server
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -605,17 +623,56 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
       summary: Log out from the server.
       tags:
-      - common
+      - Auth
   /models:
+    get:
+      description: return all structural models in the given text markup layer
+      parameters:
+      - description: User authentication token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Text markup layer
+        in: query
+        name: layer
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Show all structural models in the given text markup layer.
+      tags:
+      - Models
     post:
       consumes:
       - application/json
       description: add new structural models
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -641,25 +698,24 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
       summary: Add new structural models.
       tags:
-      - educator
-  /models/all:
+      - Models
+  /properties:
     get:
-      description: return all structural models in the given text markup layer
+      description: return all unit properties
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
         required: true
         type: string
       produces:
@@ -673,21 +729,24 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
-      summary: Show all structural models in the given text markup layer.
+      summary: Show all unit properties.
       tags:
-      - student
-  /properties:
+      - Properties
     post:
       consumes:
       - application/json
       description: add new unit properties
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -708,40 +767,17 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
       summary: Add new unit properties.
       tags:
-      - student
-  /properties/all:
-    put:
-      description: return all unit properties
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputModelsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all unit properties.
-      tags:
-      - student
+      - Properties
   /properties/unit:
     put:
       consumes:
@@ -750,7 +786,7 @@ paths:
         layer
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -776,21 +812,103 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
       summary: Show all properties for the given unit in the given text markup layer.
       tags:
-      - student
+      - Properties
   /units:
+    delete:
+      consumes:
+      - application/json
+      description: delete existing units in the given text markup layer
+      parameters:
+      - description: User authentication token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Text markup layer
+        in: query
+        name: layer
+        required: true
+        type: string
+      - description: Information about updated units
+        in: body
+        name: unitsDTO
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.SearchUnitDTO'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete existing units in the given text markup layer.
+      tags:
+      - Units
+    get:
+      description: return all units in the given text markup layer
+      parameters:
+      - description: User authentication token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Text markup layer
+        in: query
+        name: layer
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Show all units in the given text markup layer.
+      tags:
+      - Units
     patch:
       consumes:
       - application/json
       description: update existing units in the given text markup layer
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -812,20 +930,24 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
       summary: Update existing units in the given text markup layer.
       tags:
-      - student
+      - Units
     post:
       consumes:
       - application/json
       description: add new units in the given text markup layer
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -847,45 +969,17 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
       summary: Add new units in the given text markup layer.
       tags:
-      - student
-  /units/all:
-    put:
-      description: return all units in the given text markup layer
-      parameters:
-      - description: User authentication token
-        in: query
-        name: token
-        required: true
-        type: string
-      - description: Text markup layer
-        in: query
-        name: layer
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.OutputUnitsDTO'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show all units in the given text markup layer.
-      tags:
-      - student
+      - Units
   /units/models:
     put:
       consumes:
@@ -894,7 +988,7 @@ paths:
         markup layer
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -920,6 +1014,10 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
@@ -927,7 +1025,7 @@ paths:
       summary: Show all units with given structural models in the given text markup
         layer.
       tags:
-      - student
+      - Units
   /units/properties:
     put:
       consumes:
@@ -936,7 +1034,7 @@ paths:
         layer
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -962,13 +1060,17 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
       summary: Show all units with given properties in the given text markup layer.
       tags:
-      - student
+      - Units
   /users:
     post:
       consumes:
@@ -976,7 +1078,7 @@ paths:
       description: add new user
       parameters:
       - description: User authentication token
-        in: query
+        in: header
         name: token
         required: true
         type: string
@@ -993,13 +1095,17 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "500":
           description: Internal Server Error
           schema:
             type: string
       summary: Add new user.
       tags:
-      - admin
+      - Users
 schemes:
 - http
 swagger: "2.0"

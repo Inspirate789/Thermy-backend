@@ -1,69 +1,50 @@
 package storage
 
 import (
-	"context"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 )
 
-type ConnDB any
-
-type Storage interface { // TODO: split?
-	OpenConn(request *entities.AuthRequest, ctx context.Context) (ConnDB, string, error) // Get conn, role in database and error
+type Storage interface {
 	UsersRepository
 	ModelsRepository
 	ModelElementsRepository
 	PropertiesRepository
 	UnitsRepository
 	LayersRepository
-	CloseConn(ConnDB) error
 }
 
-type ConnManager interface {
-	OpenConn(request *entities.AuthRequest, ctx context.Context) (ConnDB, string, error)
-	CloseConn(conn ConnDB) error
+type UsersRepository interface {
+	AddUser(user interfaces.UserDTO) error
 }
 
-type UnitsManager interface {
-	GetAllUnits(conn ConnDB, layer string) (interfaces.OutputUnitsDTO, error)
-	GetUnitsByModels(conn ConnDB, layer string, modelsDTO interfaces.ModelsIdDTO) (interfaces.OutputUnitsDTO, error)
-	GetUnitsByProperties(conn ConnDB, layer string, propertiesDTO interfaces.PropertiesIdDTO) (interfaces.OutputUnitsDTO, error)
-	SaveUnits(conn ConnDB, layer string, unitsDTO interfaces.SaveUnitsDTO) error
-	UpdateUnits(conn ConnDB, layer string, unitsDTO interfaces.UpdateUnitsDTO) error
+type ModelsRepository interface {
+	GetAllModels(layer string) ([]entities.Model, error)
+	SaveModels(layer string, models []string) ([]int, error)
 }
 
-type ModelsManager interface {
-	GetModels(conn ConnDB, layer string) (interfaces.OutputModelsDTO, error)
-	SaveModels(conn ConnDB, layer string, modelsDTO interfaces.ModelNamesDTO) (interfaces.ModelsIdDTO, error)
+type ModelElementsRepository interface {
+	GetAllModelElements(layer string) ([]entities.ModelElement, error)
+	SaveModelElements(layer string, modelElements []string) ([]int, error)
 }
 
-type ModelElementsManager interface {
-	GetModelElements(conn ConnDB, layer string) (interfaces.OutputModelElementsDTO, error)
-	SaveModelElements(conn ConnDB, layer string, modelElementsDTO interfaces.ModelElementNamesDTO) (interfaces.ModelElementsIdDTO, error)
+type PropertiesRepository interface {
+	GetAllProperties() ([]entities.Property, error)
+	GetPropertiesByUnit(layer string, unit interfaces.SearchUnitDTO) ([]entities.Property, error)
+	SaveProperties(properties []string) ([]int, error)
 }
 
-type PropertiesManager interface {
-	GetProperties(conn ConnDB) (interfaces.OutputPropertiesDTO, error)
-	GetPropertiesByUnit(conn ConnDB, layer string, unit interfaces.SearchUnitDTO) (interfaces.OutputPropertiesDTO, error)
-	SaveProperties(conn ConnDB, propertiesDTO interfaces.PropertyNamesDTO) (interfaces.PropertiesIdDTO, error)
+type UnitsRepository interface {
+	GetAllUnits(layer string) (interfaces.OutputUnitsDTO, error)
+	GetUnitsByModels(layer string, modelsID []int) (interfaces.OutputUnitsDTO, error)
+	GetUnitsByProperties(layer string, propertiesID []int) (interfaces.OutputUnitsDTO, error)
+	SaveUnits(layer string, data interfaces.SaveUnitsDTO) error // stored procedure (SQL)
+	RenameUnit(layer, lang, oldName, newName string) error
+	SetUnitProperties(layer, lang, unitName string, propertiesID []int) error
 }
 
-type LayersManager interface {
-	GetLayers(conn ConnDB) (interfaces.LayersDTO, error)
-	SaveLayer(conn ConnDB, layer string) error
-}
-
-type UsersManager interface {
-	AddUser(conn ConnDB, user interfaces.UserDTO) error
-	//GetUserPassword(conn ConnDB, username string) (string, error)
-}
-
-type StorageManager interface {
-	ConnManager
-	UnitsManager
-	ModelsManager
-	ModelElementsManager
-	PropertiesManager
-	LayersManager
-	UsersManager
+type LayersRepository interface {
+	LayerExist(layer string) (bool, error)
+	GetAllLayers() ([]string, error)
+	SaveLayer(name string) error
 }

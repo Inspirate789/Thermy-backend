@@ -3,73 +3,78 @@ package server
 import (
 	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/server/middleware"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services/authorization"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
+	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 	"os"
-	"regexp"
 )
 
 type Server struct {
 	srv            *http.Server
-	storageService storage.StorageManager
-	authService    authorization.AuthManager
+	storageService StorageService
 	logger         *log.Logger
 }
 
 func (s *Server) addRoutes(rg *gin.RouterGroup) {
+}
+
+func (s *Server) addCommonRoutes(rg *gin.RouterGroup) {
+	rg.POST("/login", s.login)
+	rg.DELETE("/logout", s.logout)
+}
+
+func (s *Server) addStudentRoutes(rg *gin.RouterGroup) {
 	rg.POST("/units", s.postUnits)
 	rg.PATCH("/units", s.patchUnits)
-	rg.PUT("/units/all", s.getAllUnits)
+	rg.GET("/units", s.getUnits)
 	rg.PUT("/units/models", s.getUnitsByModels)
 	rg.PUT("/units/properties", s.getUnitsByProperties)
+	rg.DELETE("/units", s.deleteUnits)
 
-	rg.GET("/models/all", s.getModels)
-	rg.POST("/models", s.postModels)
+	rg.GET("/models", s.getModels)
 
-	rg.GET("/elements/all", s.getModelElements)
-	rg.POST("/elements", s.postElements)
+	rg.GET("/elements", s.getModelElements)
 
-	rg.PUT("/properties/all", s.getProperties)
+	rg.GET("/properties", s.getProperties)
 	rg.PUT("/properties/unit", s.getPropertiesByUnit)
 	rg.POST("/properties", s.postProperties)
 
-	rg.GET("/layers/all", s.getAllLayers)
+	rg.GET("/layers", s.getLayers)
+}
+
+func (s *Server) addEducatorRoutes(rg *gin.RouterGroup) {
+	rg.POST("/models", s.postModels)
+
+	rg.POST("/elements", s.postElements)
+
 	rg.POST("/layers", s.postLayer)
+}
 
+func (s *Server) addAdminRoutes(rg *gin.RouterGroup) {
 	rg.POST("/users", s.postUser)
+	rg.GET("/stat", s.getStat)
 }
 
-func parseRole(ctx *gin.Context) (string, error) {
-	exp, err := regexp.Compile("/")
-	if err != nil {
-		return "", err
-	}
-
-	tokenIndex := len(exp.Split(os.Getenv("BACKEND_API_PREFIX"), -1))
-
-	return exp.Split(ctx.FullPath(), -1)[tokenIndex], nil // "/.../role/..." --> "role"
-}
-
-func (s *Server) setupHandlers(router *gin.RouterGroup, authMgr authorization.AuthManager) {
+func (s *Server) setupHandlers(router *gin.RouterGroup) {
 	router.POST("/login", s.login)
-	router.POST("/logout", s.logout)
+	router.DELETE("/logout", s.logout)
 
-	authRG := router.Group("", middleware.SessionCheck(s.authService))
-	s.addRoutes(authRG)
+	studentRg := router.Group("", middleware.RoleCheck(entities.StudentRole))
+	s.addStudentRoutes(studentRg)
 
-	adminRg := authRG.Group("/admin", middleware.RoleCheck(authMgr, parseRole))
-	adminRg.GET("/stat", s.getStat)
+	educatorRg := router.Group("", middleware.RoleCheck(entities.EducatorRole))
+	s.addEducatorRoutes(educatorRg)
+
+	adminRg := router.Group("", middleware.RoleCheck(entities.AdminRole))
+	s.addAdminRoutes(adminRg)
 }
 
-func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.StorageManager, logger *log.Logger) *Server {
+func NewServer(port int, storageMgr StorageService, logger *log.Logger) *Server {
 	gin.SetMode(os.Getenv("GIN_MODE"))
 	router := gin.Default()
-	// router.SetTrustedProxies([]string{"192.168.52.38"}) // TODO?
 	router.UseRawPath = true
 	router.UnescapePathValues = false
 
@@ -80,18 +85,17 @@ func NewServer(port int, authMgr authorization.AuthManager, storageMgr storage.S
 	router.Use(middleware.ErrorResponseWriter(logger))
 	router.Use(gin.RecoveryWithWriter(logger.Out))
 
-	s := Server{ // TODO: Enabling SSL/TLS encryption
+	s := Server{
 		srv: &http.Server{
 			Addr:    fmt.Sprintf(":%d", port),
 			Handler: router,
 		},
 		storageService: storageMgr,
-		authService:    authMgr,
 		logger:         logger,
 	}
 
 	apiRG := router.Group(os.Getenv("BACKEND_API_PREFIX"))
-	s.setupHandlers(apiRG, authMgr)
+	s.setupHandlers(apiRG)
 
 	return &s
 }

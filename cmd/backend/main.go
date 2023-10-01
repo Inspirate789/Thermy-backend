@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/server"
 	"github.com/Inspirate789/Thermy-backend/internal/adapters/storage/postgres_storage"
-	"github.com/Inspirate789/Thermy-backend/internal/domain/services/authorization"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/services/storage"
-	influx "github.com/Inspirate789/Thermy-backend/pkg/influx_writer"
 	_ "github.com/Inspirate789/Thermy-backend/swagger"
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
 	"github.com/joho/godotenv"
@@ -33,7 +31,7 @@ func init() {
 	if err != nil {
 		log.Fatalf("File %s not readed: %v", configFilename, err)
 	}
-	err = godotenv.Load(configFilename) // TODO: read filename from flag
+	err = godotenv.Load(configFilename)
 	if err != nil {
 		log.Fatalf("File %s not loaded: %v", configFilename, err)
 	}
@@ -102,28 +100,21 @@ func NewLogger(w io.Writer) *log.Logger {
 // @BasePath	/api/v1
 // @Schemes	http
 func main() {
-	w := influx.NewInfluxWriter()
-	err := w.Open()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer w.Close()
-	logger := NewLogger(w)
-
-	authService := authorization.NewAuthService(logger)
+	//w := influx.NewInfluxWriter()
+	//err := w.Open()
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//defer w.Close()
+	logger := NewLogger(os.Stdout)
 	storageService := storage.NewStorageService(postgres_storage.NewPostgresStorage(), logger, 5)
-	//storageService := storage.NewStorageService(redis_storage.NewRedisStorage( // TODO: configure main storage?
-	//	os.Getenv("REDIS_HOST"),
-	//	os.Getenv("REDIS_PORT"),
-	//	os.Getenv("REDIS_PASSWORD"),
-	//), logger, 5)
 
 	port, err := strconv.Atoi(os.Getenv("BACKEND_PORT"))
 	if err != nil {
 		logger.Fatal(err)
 	}
 
-	srv := server.NewServer(port, authService, storageService, logger)
+	srv := server.NewServer(port, storageService, logger)
 
 	go func() {
 		err = srv.Start()

@@ -1,51 +1,28 @@
 package storage
 
 import (
-	"context"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/errors"
 	"github.com/Inspirate789/Thermy-backend/internal/domain/interfaces"
 	log "github.com/sirupsen/logrus"
 )
 
-type StorageService struct {
+type Service struct {
 	storage         Storage
 	logger          *log.Logger
 	repeatOnFailure int
 }
 
-func NewStorageService(storage Storage, logger *log.Logger, repeatOnFailure int) *StorageService {
-	return &StorageService{
+func NewStorageService(storage Storage, logger *log.Logger, repeatOnFailure int) *Service {
+	return &Service{
 		storage:         storage,
 		logger:          logger,
 		repeatOnFailure: repeatOnFailure,
 	}
 }
 
-func (ss *StorageService) OpenConn(request *entities.AuthRequest, ctx context.Context) (ConnDB, string, error) {
-	conn, role, err := ss.storage.OpenConn(request, ctx)
-	if err != nil {
-		ss.logger.Error(err)
-		return conn, role, errors.IdentifyStorageError(err)
-	}
-	ss.logger.Infof("storage connection for %s opened", role)
-
-	return conn, role, nil
-}
-
-func (ss *StorageService) CloseConn(conn ConnDB) error {
-	err := ss.storage.CloseConn(conn)
-	if err != nil {
-		ss.logger.Error(err)
-		return errors.IdentifyStorageError(err)
-	}
-	ss.logger.Info("storage connection closed") // TODO: make them more informative?
-
-	return nil
-}
-
-func (ss *StorageService) GetAllUnits(conn ConnDB, layer string) (interfaces.OutputUnitsDTO, error) {
-	exist, err := ss.storage.LayerExist(conn, layer)
+func (ss *Service) GetAllUnits(layer string) (interfaces.OutputUnitsDTO, error) {
+	exist, err := ss.storage.LayerExist(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputUnitsDTO{}, errors.IdentifyStorageError(err)
@@ -56,7 +33,7 @@ func (ss *StorageService) GetAllUnits(conn ConnDB, layer string) (interfaces.Out
 		return interfaces.OutputUnitsDTO{}, err
 	}
 
-	units, err := ss.storage.GetAllUnits(conn, layer)
+	units, err := ss.storage.GetAllUnits(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputUnitsDTO{}, errors.IdentifyStorageError(err)
@@ -65,8 +42,8 @@ func (ss *StorageService) GetAllUnits(conn ConnDB, layer string) (interfaces.Out
 	return units, nil
 }
 
-func (ss *StorageService) GetUnitsByModels(conn ConnDB, layer string, modelsDTO interfaces.ModelsIdDTO) (interfaces.OutputUnitsDTO, error) {
-	exist, err := ss.storage.LayerExist(conn, layer)
+func (ss *Service) GetUnitsByModels(layer string, modelsDTO interfaces.ModelsIdDTO) (interfaces.OutputUnitsDTO, error) {
+	exist, err := ss.storage.LayerExist(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputUnitsDTO{}, errors.IdentifyStorageError(err)
@@ -84,7 +61,7 @@ func (ss *StorageService) GetUnitsByModels(conn ConnDB, layer string, modelsDTO 
 		}, nil
 	}
 
-	units, err := ss.storage.GetUnitsByModels(conn, layer, modelsDTO.Models)
+	units, err := ss.storage.GetUnitsByModels(layer, modelsDTO.Models)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputUnitsDTO{}, errors.IdentifyStorageError(err)
@@ -93,8 +70,8 @@ func (ss *StorageService) GetUnitsByModels(conn ConnDB, layer string, modelsDTO 
 	return units, nil
 }
 
-func (ss *StorageService) GetUnitsByProperties(conn ConnDB, layer string, propertiesDTO interfaces.PropertiesIdDTO) (interfaces.OutputUnitsDTO, error) {
-	exist, err := ss.storage.LayerExist(conn, layer)
+func (ss *Service) GetUnitsByProperties(layer string, propertiesDTO interfaces.PropertiesIdDTO) (interfaces.OutputUnitsDTO, error) {
+	exist, err := ss.storage.LayerExist(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputUnitsDTO{}, errors.IdentifyStorageError(err)
@@ -112,7 +89,7 @@ func (ss *StorageService) GetUnitsByProperties(conn ConnDB, layer string, proper
 		}, nil
 	}
 
-	units, err := ss.storage.GetUnitsByProperties(conn, layer, propertiesDTO.Properties)
+	units, err := ss.storage.GetUnitsByProperties(layer, propertiesDTO.Properties)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputUnitsDTO{}, errors.IdentifyStorageError(err)
@@ -121,8 +98,8 @@ func (ss *StorageService) GetUnitsByProperties(conn ConnDB, layer string, proper
 	return units, nil
 }
 
-func (ss *StorageService) GetModels(conn ConnDB, layer string) (interfaces.OutputModelsDTO, error) {
-	exist, err := ss.storage.LayerExist(conn, layer)
+func (ss *Service) GetModels(layer string) (interfaces.OutputModelsDTO, error) {
+	exist, err := ss.storage.LayerExist(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputModelsDTO{}, errors.IdentifyStorageError(err)
@@ -133,7 +110,7 @@ func (ss *StorageService) GetModels(conn ConnDB, layer string) (interfaces.Outpu
 		return interfaces.OutputModelsDTO{}, err
 	}
 
-	models, err := ss.storage.GetAllModels(conn, layer)
+	models, err := ss.storage.GetAllModels(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputModelsDTO{}, errors.IdentifyStorageError(err)
@@ -147,8 +124,8 @@ func (ss *StorageService) GetModels(conn ConnDB, layer string) (interfaces.Outpu
 	return interfaces.OutputModelsDTO{Models: modelsDTO}, nil
 }
 
-func (ss *StorageService) GetModelElements(conn ConnDB, layer string) (interfaces.OutputModelElementsDTO, error) {
-	exist, err := ss.storage.LayerExist(conn, layer)
+func (ss *Service) GetModelElements(layer string) (interfaces.OutputModelElementsDTO, error) {
+	exist, err := ss.storage.LayerExist(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputModelElementsDTO{}, errors.IdentifyStorageError(err)
@@ -159,7 +136,7 @@ func (ss *StorageService) GetModelElements(conn ConnDB, layer string) (interface
 		return interfaces.OutputModelElementsDTO{}, err
 	}
 
-	modelElements, err := ss.storage.GetAllModelElements(conn, layer)
+	modelElements, err := ss.storage.GetAllModelElements(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputModelElementsDTO{}, errors.IdentifyStorageError(err)
@@ -173,8 +150,8 @@ func (ss *StorageService) GetModelElements(conn ConnDB, layer string) (interface
 	return interfaces.OutputModelElementsDTO{Elements: modelElementsDTO}, nil
 }
 
-func (ss *StorageService) GetProperties(conn ConnDB) (interfaces.OutputPropertiesDTO, error) {
-	properties, err := ss.storage.GetAllProperties(conn)
+func (ss *Service) GetProperties() (interfaces.OutputPropertiesDTO, error) {
+	properties, err := ss.storage.GetAllProperties()
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputPropertiesDTO{}, errors.IdentifyStorageError(err)
@@ -188,8 +165,8 @@ func (ss *StorageService) GetProperties(conn ConnDB) (interfaces.OutputPropertie
 	return interfaces.OutputPropertiesDTO{Properties: propertiesDTO}, nil
 }
 
-func (ss *StorageService) GetPropertiesByUnit(conn ConnDB, layer string, unit interfaces.SearchUnitDTO) (interfaces.OutputPropertiesDTO, error) {
-	properties, err := ss.storage.GetPropertiesByUnit(conn, layer, unit)
+func (ss *Service) GetPropertiesByUnit(layer string, unit interfaces.SearchUnitDTO) (interfaces.OutputPropertiesDTO, error) {
+	properties, err := ss.storage.GetPropertiesByUnit(layer, unit)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.OutputPropertiesDTO{}, errors.IdentifyStorageError(err)
@@ -203,8 +180,8 @@ func (ss *StorageService) GetPropertiesByUnit(conn ConnDB, layer string, unit in
 	return interfaces.OutputPropertiesDTO{Properties: propertiesDTO}, nil
 }
 
-func (ss *StorageService) GetLayers(conn ConnDB) (interfaces.LayersDTO, error) {
-	layers, err := ss.storage.GetAllLayers(conn)
+func (ss *Service) GetLayers() (interfaces.LayersDTO, error) {
+	layers, err := ss.storage.GetAllLayers()
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.LayersDTO{}, errors.IdentifyStorageError(err)
@@ -213,8 +190,8 @@ func (ss *StorageService) GetLayers(conn ConnDB) (interfaces.LayersDTO, error) {
 	return interfaces.LayersDTO{Layers: layers}, nil
 }
 
-func (ss *StorageService) SaveUnits(conn ConnDB, layer string, unitsDTO interfaces.SaveUnitsDTO) error {
-	exist, err := ss.storage.LayerExist(conn, layer)
+func (ss *Service) SaveUnits(layer string, unitsDTO interfaces.SaveUnitsDTO) error {
+	exist, err := ss.storage.LayerExist(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return errors.IdentifyStorageError(err)
@@ -226,7 +203,7 @@ func (ss *StorageService) SaveUnits(conn ConnDB, layer string, unitsDTO interfac
 	}
 
 	for i := 0; i < ss.repeatOnFailure; i++ {
-		err = ss.storage.SaveUnits(conn, layer, unitsDTO)
+		err = ss.storage.SaveUnits(layer, unitsDTO)
 		if err == nil || errors.IdentifyStorageError(err) != errors.ErrConnectDatabase {
 			break
 		}
@@ -239,8 +216,8 @@ func (ss *StorageService) SaveUnits(conn ConnDB, layer string, unitsDTO interfac
 	return nil
 }
 
-func (ss *StorageService) UpdateUnits(conn ConnDB, layer string, unitsDTO interfaces.UpdateUnitsDTO) error {
-	exist, err := ss.storage.LayerExist(conn, layer)
+func (ss *Service) UpdateUnits(layer string, unitsDTO interfaces.UpdateUnitsDTO) error {
+	exist, err := ss.storage.LayerExist(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return errors.IdentifyStorageError(err)
@@ -255,7 +232,7 @@ func (ss *StorageService) UpdateUnits(conn ConnDB, layer string, unitsDTO interf
 		name := unit.OldText
 
 		if unit.NewText != nil {
-			err = ss.storage.RenameUnit(conn, layer, unit.Lang, unit.OldText, *unit.NewText)
+			err = ss.storage.RenameUnit(layer, unit.Lang, unit.OldText, *unit.NewText)
 			if err != nil {
 				ss.logger.Error(err)
 				return errors.IdentifyStorageError(err)
@@ -264,7 +241,7 @@ func (ss *StorageService) UpdateUnits(conn ConnDB, layer string, unitsDTO interf
 		}
 
 		if len(unit.PropertiesID) != 0 {
-			err = ss.storage.SetUnitProperties(conn, layer, unit.Lang, name, unit.PropertiesID)
+			err = ss.storage.SetUnitProperties(layer, unit.Lang, name, unit.PropertiesID)
 			if err != nil {
 				ss.logger.Error(err)
 				return errors.IdentifyStorageError(err)
@@ -275,8 +252,8 @@ func (ss *StorageService) UpdateUnits(conn ConnDB, layer string, unitsDTO interf
 	return nil
 }
 
-func (ss *StorageService) SaveProperties(conn ConnDB, propertiesDTO interfaces.PropertyNamesDTO) (interfaces.PropertiesIdDTO, error) {
-	propertiesID, err := ss.storage.SaveProperties(conn, propertiesDTO.Properties)
+func (ss *Service) SaveProperties(propertiesDTO interfaces.PropertyNamesDTO) (interfaces.PropertiesIdDTO, error) {
+	propertiesID, err := ss.storage.SaveProperties(propertiesDTO.Properties)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.PropertiesIdDTO{}, errors.IdentifyStorageError(err)
@@ -285,8 +262,8 @@ func (ss *StorageService) SaveProperties(conn ConnDB, propertiesDTO interfaces.P
 	return interfaces.PropertiesIdDTO{Properties: propertiesID}, nil
 }
 
-func (ss *StorageService) SaveModels(conn ConnDB, layer string, modelsDTO interfaces.ModelNamesDTO) (interfaces.ModelsIdDTO, error) {
-	exist, err := ss.storage.LayerExist(conn, layer)
+func (ss *Service) SaveModels(layer string, modelsDTO interfaces.ModelNamesDTO) (interfaces.ModelsIdDTO, error) {
+	exist, err := ss.storage.LayerExist(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.ModelsIdDTO{}, errors.IdentifyStorageError(err)
@@ -306,7 +283,7 @@ func (ss *StorageService) SaveModels(conn ConnDB, layer string, modelsDTO interf
 		}
 	}
 
-	modelsID, err := ss.storage.SaveModels(conn, layer, modelsDTO.Models)
+	modelsID, err := ss.storage.SaveModels(layer, modelsDTO.Models)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.ModelsIdDTO{}, errors.IdentifyStorageError(err)
@@ -315,8 +292,8 @@ func (ss *StorageService) SaveModels(conn ConnDB, layer string, modelsDTO interf
 	return interfaces.ModelsIdDTO{Models: modelsID}, nil
 }
 
-func (ss *StorageService) SaveModelElements(conn ConnDB, layer string, modelElementsDTO interfaces.ModelElementNamesDTO) (interfaces.ModelElementsIdDTO, error) {
-	exist, err := ss.storage.LayerExist(conn, layer)
+func (ss *Service) SaveModelElements(layer string, modelElementsDTO interfaces.ModelElementNamesDTO) (interfaces.ModelElementsIdDTO, error) {
+	exist, err := ss.storage.LayerExist(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.ModelElementsIdDTO{}, errors.IdentifyStorageError(err)
@@ -327,7 +304,7 @@ func (ss *StorageService) SaveModelElements(conn ConnDB, layer string, modelElem
 		return interfaces.ModelElementsIdDTO{}, err
 	}
 
-	modelElementsID, err := ss.storage.SaveModelElements(conn, layer, modelElementsDTO.ModelElements)
+	modelElementsID, err := ss.storage.SaveModelElements(layer, modelElementsDTO.ModelElements)
 	if err != nil {
 		ss.logger.Error(err)
 		return interfaces.ModelElementsIdDTO{}, errors.IdentifyStorageError(err)
@@ -336,8 +313,8 @@ func (ss *StorageService) SaveModelElements(conn ConnDB, layer string, modelElem
 	return interfaces.ModelElementsIdDTO{ModelElements: modelElementsID}, nil
 }
 
-func (ss *StorageService) SaveLayer(conn ConnDB, layer string) error {
-	err := ss.storage.SaveLayer(conn, layer)
+func (ss *Service) SaveLayer(layer string) error {
+	err := ss.storage.SaveLayer(layer)
 	if err != nil {
 		ss.logger.Error(err)
 		return errors.IdentifyStorageError(err)
@@ -346,8 +323,8 @@ func (ss *StorageService) SaveLayer(conn ConnDB, layer string) error {
 	return nil
 }
 
-func (ss *StorageService) AddUser(conn ConnDB, user interfaces.UserDTO) error {
-	err := ss.storage.AddUser(conn, user)
+func (ss *Service) AddUser(user interfaces.UserDTO) error {
+	err := ss.storage.AddUser(user)
 	if err != nil {
 		ss.logger.Error(err)
 		return errors.IdentifyStorageError(err)
@@ -356,13 +333,3 @@ func (ss *StorageService) AddUser(conn ConnDB, user interfaces.UserDTO) error {
 
 	return nil
 }
-
-//func (ss *StorageService) GetUserPassword(conn ConnDB, username string) (string, error) {
-//	password, err := ss.storage.GetUserPassword(conn, username)
-//	if err != nil {
-//		ss.logger.Error(err)
-//		return "", errors.IdentifyStorageError(err)
-//	}
-//
-//	return password, nil
-//}
