@@ -23,49 +23,13 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/stat": {
-            "get": {
-                "description": "return the statistic of the server process",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Info"
-                ],
-                "summary": "Show the status of server.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_pkg_monitoring.ProcStat"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/elements": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "return all elements of structural models in the given text markup layer",
                 "produces": [
                     "application/json"
@@ -77,8 +41,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -118,6 +82,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "add new elements of structural models",
                 "consumes": [
                     "application/json"
@@ -132,8 +101,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -184,6 +153,11 @@ const docTemplate = `{
         },
         "/layers": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "return all text markup layers",
                 "produces": [
                     "application/json"
@@ -195,8 +169,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     }
@@ -229,6 +203,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "add new text markup layer",
                 "tags": [
                     "Layers"
@@ -237,8 +216,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -294,7 +273,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_adapters_server.loginResponse"
+                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_adapters_server_middleware.LoginResponse"
                         }
                     },
                     "400": {
@@ -314,6 +293,11 @@ const docTemplate = `{
         },
         "/logout": {
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "log out from the server",
                 "tags": [
                     "Auth"
@@ -322,8 +306,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     }
@@ -349,6 +333,11 @@ const docTemplate = `{
         },
         "/models": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "return all structural models in the given text markup layer",
                 "produces": [
                     "application/json"
@@ -360,8 +349,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -401,6 +390,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "add new structural models",
                 "consumes": [
                     "application/json"
@@ -415,8 +409,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -467,6 +461,11 @@ const docTemplate = `{
         },
         "/properties": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "return all unit properties",
                 "produces": [
                     "application/json"
@@ -478,8 +477,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     }
@@ -512,6 +511,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "add new unit properties",
                 "consumes": [
                     "application/json"
@@ -526,8 +530,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -571,6 +575,11 @@ const docTemplate = `{
         },
         "/properties/unit": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "return all properties for the given unit in the given text markup layer",
                 "consumes": [
                     "application/json"
@@ -585,8 +594,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -635,8 +644,108 @@ const docTemplate = `{
                 }
             }
         },
+        "/refresh": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "refresh user authentication token",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh user authentication token.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_internal_adapters_server_middleware.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/stat": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "return the statistic of the server process",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Info"
+                ],
+                "summary": "Show the status of server.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Inspirate789_Thermy-backend_pkg_monitoring.ProcStat"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/units": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "return all units in the given text markup layer",
                 "produces": [
                     "application/json"
@@ -648,8 +757,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -689,6 +798,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "add new units in the given text markup layer",
                 "consumes": [
                     "application/json"
@@ -700,8 +814,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -747,6 +861,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "delete existing units in the given text markup layer",
                 "consumes": [
                     "application/json"
@@ -758,8 +877,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -811,6 +930,11 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "update existing units in the given text markup layer",
                 "consumes": [
                     "application/json"
@@ -822,8 +946,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -871,6 +995,11 @@ const docTemplate = `{
         },
         "/units/models": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "return all units with given structural models in the given text markup layer",
                 "consumes": [
                     "application/json"
@@ -885,8 +1014,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -937,6 +1066,11 @@ const docTemplate = `{
         },
         "/units/properties": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "return all units with given properties in the given text markup layer",
                 "consumes": [
                     "application/json"
@@ -951,8 +1085,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -1003,6 +1137,11 @@ const docTemplate = `{
         },
         "/users": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "add new user",
                 "consumes": [
                     "application/json"
@@ -1014,8 +1153,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User authentication token",
-                        "name": "token",
+                        "description": "Authorization",
+                        "name": "Authorization",
                         "in": "header",
                         "required": true
                     },
@@ -1056,8 +1195,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_Inspirate789_Thermy-backend_internal_adapters_server_middleware.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "expire": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_Inspirate789_Thermy-backend_internal_domain_entities.AuthRequest": {
             "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
             "properties": {
                 "password": {
                     "type": "string"
@@ -1427,14 +1581,6 @@ const docTemplate = `{
                 },
                 "undefined": {
                     "type": "integer"
-                }
-            }
-        },
-        "internal_adapters_server.loginResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
                 }
             }
         },

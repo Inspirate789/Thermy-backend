@@ -1,11 +1,21 @@
 basePath: /api/v1
 definitions:
+  github_com_Inspirate789_Thermy-backend_internal_adapters_server_middleware.LoginResponse:
+    properties:
+      expire:
+        type: string
+      token:
+        type: string
+    type: object
   github_com_Inspirate789_Thermy-backend_internal_domain_entities.AuthRequest:
     properties:
       password:
         type: string
       username:
         type: string
+    required:
+    - password
+    - username
     type: object
   github_com_Inspirate789_Thermy-backend_internal_domain_interfaces.ContextDTO:
     properties:
@@ -241,11 +251,6 @@ definitions:
       undefined:
         type: integer
     type: object
-  internal_adapters_server.loginResponse:
-    properties:
-      token:
-        type: string
-    type: object
   procfs.ProcMap:
     properties:
       dev:
@@ -414,41 +419,14 @@ info:
   title: Thermy API
   version: "1.0"
 paths:
-  /admin/stat:
-    get:
-      description: return the statistic of the server process
-      parameters:
-      - description: User authentication token
-        in: header
-        name: token
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_pkg_monitoring.ProcStat'
-        "401":
-          description: Unauthorized
-          schema:
-            type: string
-        "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Show the status of server.
-      tags:
-      - Info
   /elements:
     get:
       description: return all elements of structural models in the given text markup
         layer
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -475,6 +453,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Show all elements of structural models in the given text markup layer.
       tags:
       - Elements
@@ -483,9 +463,9 @@ paths:
       - application/json
       description: add new elements of structural models
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -518,6 +498,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Add new elements of structural models.
       tags:
       - Elements
@@ -525,9 +507,9 @@ paths:
     get:
       description: return all text markup layers
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       produces:
@@ -549,15 +531,17 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Show all text markup layers.
       tags:
       - Layers
     post:
       description: add new text markup layer
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -576,6 +560,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Add new text markup layer.
       tags:
       - Layers
@@ -595,7 +581,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_adapters_server.loginResponse'
+            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_adapters_server_middleware.LoginResponse'
         "400":
           description: Bad Request
           schema:
@@ -611,9 +597,9 @@ paths:
     delete:
       description: log out from the server
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       responses:
@@ -627,6 +613,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Log out from the server.
       tags:
       - Auth
@@ -634,9 +622,9 @@ paths:
     get:
       description: return all structural models in the given text markup layer
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -663,6 +651,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Show all structural models in the given text markup layer.
       tags:
       - Models
@@ -671,9 +661,9 @@ paths:
       - application/json
       description: add new structural models
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -706,6 +696,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Add new structural models.
       tags:
       - Models
@@ -713,9 +705,9 @@ paths:
     get:
       description: return all unit properties
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       produces:
@@ -737,6 +729,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Show all unit properties.
       tags:
       - Properties
@@ -745,9 +739,9 @@ paths:
       - application/json
       description: add new unit properties
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Unit property names
@@ -775,6 +769,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Add new unit properties.
       tags:
       - Properties
@@ -785,9 +781,9 @@ paths:
       description: return all properties for the given unit in the given text markup
         layer
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -820,18 +816,80 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Show all properties for the given unit in the given text markup layer.
       tags:
       - Properties
+  /refresh:
+    get:
+      description: refresh user authentication token
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_internal_adapters_server_middleware.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Refresh user authentication token.
+      tags:
+      - Auth
+  /stat:
+    get:
+      description: return the statistic of the server process
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_Inspirate789_Thermy-backend_pkg_monitoring.ProcStat'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Show the status of server.
+      tags:
+      - Info
   /units:
     delete:
       consumes:
       - application/json
       description: delete existing units in the given text markup layer
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -864,15 +922,17 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Delete existing units in the given text markup layer.
       tags:
       - Units
     get:
       description: return all units in the given text markup layer
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -899,6 +959,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Show all units in the given text markup layer.
       tags:
       - Units
@@ -907,9 +969,9 @@ paths:
       - application/json
       description: update existing units in the given text markup layer
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -938,6 +1000,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Update existing units in the given text markup layer.
       tags:
       - Units
@@ -946,9 +1010,9 @@ paths:
       - application/json
       description: add new units in the given text markup layer
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -977,6 +1041,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Add new units in the given text markup layer.
       tags:
       - Units
@@ -987,9 +1053,9 @@ paths:
       description: return all units with given structural models in the given text
         markup layer
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -1022,6 +1088,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Show all units with given structural models in the given text markup
         layer.
       tags:
@@ -1033,9 +1101,9 @@ paths:
       description: return all units with given properties in the given text markup
         layer
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: Text markup layer
@@ -1068,6 +1136,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Show all units with given properties in the given text markup layer.
       tags:
       - Units
@@ -1077,9 +1147,9 @@ paths:
       - application/json
       description: add new user
       parameters:
-      - description: User authentication token
+      - description: Authorization
         in: header
-        name: token
+        name: Authorization
         required: true
         type: string
       - description: User information
@@ -1103,6 +1173,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Add new user.
       tags:
       - Users

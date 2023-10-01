@@ -88,17 +88,16 @@ func NewLogger(w io.Writer) *log.Logger {
 	return logger
 }
 
-// @title			Thermy API
-// @version		1.0
-// @description	This is a Thermy backend API.
-// @contact.name	API Support
-// @contact.email	andreysapozhkov535@gmail.com
-// @license.name	MIT
-// @license.url	https://mit-license.org/
-// @securityDefinitions.apikey ApiKeyAuth
-// @host		localhost:8080
-// @BasePath	/api/v1
-// @Schemes	http
+//	@title			Thermy API
+//	@version		1.0
+//	@description	This is a Thermy backend API.
+//	@contact.name	API Support
+//	@contact.email	andreysapozhkov535@gmail.com
+//	@license.name	MIT
+//	@license.url	https://mit-license.org/
+//	@host			localhost:8080
+//	@BasePath		/api/v1
+//	@Schemes		http
 func main() {
 	//w := influx.NewInfluxWriter()
 	//err := w.Open()
@@ -108,7 +107,7 @@ func main() {
 	//defer w.Close()
 	logger := NewLogger(os.Stdout)
 
-	db, err := sqlx.Connect(os.Getenv("DB_DRIVER_NAME"), os.Getenv("DB_CONNECTION_STRING"))
+	db, err := sqlx.Connect(os.Getenv("POSTGRES_DRIVER_NAME"), os.Getenv("POSTGRES_CONNECTION_STRING"))
 	if err != nil {
 		panic(err)
 	}

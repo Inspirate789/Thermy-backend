@@ -13,9 +13,9 @@ import (
 //	@Summary		Add new user.
 //	@Description	add new user
 //	@Tags			Users
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
-//	@Param			user	body	interfaces.UserDTO	true	"User information"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string				true	"Authorization"
+//	@Param			user			body	interfaces.UserDTO	true	"User information"
 //	@Accept			json
 //	@Success		200
 //	@Failure		400	{object}	string
@@ -45,13 +45,13 @@ func (s *Server) postUser(ctx *gin.Context) {
 //	@Summary		Show the status of server.
 //	@Description	return the statistic of the server process
 //	@Tags			Info
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string	true	"Authorization"
 //	@Produce		json
 //	@Success		200	{object}	monitoring.ProcStat
 //	@Failure		401	{object}	string
 //	@Failure		500	{object}	string
-//	@Router			/admin/stat [get]
+//	@Router			/stat [get]
 func (s *Server) getStat(ctx *gin.Context) {
 	observer, err := monitoring.NewProcStatObserver()
 	if err != nil {

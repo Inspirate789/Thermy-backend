@@ -12,10 +12,10 @@ import (
 //	@Summary		Add new units in the given text markup layer.
 //	@Description	add new units in the given text markup layer
 //	@Tags			Units
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
-//	@Param			layer		query	string					true	"Text markup layer"
-//	@Param			unitsDTO	body	interfaces.SaveUnitsDTO	true	"Information about stored units"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string					true	"Authorization"
+//	@Param			layer			query	string					true	"Text markup layer"
+//	@Param			unitsDTO		body	interfaces.SaveUnitsDTO	true	"Information about stored units"
 //	@Accept			json
 //	@Success		200
 //	@Failure		400	{object}	string
@@ -47,10 +47,10 @@ func (s *Server) postUnits(ctx *gin.Context) {
 //	@Summary		Update existing units in the given text markup layer.
 //	@Description	update existing units in the given text markup layer
 //	@Tags			Units
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
-//	@Param			layer		query	string						true	"Text markup layer"
-//	@Param			unitsDTO	body	interfaces.UpdateUnitsDTO	true	"Information about updated units"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string						true	"Authorization"
+//	@Param			layer			query	string						true	"Text markup layer"
+//	@Param			unitsDTO		body	interfaces.UpdateUnitsDTO	true	"Information about updated units"
 //	@Accept			json
 //	@Success		200
 //	@Failure		400	{object}	string
@@ -82,9 +82,9 @@ func (s *Server) patchUnits(ctx *gin.Context) {
 //	@Summary		Show all units in the given text markup layer.
 //	@Description	return all units in the given text markup layer
 //	@Tags			Units
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
-//	@Param			layer	query	string	true	"Text markup layer"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string	true	"Authorization"
+//	@Param			layer			query	string	true	"Text markup layer"
 //	@Produce		json
 //	@Success		200	{object}	interfaces.OutputUnitsDTO
 //	@Failure		400	{object}	string
@@ -108,8 +108,8 @@ func (s *Server) getUnits(ctx *gin.Context) {
 //	@Summary		Show all units with given structural models in the given text markup layer.
 //	@Description	return all units with given structural models in the given text markup layer
 //	@Tags			Units
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string					true	"Authorization"
 //	@Param			layer			query	string					true	"Text markup layer"
 //	@Param			propertiesID	body	interfaces.ModelsIdDTO	true	"Models ID according to which the search will be performed"
 //	@Accept			json
@@ -144,8 +144,8 @@ func (s *Server) getUnitsByModels(ctx *gin.Context) {
 //	@Summary		Show all units with given properties in the given text markup layer.
 //	@Description	return all units with given properties in the given text markup layer
 //	@Tags			Units
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string						true	"Authorization"
 //	@Param			layer			query	string						true	"Text markup layer"
 //	@Param			propertiesID	body	interfaces.PropertiesIdDTO	true	"Properties ID according to which the search will be performed"
 //	@Accept			json
@@ -180,10 +180,10 @@ func (s *Server) getUnitsByProperties(ctx *gin.Context) {
 //	@Summary		Delete existing units in the given text markup layer.
 //	@Description	delete existing units in the given text markup layer
 //	@Tags			Units
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
-//	@Param			layer		query	string						true	"Text markup layer"
-//	@Param			unitsDTO	body	interfaces.SearchUnitDTO	true	"Information about updated units"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string						true	"Authorization"
+//	@Param			layer			query	string						true	"Text markup layer"
+//	@Param			unitsDTO		body	interfaces.SearchUnitDTO	true	"Information about updated units"
 //	@Accept			json
 //	@Success		200
 //	@Failure		400	{object}	string
@@ -216,9 +216,9 @@ func (s *Server) deleteUnits(ctx *gin.Context) {
 //	@Summary		Show all structural models in the given text markup layer.
 //	@Description	return all structural models in the given text markup layer
 //	@Tags			Models
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
-//	@Param			layer	query	string	true	"Text markup layer"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string	true	"Authorization"
+//	@Param			layer			query	string	true	"Text markup layer"
 //	@Produce		json
 //	@Success		200	{object}	interfaces.OutputModelsDTO
 //	@Failure		400	{object}	string
@@ -242,9 +242,9 @@ func (s *Server) getModels(ctx *gin.Context) {
 //	@Summary		Show all elements of structural models in the given text markup layer.
 //	@Description	return all elements of structural models in the given text markup layer
 //	@Tags			Elements
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
-//	@Param			layer	query	string	true	"Text markup layer"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string	true	"Authorization"
+//	@Param			layer			query	string	true	"Text markup layer"
 //	@Produce		json
 //	@Success		200	{object}	interfaces.OutputModelsDTO
 //	@Failure		400	{object}	string
@@ -268,8 +268,8 @@ func (s *Server) getModelElements(ctx *gin.Context) {
 //	@Summary		Show all unit properties.
 //	@Description	return all unit properties
 //	@Tags			Properties
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string	true	"Authorization"
 //	@Produce		json
 //	@Success		200	{object}	interfaces.OutputModelsDTO
 //	@Failure		400	{object}	string
@@ -292,8 +292,8 @@ func (s *Server) getProperties(ctx *gin.Context) {
 //	@Summary		Show all properties for the given unit in the given text markup layer.
 //	@Description	return all properties for the given unit in the given text markup layer
 //	@Tags			Properties
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string						true	"Authorization"
 //	@Param			layer			query	string						true	"Text markup layer"
 //	@Param			propertiesID	body	interfaces.SearchUnitDTO	true	"Unit data according to which the search will be performed"
 //	@Accept			json
@@ -328,8 +328,8 @@ func (s *Server) getPropertiesByUnit(ctx *gin.Context) {
 //	@Summary		Add new unit properties.
 //	@Description	add new unit properties
 //	@Tags			Properties
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string						true	"Authorization"
 //	@Param			propertyNames	body	interfaces.PropertyNamesDTO	true	"Unit property names"
 //	@Accept			json
 //	@Produce		json
@@ -361,8 +361,8 @@ func (s *Server) postProperties(ctx *gin.Context) {
 //	@Summary		Show all text markup layers.
 //	@Description	return all text markup layers
 //	@Tags			Layers
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string	true	"Authorization"
 //	@Produce		json
 //	@Success		200	{object}	interfaces.LayersDTO
 //	@Failure		400	{object}	string

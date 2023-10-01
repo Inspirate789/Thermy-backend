@@ -1,6 +1,8 @@
 package server
 
 import (
+	_ "github.com/Inspirate789/Thermy-backend/internal/adapters/server/middleware"
+	_ "github.com/Inspirate789/Thermy-backend/internal/domain/entities"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,12 +26,12 @@ func (s *Server) login(f gin.HandlerFunc) gin.HandlerFunc {
 //	@Summary		Refresh user authentication token.
 //	@Description	refresh user authentication token
 //	@Tags			Auth
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
-//	@Success		200	{object}	middleware.LoginResponse
-//	@Failure		400	{object}	string
-//	@Failure		401	{object}	string
-//	@Failure		500	{object}	string
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header		string	true	"Authorization"
+//	@Success		200				{object}	middleware.LoginResponse
+//	@Failure		400				{object}	string
+//	@Failure		401				{object}	string
+//	@Failure		500				{object}	string
 //	@Router			/refresh [get]
 func (s *Server) refresh(f gin.HandlerFunc) gin.HandlerFunc {
 	return f
@@ -40,8 +42,8 @@ func (s *Server) refresh(f gin.HandlerFunc) gin.HandlerFunc {
 //	@Summary		Log out from the server.
 //	@Description	log out from the server
 //	@Tags			Auth
-//	@Security ApiKeyAuth
-//	@Param Authorization header string true "Authorization"
+//	@Security		ApiKeyAuth
+//	@Param			Authorization	header	string	true	"Authorization"
 //	@Success		200
 //	@Failure		400	{object}	string
 //	@Failure		500	{object}	string

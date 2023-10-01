@@ -51,6 +51,7 @@ postgres_port=5432
 postgres_dbname="thermy_db"
 postgres_ssl_mode="disable"
 postgres_driver_name="postgres"
+postgres_connection_string="postgresql://$postgres_user:$postgres_password@$postgres_host:$postgres_port/$postgres_dbname?sslmode=$postgres_ssl_mode"
 
 echo -e "POSTGRES_USER=${postgres_user}" >> .env
 echo -e "POSTGRES_PASSWORD=${postgres_password}" >> .env
@@ -59,6 +60,7 @@ echo -e "POSTGRES_PORT=${postgres_port}" >> .env
 echo -e "POSTGRES_DBNAME=${postgres_dbname}" >> .env
 echo -e "POSTGRES_SSL_MODE=${postgres_ssl_mode}" >> .env
 echo -e "POSTGRES_DRIVER_NAME=${postgres_driver_name}" >> .env
+echo -e "POSTGRES_CONNECTION_STRING=${postgres_connection_string}" >> .env
 
 
 
@@ -100,6 +102,7 @@ echo -e "POSTGRES_PORT=${postgres_port}" >> backend.env
 echo -e "POSTGRES_DBNAME=${postgres_dbname}" >> backend.env
 echo -e "POSTGRES_SSL_MODE=${postgres_ssl_mode}" >> backend.env
 echo -e "POSTGRES_DRIVER_NAME=${postgres_driver_name}" >> backend.env
+echo -e "POSTGRES_CONNECTION_STRING=${postgres_connection_string}" >> backend.env
 # echo -e "REDIS_HOST=${redis_host}" >> backend.env
 # echo -e "REDIS_PORT=${redis_port}" >> backend.env
 # echo -e "REDIS_PASSWORD=${redis_password}" >> backend.env

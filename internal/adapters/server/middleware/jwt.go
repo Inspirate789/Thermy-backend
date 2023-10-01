@@ -14,7 +14,7 @@ type LoginResponse struct {
 	Expire string `json:"expire"`
 }
 
-type UserCheckFunc func(entities.AuthRequest) (entities.User, error)
+type UserCheckFunc func(entities.AuthRequest) (*entities.User, error)
 
 const (
 	identityKey = "id"
@@ -28,6 +28,13 @@ func MakeGinJWTMiddleware(requiredRoles []string, getUser UserCheckFunc) (*jwt.G
 		Timeout:     time.Hour,
 		MaxRefresh:  time.Hour,
 		IdentityKey: identityKey,
+		Authenticator: func(c *gin.Context) (interface{}, error) { // for login (step 1)
+			var request entities.AuthRequest
+			if err := c.ShouldBind(&request); err != nil {
+				return nil, jwt.ErrMissingLoginValues
+			}
+			return getUser(request)
+		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims { // for login (step 2)
 			if v, ok := data.(*entities.User); ok {
 				return jwt.MapClaims{
@@ -40,16 +47,9 @@ func MakeGinJWTMiddleware(requiredRoles []string, getUser UserCheckFunc) (*jwt.G
 		IdentityHandler: func(c *gin.Context) interface{} { // for auth (step 1)
 			claims := jwt.ExtractClaims(c)
 			return &entities.User{
-				ID:   claims[identityKey].(int),
+				ID:   int(claims[identityKey].(float64)),
 				Role: claims[roleKey].(string),
 			}
-		},
-		Authenticator: func(c *gin.Context) (interface{}, error) { // for login (step 1)
-			var request entities.AuthRequest
-			if err := c.ShouldBind(&request); err != nil {
-				return nil, jwt.ErrMissingLoginValues
-			}
-			return getUser(request)
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool { // for auth (step 2)
 			v, ok := data.(*entities.User)
@@ -75,7 +75,7 @@ func MakeGinJWTMiddleware(requiredRoles []string, getUser UserCheckFunc) (*jwt.G
 		LogoutResponse: func(c *gin.Context, code int) {
 			c.Status(code)
 		},
-		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
+		TokenLookup:   "header:Authorization",
 		TokenHeadName: "Bearer",
 		TimeFunc:      time.Now,
 	})

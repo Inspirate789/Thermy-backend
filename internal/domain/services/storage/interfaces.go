@@ -16,7 +16,7 @@ type Storage interface {
 
 type UsersRepository interface {
 	AddUser(user interfaces.UserDTO) error
-	GetUser(entities.AuthRequest) (entities.User, error)
+	GetUser(entities.AuthRequest) (*entities.User, error)
 }
 
 type ModelsRepository interface {

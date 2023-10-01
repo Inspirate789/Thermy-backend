@@ -46,5 +46,5 @@ type LayersService interface {
 
 type UsersService interface {
 	AddUser(user interfaces.UserDTO) error
-	GetUser(entities.AuthRequest) (entities.User, error)
+	GetUser(entities.AuthRequest) (*entities.User, error)
 }

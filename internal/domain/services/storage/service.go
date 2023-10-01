@@ -309,11 +309,11 @@ func (s *Service) AddUser(user interfaces.UserDTO) error {
 	return nil
 }
 
-func (s *Service) GetUser(request entities.AuthRequest) (entities.User, error) {
+func (s *Service) GetUser(request entities.AuthRequest) (*entities.User, error) {
 	user, err := s.storage.GetUser(request)
 	if err != nil {
 		s.logger.Error(err)
-		return entities.User{}, errors.IdentifyStorageError(err)
+		return nil, errors.IdentifyStorageError(err)
 	}
 
 	return user, nil

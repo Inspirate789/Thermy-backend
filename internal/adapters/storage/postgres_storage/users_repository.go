@@ -22,7 +22,7 @@ func (r *UsersPgRepository) AddUser(user interfaces.UserDTO) error {
 	return err
 }
 
-func (r *UsersPgRepository) GetUser(request entities.AuthRequest) (entities.User, error) {
+func (r *UsersPgRepository) GetUser(request entities.AuthRequest) (*entities.User, error) {
 	args := map[string]any{
 		"username": request.Username,
 		"password": request.Password,
@@ -30,7 +30,7 @@ func (r *UsersPgRepository) GetUser(request entities.AuthRequest) (entities.User
 	var user entities.User
 	err := sqlx_utils.NamedGet(context.Background(), r.conn, &user, selectUser, args)
 	if err != nil {
-		return entities.User{}, err
+		return nil, err
 	}
-	return user, nil
+	return &user, nil
 }
